@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>790</width>
+    <height>639</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>300</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QGraphicsView" name="graphicsView"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>日志</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QTextBrowser" name="textBrowser"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>790</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuprojectManagement">
+    <property name="title">
+     <string>项目管理</string>
+    </property>
+    <addaction name="actionNewProject"/>
+    <addaction name="actionOpenProject"/>
+    <addaction name="actionSaveProject"/>
+    <addaction name="actionSaveAsProject"/>
+    <addaction name="actioncloseProject"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuDeviceManagement">
+    <property name="title">
+     <string>设备管理</string>
+    </property>
+    <addaction name="actionNewBodyFrame"/>
+    <addaction name="actionDeleteBodyFrame"/>
+   </widget>
+   <widget class="QMenu" name="menuCMDTableManagement">
+    <property name="title">
+     <string>命令表管理</string>
+    </property>
+    <addaction name="actionOpenCMDTable"/>
+    <addaction name="actionSaveCMDTable"/>
+    <addaction name="actionSaveAsCMDTable"/>
+    <addaction name="actionCreateCMDTable"/>
+    <addaction name="actionCompileCMDTable"/>
+    <addaction name="actionBurnToFPGA"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>视图</string>
+    </property>
+    <addaction name="actionMainWindow"/>
+    <addaction name="actionLogView"/>
+    <addaction name="actionBusMonitorView"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actionHelpView"/>
+    <addaction name="actionAboutView"/>
+   </widget>
+   <widget class="QMenu" name="menuSimulink">
+    <property name="title">
+     <string>仿真</string>
+    </property>
+    <addaction name="actionStartSim"/>
+    <addaction name="actionAbortSim"/>
+    <addaction name="actionEndSim"/>
+   </widget>
+   <widget class="QMenu" name="menuMonitor">
+    <property name="title">
+     <string>数据监视器</string>
+    </property>
+    <addaction name="actionOpenMonitor"/>
+   </widget>
+   <addaction name="menuprojectManagement"/>
+   <addaction name="menuDeviceManagement"/>
+   <addaction name="menuCMDTableManagement"/>
+   <addaction name="menuMonitor"/>
+   <addaction name="menuSimulink"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="windowTitle">
+    <string>项目列表</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTreeWidget" name="treeWidget">
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>50</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>300</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>参数配置</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QWidget" name="paraConfigWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionNewProject">
+   <property name="text">
+    <string>新建项目</string>
+   </property>
+  </action>
+  <action name="actionOpenProject">
+   <property name="text">
+    <string>打开项目</string>
+   </property>
+  </action>
+  <action name="actionSaveProject">
+   <property name="text">
+    <string>保存项目</string>
+   </property>
+  </action>
+  <action name="actionSaveAsProject">
+   <property name="text">
+    <string>项目另存为</string>
+   </property>
+  </action>
+  <action name="actioncloseProject">
+   <property name="text">
+    <string>关闭项目</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>退出</string>
+   </property>
+  </action>
+  <action name="actionNewBodyFrame">
+   <property name="text">
+    <string>新建机架</string>
+   </property>
+  </action>
+  <action name="actionDeleteBodyFrame">
+   <property name="text">
+    <string>删除机架</string>
+   </property>
+  </action>
+  <action name="actionOpenCMDTable">
+   <property name="text">
+    <string>打开命令表</string>
+   </property>
+  </action>
+  <action name="actionSaveCMDTable">
+   <property name="text">
+    <string>保存命令表</string>
+   </property>
+  </action>
+  <action name="actionSaveAsCMDTable">
+   <property name="text">
+    <string>命令表另存为</string>
+   </property>
+  </action>
+  <action name="actionCreateCMDTable">
+   <property name="text">
+    <string>生成命令表</string>
+   </property>
+  </action>
+  <action name="actionCompileCMDTable">
+   <property name="text">
+    <string>编译命令表</string>
+   </property>
+  </action>
+  <action name="actionBurnToFPGA">
+   <property name="text">
+    <string>烧录到FPGA</string>
+   </property>
+  </action>
+  <action name="actionMainWindow">
+   <property name="text">
+    <string>主界面</string>
+   </property>
+  </action>
+  <action name="actionLogView">
+   <property name="text">
+    <string>日志窗口</string>
+   </property>
+  </action>
+  <action name="actionBusMonitorView">
+   <property name="text">
+    <string>总线监视窗口</string>
+   </property>
+  </action>
+  <action name="actionHelpView">
+   <property name="text">
+    <string>帮助</string>
+   </property>
+  </action>
+  <action name="actionAboutView">
+   <property name="text">
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="actionStartSim">
+   <property name="text">
+    <string>开始仿真</string>
+   </property>
+  </action>
+  <action name="actionAbortSim">
+   <property name="text">
+    <string>中止仿真</string>
+   </property>
+  </action>
+  <action name="actionEndSim">
+   <property name="text">
+    <string>结束仿真</string>
+   </property>
+  </action>
+  <action name="actionOpenMonitor">
+   <property name="text">
+    <string>打开数据监视器</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
