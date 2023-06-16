@@ -26,8 +26,8 @@ public:
 
     void forTest();
 
-//private slots:
-//    void on_actionNewBodyFrame_triggered();
+private slots:
+    void on_actionNewBodyFrame_triggered();
 
 //    //void showBodyFrameCfgSlot();
 
@@ -39,9 +39,9 @@ public:
 
 //    void on_actionBurnToFPGA_triggered();
 
-//    void on_actionNewProject_triggered();
+    void on_actionNewProject_triggered();
 
-//    void addNewProjectSlot(QString name, QString info);
+    void addNewProjectSlot(QString name, QString info);
 
 //    void saveFrame();
 

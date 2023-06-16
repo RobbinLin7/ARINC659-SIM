@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     scene = new DeviceModelScene();
     ui->graphicsView->setScene(scene);
-    //layout = new QVBoxLayout(this->ui->paraConfigWidget);
     bodyFrameNum = 0;
 
 
@@ -42,18 +41,18 @@ void MainWindow::forTest()
 }
 
 
-//void MainWindow::on_actionNewBodyFrame_triggered()
-//{
-////    bodyFrameNum++;
-////    BodyFrame *bodyFrame = new BodyFrame(this, ui->paraConfigWidget);
-////    connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
-////    myBodyFrameList.insert(bodyFrameNum, bodyFrame);
-////    bodyFrame->setBodyFrameID(bodyFrameNum);
-////    bodyFrame->setWindowFlags(Qt::Dialog);
-////    bodyFrame->setWindowModality(Qt::WindowModal);
-////    bodyFrame->show();
-////    //connect(bodyFrame, &BodyFrame::)
-//}
+void MainWindow::on_actionNewBodyFrame_triggered()
+{
+    bodyFrameNum++;
+    BodyFrame *bodyFrame = new BodyFrame(this);
+    //connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
+    myBodyFrameList.insert(bodyFrameNum, bodyFrame);
+    bodyFrame->setBodyFrameID(bodyFrameNum);
+    bodyFrame->setWindowFlags(Qt::Dialog);
+    bodyFrame->setWindowModality(Qt::WindowModal);
+    bodyFrame->show();
+    //connect(bodyFrame, &BodyFrame::)
+}
 
 //void MainWindow::saveFrame(){
 //    BodyFrameItem *item = new BodyFrameItem(scene);
@@ -143,81 +142,86 @@ void MainWindow::initMainWindow()
 //        QMessageBox::warning(this, tr("警告"), "启动IMPACT.exe失败,请检查是否存在!");
 //    }
 //}
+/**
+ * @brief MainWindow::on_actionNewProject_triggered
+ */
+void MainWindow::on_actionNewProject_triggered()
+{
+    NewProjectDialog *newProj = new NewProjectDialog();
 
-//void MainWindow::on_actionNewProject_triggered()
-//{
-//    NewProjectDialog *newProj = new NewProjectDialog();
+    newProj->show();
 
-//    newProj->show();
+    connect(newProj, SIGNAL(sendProjInfo(QString, QString)), this, SLOT(addNewProjectSlot(QString, QString)));
 
-//    connect(newProj, SIGNAL(sendProjInfo(QString, QString)), this, SLOT(addNewProjectSlot(QString, QString)));
+}
+/**
+ * @brief MainWindow::addNewProjectSlot
+ * @param name
+ * @param info
+ */
+void MainWindow::addNewProjectSlot(QString name, QString info)
+{
 
-
-//}
-
-//void MainWindow::addNewProjectSlot(QString name, QString info)
-//{
-
-//    ui->treeWidget->setColumnCount(1);
-
-
-//    //拿到项目名称后更新树中的内容
-
-//    QStringList headerList;
-
-//    headerList << tr("项目信息");
-
-//    ui->treeWidget->setHeaderLabels(headerList);
-
-//    QTreeWidgetItem *topItem = new QTreeWidgetItem();
-
-//    topItem->setText(0, name);
-
-//    ui->treeWidget->addTopLevelItem(topItem);
-
-//    QTreeWidgetItem *item1 = new QTreeWidgetItem();
-//    item1->setText(0, tr("机架配置"));
-
-//    topItem->addChild(item1);
-
-//    QTreeWidgetItem *item11 = new QTreeWidgetItem();
-//    item11->setText(0, tr("机架1"));
-
-//    item1->addChild(item11);
-
-//    QTreeWidgetItem *item111 = new QTreeWidgetItem();
-//    item111->setText(0, tr("模块1"));
-
-//    item11->addChild(item111);
+    ui->projectTreeWidget->setColumnCount(1);
 
 
-//    QTreeWidgetItem *item2 = new QTreeWidgetItem();
-//    item2->setText(0, tr("输出文件"));
+    //拿到项目名称后更新树中的内容
 
-//    topItem->addChild(item2);
+    QStringList headerList;
 
-//    QTreeWidgetItem *item21 = new QTreeWidgetItem();
-//    item21->setText(0, tr("命令表文件"));
+    headerList << tr("项目信息");
 
-//    item2->addChild(item21);
+    ui->projectTreeWidget->setHeaderLabels(headerList);
 
-//    QTreeWidgetItem *item22 = new QTreeWidgetItem();
-//    item22->setText(0, tr("编译结果"));
+    QTreeWidgetItem *topItem = new QTreeWidgetItem();
 
-//    item2->addChild(item22);
+    topItem->setText(0, name);
 
-//    QTreeWidgetItem *item23 = new QTreeWidgetItem();
-//    item23->setText(0, tr("生成文件"));
+    ui->projectTreeWidget->addTopLevelItem(topItem);
 
-//    item2->addChild(item23);
+    QTreeWidgetItem *item1 = new QTreeWidgetItem();
+    item1->setText(0, tr("机架配置"));
 
-//    QTreeWidgetItem *item24 = new QTreeWidgetItem();
-//    item24->setText(0, tr("烧录"));
+    topItem->addChild(item1);
 
-//    item2->addChild(item24);
+    QTreeWidgetItem *item11 = new QTreeWidgetItem();
+    item11->setText(0, tr("机架1"));
 
-//    QTreeWidgetItem *item3 = new QTreeWidgetItem();
-//    item3->setText(0, tr("仿真"));
+    item1->addChild(item11);
 
-//    topItem->addChild(item3);
-//}
+    QTreeWidgetItem *item111 = new QTreeWidgetItem();
+    item111->setText(0, tr("模块1"));
+
+    item11->addChild(item111);
+
+
+    QTreeWidgetItem *item2 = new QTreeWidgetItem();
+    item2->setText(0, tr("输出文件"));
+
+    topItem->addChild(item2);
+
+    QTreeWidgetItem *item21 = new QTreeWidgetItem();
+    item21->setText(0, tr("命令表文件"));
+
+    item2->addChild(item21);
+
+    QTreeWidgetItem *item22 = new QTreeWidgetItem();
+    item22->setText(0, tr("编译结果"));
+
+    item2->addChild(item22);
+
+    QTreeWidgetItem *item23 = new QTreeWidgetItem();
+    item23->setText(0, tr("生成文件"));
+
+    item2->addChild(item23);
+
+    QTreeWidgetItem *item24 = new QTreeWidgetItem();
+    item24->setText(0, tr("烧录"));
+
+    item2->addChild(item24);
+
+    QTreeWidgetItem *item3 = new QTreeWidgetItem();
+    item3->setText(0, tr("仿真"));
+
+    topItem->addChild(item3);
+}

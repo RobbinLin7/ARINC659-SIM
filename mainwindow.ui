@@ -57,6 +57,11 @@
             <height>0</height>
            </size>
           </property>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
          </widget>
         </item>
         <item>
