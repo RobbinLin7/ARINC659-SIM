@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -29,21 +29,21 @@ public:
 private slots:
     void on_actionNewBodyFrame_triggered();
 
-    //void showBodyFrameCfgSlot();
+//    //void showBodyFrameCfgSlot();
 
-    void on_actionOpenMonitor_triggered();
+//    void on_actionOpenMonitor_triggered();
 
-    void on_actionOpenCMDTable_triggered();
+//    void on_actionOpenCMDTable_triggered();
 
-    void on_actionStartSim_triggered();
+//    void on_actionStartSim_triggered();
 
-    void on_actionBurnToFPGA_triggered();
+//    void on_actionBurnToFPGA_triggered();
 
     void on_actionNewProject_triggered();
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveFrame();
+//    void saveFrame();
 
 private:
     Ui::MainWindow *ui;
@@ -56,7 +56,7 @@ private:
 
     QVBoxLayout *layout;
 
-
+    void initMainWindow();
 
 };
 #endif // MAINWINDOW_H

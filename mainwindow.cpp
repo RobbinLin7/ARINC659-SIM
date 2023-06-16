@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include "deviceModel/bodyFrameItem.h"
@@ -19,10 +19,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     scene = new DeviceModelScene();
     ui->graphicsView->setScene(scene);
-    layout = new QVBoxLayout(this->ui->paraConfigWidget);
     bodyFrameNum = 0;
 
-    this->setWindowTitle(tr("ARINC659配置工具"));
+
+    this->initMainWindow();
 
     connect(scene, &DeviceModelScene::cfgBFSignal, [=](BodyFrameItem *selectedItem){
         qDebug() << "this: " << selectedItem->getBodyFrameID();
@@ -44,8 +44,8 @@ void MainWindow::forTest()
 void MainWindow::on_actionNewBodyFrame_triggered()
 {
     bodyFrameNum++;
-    BodyFrame *bodyFrame = new BodyFrame(this, ui->paraConfigWidget);
-    connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
+    BodyFrame *bodyFrame = new BodyFrame(this);
+    //connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
     myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
@@ -54,75 +54,97 @@ void MainWindow::on_actionNewBodyFrame_triggered()
     //connect(bodyFrame, &BodyFrame::)
 }
 
-void MainWindow::saveFrame(){
-    BodyFrameItem *item = new BodyFrameItem(scene);
+//void MainWindow::saveFrame(){
+//    BodyFrameItem *item = new BodyFrameItem(scene);
 
-    item->setPos(QPointF(10, 10));
+//    item->setPos(QPointF(10, 10));
 
-    item->setBodyFrameID(bodyFrameNum);
+//    item->setBodyFrameID(bodyFrameNum);
 
-    scene->addItem(item);
+//    scene->addItem(item);
 
-    connect(item, &BodyFrameItem::cfgBodyFrame, this, [=](uint frameId){
-        if(!myBodyFrameList.contains(frameId)){
-            qDebug() << tr("该frameId不存在");
-            return;
-        }
-        else{
-            BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
+//    connect(item, &BodyFrameItem::cfgBodyFrame, this, [=](uint frameId){
+//        if(!myBodyFrameList.contains(frameId)){
+//            qDebug() << tr("该frameId不存在");
+//            return;
+//        }
+//        else{
+//            BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
 
-            //layout->addWidget(bodyFrame);
-            bodyFrame->setWindowFlags(Qt::Dialog);
-            bodyFrame->setWindowModality(Qt::WindowModal);
-            bodyFrame->show();
-        }
-        qDebug() << "cfgBodyFrame";
-    });
-}
+//            //layout->addWidget(bodyFrame);
+//            bodyFrame->setWindowFlags(Qt::Dialog);
+//            bodyFrame->setWindowModality(Qt::WindowModal);
+//            bodyFrame->show();
+//        }
+//        qDebug() << "cfgBodyFrame";
+//    });
+//}
 
-void MainWindow::on_actionOpenMonitor_triggered()
+/**
+ * @brief 初始化主窗口
+ */
+void MainWindow::initMainWindow()
 {
-    MonitorWidget *monitor = new MonitorWidget();
+    //设置名称
+    this->setWindowTitle(tr("ARINC659配置工具"));
 
-    monitor->show();
+    //输出日志信息
+    ui->textBrowser->append(tr("等待用户操作"));
+
+    //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
+
+    ui->projectTreeWidget->setFixedWidth(150);
+
+    //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
+
+    //ui->projectTreeWidget->setFixedSize(100, 20);
 }
 
-void MainWindow::on_actionOpenCMDTable_triggered()
-{
-    QString filename = QFileDialog::getOpenFileName(this, QStringLiteral("打开命令表文件"), "./", QStringLiteral("(*txt)"));
+//void MainWindow::on_actionOpenMonitor_triggered()
+//{
+//    MonitorWidget *monitor = new MonitorWidget();
+
+//    monitor->show();
+//}
+
+//void MainWindow::on_actionOpenCMDTable_triggered()
+//{
+//    QString filename = QFileDialog::getOpenFileName(this, QStringLiteral("打开命令表文件"), "./", QStringLiteral("(*txt)"));
 
 
-    if(filename.isEmpty())
-    {
+//    if(filename.isEmpty())
+//    {
 
-    }else
-    {
+//    }else
+//    {
 
-    }
-}
+//    }
+//}
 
-void MainWindow::on_actionStartSim_triggered()
-{
-    SimulinkWidget *simulinkWidget = new SimulinkWidget();
+//void MainWindow::on_actionStartSim_triggered()
+//{
+//    SimulinkWidget *simulinkWidget = new SimulinkWidget();
 
 
-    simulinkWidget->show();
-}
+//    simulinkWidget->show();
+//}
 
-void MainWindow::on_actionBurnToFPGA_triggered()
-{
-    QProcess process(this);
-    QString execIMPACT = "C:\\Xilinx\\14.7\\ISE_DS\\ISE\\bin\\nt64\\impact.exe";
+//void MainWindow::on_actionBurnToFPGA_triggered()
+//{
+//    QProcess process(this);
+//    QString execIMPACT = "C:\\Xilinx\\14.7\\ISE_DS\\ISE\\bin\\nt64\\impact.exe";
 
-    if(process.startDetached(execIMPACT))
-    {
-        qDebug() << "on_actionBurnToFPGA_triggered() true!";
-    }else
-    {
-        QMessageBox::warning(this, tr("警告"), "启动IMPACT.exe失败,请检查是否存在!");
-    }
-}
-
+//    if(process.startDetached(execIMPACT))
+//    {
+//        qDebug() << "on_actionBurnToFPGA_triggered() true!";
+//    }else
+//    {
+//        QMessageBox::warning(this, tr("警告"), "启动IMPACT.exe失败,请检查是否存在!");
+//    }
+//}
+/**
+ * @brief MainWindow::on_actionNewProject_triggered
+ */
 void MainWindow::on_actionNewProject_triggered()
 {
     NewProjectDialog *newProj = new NewProjectDialog();
@@ -131,13 +153,16 @@ void MainWindow::on_actionNewProject_triggered()
 
     connect(newProj, SIGNAL(sendProjInfo(QString, QString)), this, SLOT(addNewProjectSlot(QString, QString)));
 
-
 }
-
+/**
+ * @brief MainWindow::addNewProjectSlot
+ * @param name
+ * @param info
+ */
 void MainWindow::addNewProjectSlot(QString name, QString info)
 {
 
-    ui->treeWidget->setColumnCount(1);
+    ui->projectTreeWidget->setColumnCount(1);
 
 
     //拿到项目名称后更新树中的内容
@@ -146,13 +171,13 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
 
     headerList << tr("项目信息");
 
-    ui->treeWidget->setHeaderLabels(headerList);
+    ui->projectTreeWidget->setHeaderLabels(headerList);
 
     QTreeWidgetItem *topItem = new QTreeWidgetItem();
 
     topItem->setText(0, name);
 
-    ui->treeWidget->addTopLevelItem(topItem);
+    ui->projectTreeWidget->addTopLevelItem(topItem);
 
     QTreeWidgetItem *item1 = new QTreeWidgetItem();
     item1->setText(0, tr("机架配置"));
