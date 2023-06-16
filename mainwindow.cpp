@@ -45,40 +45,39 @@ void MainWindow::on_actionNewBodyFrame_triggered()
 {
     bodyFrameNum++;
     BodyFrame *bodyFrame = new BodyFrame(this);
-    //connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
+    connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
     myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
     bodyFrame->setWindowModality(Qt::WindowModal);
     bodyFrame->show();
-    //connect(bodyFrame, &BodyFrame::)
 }
 
-//void MainWindow::saveFrame(){
-//    BodyFrameItem *item = new BodyFrameItem(scene);
+void MainWindow::saveFrame(){
+    BodyFrameItem *item = new BodyFrameItem(scene);
 
-//    item->setPos(QPointF(10, 10));
+    item->setPos(QPointF(10, 10));
 
-//    item->setBodyFrameID(bodyFrameNum);
+    item->setBodyFrameID(bodyFrameNum);
 
-//    scene->addItem(item);
+    scene->addItem(item);
 
-//    connect(item, &BodyFrameItem::cfgBodyFrame, this, [=](uint frameId){
-//        if(!myBodyFrameList.contains(frameId)){
-//            qDebug() << tr("该frameId不存在");
-//            return;
-//        }
-//        else{
-//            BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
+    connect(item, &BodyFrameItem::cfgBodyFrame, this, [=](uint frameId){
+        if(!myBodyFrameList.contains(frameId)){
+            qDebug() << tr("该frameId不存在");
+            return;
+        }
+        else{
+            BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
 
-//            //layout->addWidget(bodyFrame);
-//            bodyFrame->setWindowFlags(Qt::Dialog);
-//            bodyFrame->setWindowModality(Qt::WindowModal);
-//            bodyFrame->show();
-//        }
-//        qDebug() << "cfgBodyFrame";
-//    });
-//}
+            //layout->addWidget(bodyFrame);
+            bodyFrame->setWindowFlags(Qt::Dialog);
+            bodyFrame->setWindowModality(Qt::WindowModal);
+            bodyFrame->show();
+        }
+        qDebug() << "cfgBodyFrame";
+    });
+}
 
 /**
  * @brief 初始化主窗口

@@ -43,7 +43,7 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-//    void saveFrame();
+    void saveFrame();
 
 private:
     Ui::MainWindow *ui;

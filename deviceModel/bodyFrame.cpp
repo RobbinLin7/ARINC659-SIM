@@ -16,7 +16,8 @@ BodyFrame::BodyFrame(QWidget *parent, QWidget *paraConfigWidget) :
     headerList.clear();
     headerList << tr("帧标识") << tr("窗口数") << tr("帧周期") << tr("空闲方式") << tr("子帧");
     setStdTableHeader(ui->frameTableWidget, headerList);
-
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(QString(tr("确认")));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(QString(tr("取消")));
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, [=](){
         this->close();
     });

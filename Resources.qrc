@@ -1,11 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/save.svg</file>
-        <file>icons/open.svg</file>
-        <file>icons/simulation.svg</file>
-        <file>icons/design_input.svg</file>
-        <file>icons/output_files.svg</file>
-        <file>icons/rack.svg</file>
-        <file>icons/table.svg</file>
+        <file>resources/Image/bodyFrame.png</file>
+        <file>resources/qss/MacOS.qss</file>
+        <file>resources/qss/AMOLED.qss</file>
+        <file>resources/qss/Aqua.qss</file>
+        <file>resources/qss/ConsoleStyle.qss</file>
+        <file>resources/qss/ElegantDark.qss</file>
+        <file>resources/qss/ManjaroMix.qss</file>
+        <file>resources/qss/MaterialDark.qss</file>
+        <file>resources/qss/NeonButtons.qss</file>
+        <file>resources/qss/Ubuntu.qss</file>
     </qresource>
 </RCC>
