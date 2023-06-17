@@ -88,7 +88,7 @@ void MainWindow::initMainWindow()
     this->setWindowTitle(tr("ARINC659配置工具"));
 
     //输出日志信息
-    ui->textBrowser->append(tr("等待用户操作"));
+    ui->logTextBrowser->append(tr("等待用户操作"));
 
     //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
 
@@ -97,6 +97,8 @@ void MainWindow::initMainWindow()
     //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
 
     //ui->projectTreeWidget->setFixedSize(100, 20);
+
+    //connect(ui->actionOpenProject, &QAction::triggered, this, )
 }
 
 //void MainWindow::on_actionOpenMonitor_triggered()
@@ -152,6 +154,30 @@ void MainWindow::on_actionNewProject_triggered()
 
     connect(newProj, SIGNAL(sendProjInfo(QString, QString)), this, SLOT(addNewProjectSlot(QString, QString)));
 
+}
+/**
+ * @brief MainWindow::on_actionOpenProject_triggered
+ */
+
+void MainWindow::on_actionOpenProject_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, QString(tr("打开项目文件")), QString(), QString("*.proj659"));
+    if(filePath == ""){
+        addLogToDockWidget(QString(tr("打开项目失败")));
+        QMessageBox::critical(this, QString(tr("错误")), QString(tr("打开项目失败")));
+    }
+    else{
+        if(myXml.loadXmlFile(filePath)){
+            Proj659& project = myXml.getProject659(); //可以通过xml获取project信息
+            project.setDescription("this is a new description");
+            qDebug() << project.getName() << project.getDescription();
+
+        }
+        else{
+            addLogToDockWidget(QString(tr("项目解析失败")));
+            QMessageBox::critical(this, QString(tr("错误")), QString(tr("项目解析失败")));
+        }
+    }
 }
 /**
  * @brief MainWindow::addNewProjectSlot
@@ -223,4 +249,11 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
     item3->setText(0, tr("仿真"));
 
     topItem->addChild(item3);
+}
+
+void MainWindow::addLogToDockWidget(const QString log)
+{
+    QString currentTime;
+    currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    ui->logTextBrowser->append(currentTime + log);
 }

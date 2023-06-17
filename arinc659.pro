@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -26,8 +27,10 @@ SOURCES += \
     monitor/monitorWidget.cpp \
     monitor/qcustomplot.cpp \
     newprojectdialog.cpp \
+    project/proj659.cpp \
     simulation/faultwidget.cpp \
-    simulation/simulinkwidget.cpp
+    simulation/simulinkwidget.cpp \
+    tools/myxml.cpp
 
 HEADERS += \
     deviceModel/bodyFrame.h \
@@ -39,8 +42,10 @@ HEADERS += \
     monitor/monitorWidget.h \
     monitor/qcustomplot.h \
     newprojectdialog.h \
+    project/proj659.h \
     simulation/faultwidget.h \
-    simulation/simulinkwidget.h
+    simulation/simulinkwidget.h \
+    tools/myxml.h
 
 FORMS += \
     deviceModel/bodyFrame.ui \

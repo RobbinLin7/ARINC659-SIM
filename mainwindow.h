@@ -7,8 +7,8 @@
 #include "deviceModel/deviceModelScene.h"
 #include "monitor/monitorWidget.h"
 #include "monitor/qcustomplot.h"
-
 #include "simulation/simulinkwidget.h"
+#include "tools/myxml.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +26,7 @@ public:
 
     void forTest();
 
+
 private slots:
     void on_actionNewBodyFrame_triggered();
 
@@ -40,6 +41,8 @@ private slots:
 //    void on_actionBurnToFPGA_triggered();
 
     void on_actionNewProject_triggered();
+
+    void on_actionOpenProject_triggered();
 
     void addNewProjectSlot(QString name, QString info);
 
@@ -57,6 +60,10 @@ private:
     QVBoxLayout *layout;
 
     void initMainWindow();
+
+    void addLogToDockWidget(const QString log);
+
+    MyXml myXml;
 
 };
 #endif // MAINWINDOW_H

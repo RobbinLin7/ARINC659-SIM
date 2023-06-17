@@ -8,11 +8,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication a(argc, argv);
-    QFile qssFile(":/resources/qss/Aqua.qss");//1.
-    if(qssFile.open(QFile::ReadOnly)){//2.
-        a.setStyleSheet(qssFile.readAll());//3.
+    QFile qssFile(":/resources/qss/Aqua.qss");
+    if(qssFile.open(QFile::ReadOnly)){
+        a.setStyleSheet(qssFile.readAll());
     }
-    qssFile.close();//4.
+    qssFile.close();
     MainWindow w;
     w.show();
     return a.exec();
