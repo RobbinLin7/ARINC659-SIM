@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setScene(scene);
     bodyFrameNum = 0;
 
-
+    //this->setStyleSheet("")
     this->initMainWindow();
 
     connect(scene, &DeviceModelScene::cfgBFSignal, [=](BodyFrameItem *selectedItem){
@@ -77,6 +77,32 @@ void MainWindow::saveFrame(){
         }
         qDebug() << "cfgBodyFrame";
     });
+}
+
+/**
+ * @brief MainWindow::changeStyleSheetSlot
+ * @param styleNo 样式序号
+ *
+ */
+void MainWindow::changeStyleSheetSlot(QString styleSheet)
+{
+    QFile qssFile(":/resources/qss/" + styleSheet);
+    if(qssFile.open(QFile::ReadOnly)){
+        qApp->setStyleSheet(qssFile.readAll());
+        qssFile.close();
+    }
+    else{
+        qDebug() << "hahaha";
+    }
+}
+
+void MainWindow::on_actionChangeStyleSheet_triggered()
+{
+    StyleSheetDialog styleSheetDialog(this);
+    //styleSheetDialog.setWindowFlags(Qt::Dialog);
+    styleSheetDialog.setWindowModality(Qt::WindowModal);
+    connect(&styleSheetDialog, &StyleSheetDialog::changeStyleSheetSignal, this, &MainWindow::changeStyleSheetSlot);
+    styleSheetDialog.exec();
 }
 
 /**

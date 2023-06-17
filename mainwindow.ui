@@ -131,7 +131,7 @@
      <x>0</x>
      <y>0</y>
      <width>955</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuprojectManagement">
@@ -175,6 +175,7 @@
     <property name="title">
      <string>帮助</string>
     </property>
+    <addaction name="actionChangeStyleSheet"/>
     <addaction name="actionHelpView"/>
     <addaction name="actionAboutView"/>
    </widget>
@@ -314,6 +315,11 @@
   <action name="actionOpenMonitor">
    <property name="text">
     <string>打开数据监视器</string>
+   </property>
+  </action>
+  <action name="actionChangeStyleSheet">
+   <property name="text">
+    <string>更改样式</string>
    </property>
   </action>
  </widget>

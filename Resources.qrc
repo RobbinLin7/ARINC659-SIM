@@ -10,5 +10,6 @@
         <file>resources/qss/MaterialDark.qss</file>
         <file>resources/qss/NeonButtons.qss</file>
         <file>resources/qss/Ubuntu.qss</file>
+        <file>resources/qss/new1.qss</file>
     </qresource>
 </RCC>

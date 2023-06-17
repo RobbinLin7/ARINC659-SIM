@@ -9,6 +9,7 @@
 #include "monitor/qcustomplot.h"
 #include "simulation/simulinkwidget.h"
 #include "tools/myxml.h"
+#include "dialog/stylesheetdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -48,6 +49,10 @@ private slots:
 
     void saveFrame();
 
+    void changeStyleSheetSlot(QString);
+
+    void on_actionChangeStyleSheet_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -63,7 +68,7 @@ private:
 
     void addLogToDockWidget(const QString log);
 
-    MyXml myXml;
+    MyXml myXml;  
 
 };
 #endif // MAINWINDOW_H

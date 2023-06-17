@@ -22,6 +22,7 @@ SOURCES += \
     deviceModel/dataFrame.cpp \
     deviceModel/deviceModelScene.cpp \
     deviceModel/hardwareModel.cpp \
+    dialog/stylesheetdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     monitor/monitorWidget.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     deviceModel/dataFrame.h \
     deviceModel/deviceModelScene.h \
     deviceModel/hardwareModel.h \
+    dialog/stylesheetdialog.h \
     mainwindow.h \
     monitor/monitorWidget.h \
     monitor/qcustomplot.h \
@@ -51,6 +53,7 @@ FORMS += \
     deviceModel/bodyFrame.ui \
     deviceModel/dataFrame.ui \
     deviceModel/hardwareModel.ui \
+    dialog/stylesheetdialog.ui \
     mainwindow.ui \
     monitor/monitorWidget.ui \
     newprojectdialog.ui \
