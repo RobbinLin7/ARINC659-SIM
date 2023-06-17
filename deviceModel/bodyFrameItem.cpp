@@ -43,7 +43,7 @@ void BodyFrameItem::paint(QPainter *painter,
     bodyFrameImageSize();
 
 
-    painter->drawImage(imageRect, QImage(":/image/bodyFrame.png"));
+    painter->drawImage(imageRect, QImage(":/resources/Image/bodyFrame.png"));
 
     //在图片右上角标注出机架中的模块数
 

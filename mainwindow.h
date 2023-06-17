@@ -33,7 +33,7 @@ private slots:
 
 //    //void showBodyFrameCfgSlot();
 
-//    void on_actionOpenMonitor_triggered();
+    void on_actionOpenMonitor_triggered();
 
 //    void on_actionOpenCMDTable_triggered();
 

@@ -127,12 +127,12 @@ void MainWindow::initMainWindow()
     //connect(ui->actionOpenProject, &QAction::triggered, this, )
 }
 
-//void MainWindow::on_actionOpenMonitor_triggered()
-//{
-//    MonitorWidget *monitor = new MonitorWidget();
+void MainWindow::on_actionOpenMonitor_triggered()
+{
+    MonitorWidget *monitor = new MonitorWidget();
 
-//    monitor->show();
-//}
+    monitor->show();
+}
 
 //void MainWindow::on_actionOpenCMDTable_triggered()
 //{
