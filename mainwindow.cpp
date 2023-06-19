@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    //ui->widget->hide();
     scene = new DeviceModelScene();
     ui->graphicsView->setScene(scene);
     bodyFrameNum = 0;
@@ -52,7 +52,9 @@ void MainWindow::on_actionNewBodyFrame_triggered()
     bodyFrame->setWindowModality(Qt::WindowModal);
     bodyFrame->show();
 }
-
+/**
+ * @brief MainWindow::saveFrame
+ */
 void MainWindow::saveFrame(){
     BodyFrameItem *item = new BodyFrameItem(scene);
 
@@ -62,21 +64,7 @@ void MainWindow::saveFrame(){
 
     scene->addItem(item);
 
-    connect(item, &BodyFrameItem::cfgBodyFrame, this, [=](uint frameId){
-        if(!myBodyFrameList.contains(frameId)){
-            qDebug() << tr("该frameId不存在");
-            return;
-        }
-        else{
-            BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
-
-            //layout->addWidget(bodyFrame);
-            bodyFrame->setWindowFlags(Qt::Dialog);
-            bodyFrame->setWindowModality(Qt::WindowModal);
-            bodyFrame->show();
-        }
-        qDebug() << "cfgBodyFrame";
-    });
+    connect(item, &BodyFrameItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
 }
 
 /**
@@ -94,6 +82,27 @@ void MainWindow::changeStyleSheetSlot(QString styleSheet)
     else{
         qDebug() << "hahaha";
     }
+}
+
+void MainWindow::cfgBodyFrameItemSlot(uint frameId)
+{
+    if(!myBodyFrameList.contains(frameId)){
+        qDebug() << tr("该frameId不存在");
+        return;
+    }
+    else{
+        BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
+        QVBoxLayout *mainLayout = new QVBoxLayout(ui->widget);
+        mainLayout->addWidget(bodyFrame);
+        //layout->addWidget(bodyFrame);
+        //bodyFrame->setWindowFlags(Qt::Dialog);
+        //bodyFrame->setWindowModality(Qt::WindowModal);
+        //bodyFrame->show();
+    }
+    qDebug() << "cfgBodyFrame";
+    ui->widget->show();
+    //mainLay
+    //adjustSize();
 }
 
 void MainWindow::on_actionChangeStyleSheet_triggered()

@@ -77,7 +77,7 @@ void BodyFrameItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     menu.addAction(deleteBF);
     QPoint point(event->screenPos().x(), event->screenPos().y());
     QObject::connect(cfgBF, &QAction::triggered, this, [=](){
-       emit(cfgBodyFrame(this->myBodyFrameID));
+       emit(cfgBodyFrameItemSignal(this->myBodyFrameID));
     });
     menu.exec(point);
 
@@ -108,7 +108,7 @@ void BodyFrameItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 QSize BodyFrameItem::bodyFrameImageSize()
 {
-    QString filename = ":/image/bodyFrame.png";
+    QString filename = ":/resources/Image/bodyFrame.png";
     QImageReader reader(filename);
     reader.setAutoTransform(true);
     const QImage img = reader.read();

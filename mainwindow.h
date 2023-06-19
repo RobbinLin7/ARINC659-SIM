@@ -51,6 +51,8 @@ private slots:
 
     void changeStyleSheetSlot(QString);
 
+    void cfgBodyFrameItemSlot(uint);
+
     void on_actionChangeStyleSheet_triggered();
 
 private:

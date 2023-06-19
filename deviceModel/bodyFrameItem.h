@@ -46,7 +46,7 @@ private:
 
 signals:
 
-    void cfgBodyFrame(uint frameId);
+    void cfgBodyFrameItemSignal(uint frameId);
 
 };
 
