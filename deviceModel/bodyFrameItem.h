@@ -1,4 +1,4 @@
-#ifndef BODYFRAMEITEM_H
+﻿#ifndef BODYFRAMEITEM_H
 #define BODYFRAMEITEM_H
 
 #include <QGraphicsItem>
@@ -12,9 +12,7 @@ class BodyFrameItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    BodyFrameItem(QObject* parent = nullptr);
-
-    //BodyFrameItem(BodyFrame *bf);
+    BodyFrameItem(uint frameId, QObject* parent = nullptr);
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;

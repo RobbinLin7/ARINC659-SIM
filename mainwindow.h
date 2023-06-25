@@ -47,7 +47,9 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveFrame();
+    void saveFrameSlot();
+
+    void updateFrameSlot();
 
     void changeStyleSheetSlot(QString);
 
@@ -70,7 +72,7 @@ private:
 
     void addLogToDockWidget(const QString log);
 
-    MyXml myXml;  
+    MyXml myXml;
 
 };
 #endif // MAINWINDOW_H

@@ -1,4 +1,4 @@
-#ifndef BODYFRAME_H
+﻿#ifndef BODYFRAME_H
 #define BODYFRAME_H
 
 #include <QWidget>
@@ -7,6 +7,7 @@
 #include <QTableWidget>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QValidator>
 #include "hardwareModel.h"
 #include "dataFrame.h"
 
@@ -28,6 +29,8 @@ public:
 
     void setBodyFrameID(const uint &id);
 
+    void connectOkButtonToUpdateSignal();
+
 private slots:
     void on_addModelBtn_clicked();
 
@@ -36,7 +39,8 @@ private slots:
 
 protected:
     void closeEvent(QCloseEvent *e);
-
+    //void mouseReleaseEvent(QObject* sender, QMouseEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 private:
     Ui::BodyFrame *ui;
 
@@ -57,6 +61,14 @@ private:
 
     bool ok = false;
 
+    QIntValidator* validator;
+
+    //安装事件过滤器
+    void installEventFilter();
+
+    //安装验证器
+    void installValidator();
+
 
 private:
 
@@ -64,7 +76,15 @@ private:
 
 signals:
 
-    void saveFrame();
+    void saveFrameSignal();
+
+    void updateFrameSignal();
+
+
+
+
+    // QObject interface
+public:
 
 };
 

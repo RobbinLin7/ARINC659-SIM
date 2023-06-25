@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>693</height>
+    <width>1320</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -75,7 +75,19 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true"/>
+         <widget class="QWidget" name="paraConfigWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="paraConfigLayout"/>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </item>
@@ -133,8 +145,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>955</width>
-     <height>26</height>
+     <width>1320</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuprojectManagement">

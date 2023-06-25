@@ -16,12 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //ui->widget->hide();
+    ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
     ui->graphicsView->setScene(scene);
     bodyFrameNum = 0;
 
-    //this->setStyleSheet("")
     this->initMainWindow();
 
     connect(scene, &DeviceModelScene::cfgBFSignal, [=](BodyFrameItem *selectedItem){
@@ -45,18 +44,20 @@ void MainWindow::on_actionNewBodyFrame_triggered()
 {
     bodyFrameNum++;
     BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame, &BodyFrame::saveFrame, this, &MainWindow::saveFrame);
+    connect(bodyFrame, &BodyFrame::saveFrameSignal, this, &MainWindow::saveFrameSlot);
+    connect(bodyFrame, &BodyFrame::updateFrameSignal, this, &MainWindow::updateFrameSlot);
     myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
+    //bodyFrame->setWindowModality(Qt::WindowModal);
     bodyFrame->setWindowModality(Qt::WindowModal);
     bodyFrame->show();
 }
 /**
  * @brief MainWindow::saveFrame
  */
-void MainWindow::saveFrame(){
-    BodyFrameItem *item = new BodyFrameItem(scene);
+void MainWindow::saveFrameSlot(){
+    BodyFrameItem *item = new BodyFrameItem(bodyFrameNum, scene);
 
     item->setPos(QPointF(10, 10));
 
@@ -65,11 +66,17 @@ void MainWindow::saveFrame(){
     scene->addItem(item);
 
     connect(item, &BodyFrameItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
+
+}
+
+void MainWindow::updateFrameSlot()
+{
+    qDebug() << "update success";
 }
 
 /**
  * @brief MainWindow::changeStyleSheetSlot
- * @param styleNo 样式序号
+ * @param styleSheet 样式名
  *
  */
 void MainWindow::changeStyleSheetSlot(QString styleSheet)
@@ -92,17 +99,13 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
     }
     else{
         BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
-        QVBoxLayout *mainLayout = new QVBoxLayout(ui->widget);
-        mainLayout->addWidget(bodyFrame);
-        //layout->addWidget(bodyFrame);
-        //bodyFrame->setWindowFlags(Qt::Dialog);
-        //bodyFrame->setWindowModality(Qt::WindowModal);
-        //bodyFrame->show();
+        bodyFrame->connectOkButtonToUpdateSignal();
+        bodyFrame->setParent(ui->paraConfigWidget);
+        bodyFrame->setMinimumHeight(501);
+        ui->paraConfigLayout->addWidget(bodyFrame);
+        ui->paraConfigWidget->show();
+        bodyFrame->show();
     }
-    qDebug() << "cfgBodyFrame";
-    ui->widget->show();
-    //mainLay
-    //adjustSize();
 }
 
 void MainWindow::on_actionChangeStyleSheet_triggered()

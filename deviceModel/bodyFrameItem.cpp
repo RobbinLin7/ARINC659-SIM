@@ -1,4 +1,4 @@
-#include "bodyFrameItem.h"
+﻿#include "bodyFrameItem.h"
 
 #include <QImageReader>
 
@@ -6,7 +6,8 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-BodyFrameItem::BodyFrameItem(QObject* parent):QObject(parent)
+BodyFrameItem::BodyFrameItem(uint frameId, QObject* parent)
+    :QObject(parent), myBodyFrameID(frameId)
 {
     setZValue(1);
 
@@ -15,11 +16,6 @@ BodyFrameItem::BodyFrameItem(QObject* parent):QObject(parent)
 
     this->myHardwareModelNum = 0;
 }
-
-//BodyFrameItem::BodyFrameItem(BodyFrame *bf)
-//{
-//    this->myBodyFrame = bf;
-//}
 
 QRectF BodyFrameItem::boundingRect() const
 {

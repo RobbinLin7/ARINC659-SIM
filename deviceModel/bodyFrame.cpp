@@ -1,5 +1,6 @@
-#include "bodyFrame.h"
+﻿#include "bodyFrame.h"
 #include "ui_bodyFrame.h"
+#include <QDebug>
 
 BodyFrame::BodyFrame(QWidget *parent, QWidget *paraConfigWidget) :
     QWidget(parent),
@@ -23,9 +24,14 @@ BodyFrame::BodyFrame(QWidget *parent, QWidget *paraConfigWidget) :
     });
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
         ok = true;
-        emit(saveFrame());
+        emit(saveFrameSignal());
         this->close();
     });
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    ui->lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
+    installEventFilter();
+    installValidator();
+
 }
 
 BodyFrame::~BodyFrame()
@@ -39,6 +45,16 @@ void BodyFrame::setBodyFrameID(const uint &id)
     this->myBodyFrameID = id;
 
     ui->lineEdit->setText(QString("编辑机架%1").arg(this->myBodyFrameID));
+}
+
+void BodyFrame::connectOkButtonToUpdateSignal()
+{
+    disconnect(ui->buttonBox->button(QDialogButtonBox::Ok), 0, 0, 0);
+    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
+        ok = true;
+        emit(updateFrameSignal());
+        this->close();
+    });
 }
 
 void BodyFrame::setStdTableHeader(QTableWidget *widget, const QStringList &headerList)
@@ -100,3 +116,33 @@ void BodyFrame::closeEvent(QCloseEvent *e)
         e->ignore();
     }
 }
+
+bool BodyFrame::eventFilter(QObject *watched, QEvent *event)
+{
+    //qDebug() << event->type();
+    QString input1 = ui->lineEdit->text();
+    int pos = 0;
+    if(event->type() == QEvent::KeyRelease){
+        if(validator->validate(input1, pos) == QValidator::Acceptable){
+
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+            ui->lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+void BodyFrame::installEventFilter()
+{
+    ui->lineEdit->installEventFilter(this);
+    ui->lineEdit_2->installEventFilter(this);
+}
+
+void BodyFrame::installValidator()
+{
+    validator = new QIntValidator(this);
+    ui->lineEdit->setValidator(validator);
+}
+
+
+
