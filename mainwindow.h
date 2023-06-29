@@ -55,6 +55,8 @@ private slots:
 
     void cfgBodyFrameItemSlot(uint);
 
+    void deleteBodyFrameItemSlot(uint);
+
     void on_actionChangeStyleSheet_triggered();
 
 private:
@@ -64,9 +66,11 @@ private:
 
     uint bodyFrameNum;
 
-    QMap<uint, BodyFrame*> myBodyFrameList;
+    QMap<uint, std::shared_ptr<BodyFrame>> myBodyFrameList;
 
     QVBoxLayout *layout;
+
+    std::shared_ptr<BodyFrame> bodyFrame;
 
     void initMainWindow();
 

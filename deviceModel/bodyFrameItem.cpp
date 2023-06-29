@@ -75,6 +75,9 @@ void BodyFrameItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     QObject::connect(cfgBF, &QAction::triggered, this, [=](){
        emit(cfgBodyFrameItemSignal(this->myBodyFrameID));
     });
+    connect(deleteBF, &QAction::triggered, this, [=](){
+       emit(deleteBodyFrameItemSignal(this->myBodyFrameID));
+    });
     menu.exec(point);
 
 }

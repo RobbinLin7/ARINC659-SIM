@@ -46,6 +46,8 @@ signals:
 
     void cfgBodyFrameItemSignal(uint frameId);
 
+    void deleteBodyFrameItemSignal(uint frameId);
+
 };
 
 #endif // BODYFRAMEITEM_H

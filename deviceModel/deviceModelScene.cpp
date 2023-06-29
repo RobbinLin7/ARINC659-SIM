@@ -1,4 +1,4 @@
-#include "deviceModelScene.h"
+﻿#include "deviceModelScene.h"
 
 #include <QMenu>
 #include <QGraphicsSceneMouseEvent>
@@ -9,6 +9,37 @@
 DeviceModelScene::DeviceModelScene()
 {
 
+}
+
+uint DeviceModelScene::addBodyFrameItem()
+{
+    uint minIdUnused = getMinIdUnused();
+    if(minIdUnused > 0){
+        std::shared_ptr<BodyFrameItem> item = std::make_shared<BodyFrameItem>(minIdUnused, this);
+        connect(item.get(), &BodyFrameItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
+        connect(item.get(), &BodyFrameItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
+        flag[minIdUnused] = true;
+        this->bodyFrameItemMap.insert(minIdUnused, item);
+        item->setPos(QPointF(10, 10));
+        item->setBodyFrameID(minIdUnused);
+        this->addItem(item.get());
+        return minIdUnused;
+    }
+    else{
+        qDebug() << QString(tr("bodyFrameId 分配失败"));
+        return 0;
+    }
+}
+
+
+uint DeviceModelScene::getMinIdUnused()
+{
+    for(uint i = 1; i <= maxBodyFrameId; i++){
+        if(flag[i] == false){
+            return i;
+        }
+    }
+    return 0;
 }
 
 void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -57,9 +88,16 @@ void DeviceModelScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //    menu.exec(point);
 //}
 
-void DeviceModelScene::cfgBFSlot()
-{
-    qDebug() << "DeviceModelScene::cfgBFSlot()";
 
-    emit cfgBFSignal(this->selectedItem);
+void DeviceModelScene::cfgBodyFrameItemSlot(uint bodyFrameId)
+{
+    emit(cfgBodyFrameItemSignal(bodyFrameId));
+}
+
+void DeviceModelScene::deleteBodyFrameItemSlot(uint bodyFrameId)
+{
+    this->bodyFrameItemMap.remove(bodyFrameId);
+    flag[bodyFrameId] = false;
+    bodyFrameItemMap.value(bodyFrameId)->deleteLater();
+    emit(deleteBodyFrameItemSignal(bodyFrameId));
 }

@@ -1,9 +1,11 @@
-#ifndef DEVICEMODELSCENE_H
+﻿#ifndef DEVICEMODELSCENE_H
 #define DEVICEMODELSCENE_H
-
 #include <QGraphicsScene>
-
+#include <memory>
 #include "bodyFrameItem.h"
+#include "deviceModel/bodyFrame.h"
+#include <memory>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -15,12 +17,16 @@ class QGraphicsTextItem;
 class QColor;
 QT_END_NAMESPACE
 
+
 class DeviceModelScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
     enum DeviceModel{BodyFrame};
     DeviceModelScene();
+    uint addBodyFrameItem();
+    void deleteBodyFrameItem();
+    uint getMinIdUnused();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -31,13 +37,20 @@ protected:
 
 private slots:
 
-    void cfgBFSlot();
+    void cfgBodyFrameItemSlot(uint);
+    void deleteBodyFrameItemSlot(uint);
 
 private:
+    static const int maxBodyFrameId = 1000;
+    bool flag[maxBodyFrameId];
     BodyFrameItem *selectedItem;
+    QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:
-    void cfgBFSignal(BodyFrameItem *selectedItem);
+//    void cfgBFSignal(BodyFrameItem *selectedItem);
+    void cfgBodyFrameItemSignal(uint);
+    void deleteBodyFrameItemSignal(uint);
+
 };
 
 #endif // DEVICEMODELSCENE_H

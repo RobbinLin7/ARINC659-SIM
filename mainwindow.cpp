@@ -23,10 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->initMainWindow();
 
-    connect(scene, &DeviceModelScene::cfgBFSignal, [=](BodyFrameItem *selectedItem){
-        qDebug() << "this: " << selectedItem->getBodyFrameID();
-        this->myBodyFrameList.value(selectedItem->getBodyFrameID())->show();
-    });
+    connect(scene, &DeviceModelScene::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
+    connect(scene, &DeviceModelScene::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
 }
 
 MainWindow::~MainWindow()
@@ -42,11 +40,12 @@ void MainWindow::forTest()
 
 void MainWindow::on_actionNewBodyFrame_triggered()
 {
-    bodyFrameNum++;
-    BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame, &BodyFrame::saveFrameSignal, this, &MainWindow::saveFrameSlot);
-    connect(bodyFrame, &BodyFrame::updateFrameSignal, this, &MainWindow::updateFrameSlot);
-    myBodyFrameList.insert(bodyFrameNum, bodyFrame);
+    //bodyFrameNum++;
+    bodyFrame = std::make_shared<BodyFrame>(this);
+    //BodyFrame *bodyFrame = new BodyFrame(this);
+    connect(bodyFrame.get(), &BodyFrame::saveFrameSignal, this, &MainWindow::saveFrameSlot);
+    connect(bodyFrame.get(), &BodyFrame::updateFrameSignal, this, &MainWindow::updateFrameSlot);
+    //myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
     //bodyFrame->setWindowModality(Qt::WindowModal);
@@ -57,16 +56,8 @@ void MainWindow::on_actionNewBodyFrame_triggered()
  * @brief MainWindow::saveFrame
  */
 void MainWindow::saveFrameSlot(){
-    BodyFrameItem *item = new BodyFrameItem(bodyFrameNum, scene);
-
-    item->setPos(QPointF(10, 10));
-
-    item->setBodyFrameID(bodyFrameNum);
-
-    scene->addItem(item);
-
-    connect(item, &BodyFrameItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
-
+    uint bodyFrameId = scene->addBodyFrameItem();
+    myBodyFrameList.insert(bodyFrameId, bodyFrame);
 }
 
 void MainWindow::updateFrameSlot()
@@ -93,19 +84,25 @@ void MainWindow::changeStyleSheetSlot(QString styleSheet)
 
 void MainWindow::cfgBodyFrameItemSlot(uint frameId)
 {
+    qDebug() << "该frameId为" << frameId;
     if(!myBodyFrameList.contains(frameId)){
         qDebug() << tr("该frameId不存在");
         return;
     }
     else{
-        BodyFrame* bodyFrame = myBodyFrameList.value(frameId);
+        std::shared_ptr<BodyFrame> bodyFrame = myBodyFrameList.value(frameId);
         bodyFrame->connectOkButtonToUpdateSignal();
         bodyFrame->setParent(ui->paraConfigWidget);
         bodyFrame->setMinimumHeight(501);
-        ui->paraConfigLayout->addWidget(bodyFrame);
+        ui->paraConfigLayout->addWidget(bodyFrame.get());
         ui->paraConfigWidget->show();
         bodyFrame->show();
     }
+}
+
+void MainWindow::deleteBodyFrameItemSlot(uint frameId)
+{
+    myBodyFrameList.remove(frameId);
 }
 
 void MainWindow::on_actionChangeStyleSheet_triggered()

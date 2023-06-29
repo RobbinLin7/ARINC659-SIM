@@ -44,7 +44,7 @@ void BodyFrame::setBodyFrameID(const uint &id)
 {
     this->myBodyFrameID = id;
 
-    ui->lineEdit->setText(QString("编辑机架%1").arg(this->myBodyFrameID));
+    //ui->lineEdit->setText(QString("编辑机架%1").arg(this->myBodyFrameID));
 }
 
 void BodyFrame::connectOkButtonToUpdateSignal()
