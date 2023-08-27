@@ -19,12 +19,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
     ui->graphicsView->setScene(scene);
+    qDebug() << scene->width();
+    ui->projectTreeWidget->clear();
+    QStringList headerList;
+    headerList << tr("项目信息");
+    ui->projectTreeWidget->setHeaderLabels(headerList);
     bodyFrameNum = 0;
-
+    test = new QAction("关闭项目", ui->projectTreeWidget);
     this->initMainWindow();
 
     connect(scene, &DeviceModelScene::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
-    connect(scene, &DeviceModelScene::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
+    connect(scene, &DeviceModelScene::deleteBodyFrameSignal, this, &MainWindow::deleteBodyFrameSlot);
+    connect(ui->projectTreeWidget, &QTreeWidget::itemPressed, this, &MainWindow::onProjectItemPressed);
+    connect(ui->projectTreeWidget, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onProjectItemDoubleClicked);
 }
 
 MainWindow::~MainWindow()
@@ -41,10 +48,10 @@ void MainWindow::forTest()
 void MainWindow::on_actionNewBodyFrame_triggered()
 {
     //bodyFrameNum++;
-    bodyFrame = std::make_shared<BodyFrame>(this);
+    bodyFrame = std::make_shared<BodyFrameCfgWidget>(this);
     //BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame.get(), &BodyFrame::saveFrameSignal, this, &MainWindow::saveFrameSlot);
-    connect(bodyFrame.get(), &BodyFrame::updateFrameSignal, this, &MainWindow::updateFrameSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveFrameSignal, this, &MainWindow::saveBodyFrameSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateFrameSignal, this, &MainWindow::updateBodyFrameSlot);
     //myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
@@ -55,12 +62,17 @@ void MainWindow::on_actionNewBodyFrame_triggered()
 /**
  * @brief MainWindow::saveFrame
  */
-void MainWindow::saveFrameSlot(){
+void MainWindow::saveBodyFrameSlot(){
     uint bodyFrameId = scene->addBodyFrameItem();
     myBodyFrameList.insert(bodyFrameId, bodyFrame);
 }
 
-void MainWindow::updateFrameSlot()
+void MainWindow::deleteBodyFrameSlot(uint bodyFrameId)
+{
+    myBodyFrameList.remove(bodyFrameId);
+}
+
+void MainWindow::updateBodyFrameSlot()
 {
     qDebug() << "update success";
 }
@@ -90,7 +102,7 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         return;
     }
     else{
-        std::shared_ptr<BodyFrame> bodyFrame = myBodyFrameList.value(frameId);
+        std::shared_ptr<BodyFrameCfgWidget> bodyFrame = myBodyFrameList.value(frameId);
         bodyFrame->connectOkButtonToUpdateSignal();
         bodyFrame->setParent(ui->paraConfigWidget);
         bodyFrame->setMinimumHeight(501);
@@ -98,11 +110,6 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         ui->paraConfigWidget->show();
         bodyFrame->show();
     }
-}
-
-void MainWindow::deleteBodyFrameItemSlot(uint frameId)
-{
-    myBodyFrameList.remove(frameId);
 }
 
 void MainWindow::on_actionChangeStyleSheet_triggered()
@@ -188,7 +195,6 @@ void MainWindow::on_actionNewProject_triggered()
     newProj->show();
 
     connect(newProj, SIGNAL(sendProjInfo(QString, QString)), this, SLOT(addNewProjectSlot(QString, QString)));
-
 }
 /**
  * @brief MainWindow::on_actionOpenProject_triggered
@@ -224,14 +230,7 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
 
     ui->projectTreeWidget->setColumnCount(1);
 
-
     //拿到项目名称后更新树中的内容
-
-    QStringList headerList;
-
-    headerList << tr("项目信息");
-
-    ui->projectTreeWidget->setHeaderLabels(headerList);
 
     QTreeWidgetItem *topItem = new QTreeWidgetItem();
 
@@ -240,22 +239,25 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
     ui->projectTreeWidget->addTopLevelItem(topItem);
 
     QTreeWidgetItem *item1 = new QTreeWidgetItem();
+
     item1->setText(0, tr("机架配置"));
 
     topItem->addChild(item1);
 
     QTreeWidgetItem *item11 = new QTreeWidgetItem();
+
     item11->setText(0, tr("机架1"));
 
     item1->addChild(item11);
 
     QTreeWidgetItem *item111 = new QTreeWidgetItem();
+
     item111->setText(0, tr("模块1"));
 
     item11->addChild(item111);
 
-
     QTreeWidgetItem *item2 = new QTreeWidgetItem();
+
     item2->setText(0, tr("输出文件"));
 
     topItem->addChild(item2);
@@ -291,4 +293,26 @@ void MainWindow::addLogToDockWidget(const QString log)
     QString currentTime;
     currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     ui->logTextBrowser->append(currentTime + log);
+}
+
+void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
+{
+    if(item->parent() != nullptr) return;
+    QAction* closeAction = new QAction(QString("关闭项目\"%1\"").arg(item->text(column)), ui->projectTreeWidget);
+    if(qApp->mouseButtons() == Qt::RightButton){
+        QMenu *menu = new QMenu(ui->projectTreeWidget);
+        connect(closeAction, &QAction::triggered, this, [=](){
+            ui->projectTreeWidget->removeItemWidget(item, column);
+            delete item;
+            qDebug() << "hahah";
+        });
+        menu->addAction(closeAction);
+        menu->exec(QCursor::pos());
+    }
+}
+
+void MainWindow::onProjectItemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    qDebug() << "double clicked";
+
 }

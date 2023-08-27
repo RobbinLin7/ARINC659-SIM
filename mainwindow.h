@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "deviceModel/bodyFrame.h"
+#include "deviceModel/bodyFrameCfgWidget.h"
 #include "deviceModel/deviceModelScene.h"
 #include "monitor/monitorWidget.h"
 #include "monitor/qcustomplot.h"
@@ -47,15 +47,15 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveFrameSlot();
+    void saveBodyFrameSlot();
 
-    void updateFrameSlot();
+    void deleteBodyFrameSlot(uint);
+
+    void updateBodyFrameSlot();
 
     void changeStyleSheetSlot(QString);
 
     void cfgBodyFrameItemSlot(uint);
-
-    void deleteBodyFrameItemSlot(uint);
 
     void on_actionChangeStyleSheet_triggered();
 
@@ -66,17 +66,26 @@ private:
 
     uint bodyFrameNum;
 
-    QMap<uint, std::shared_ptr<BodyFrame>> myBodyFrameList;
+    QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> myBodyFrameList;
 
     QVBoxLayout *layout;
 
-    std::shared_ptr<BodyFrame> bodyFrame;
+    std::shared_ptr<BodyFrameCfgWidget> bodyFrame;
 
     void initMainWindow();
 
     void addLogToDockWidget(const QString log);
 
     MyXml myXml;
+
+    QAction *test = nullptr;
+
+    QMap<QString, Proj659*> projectMap;
+
+private slots:
+    void onProjectItemPressed(QTreeWidgetItem *item, int column);
+
+    void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
 
 };
 #endif // MAINWINDOW_H

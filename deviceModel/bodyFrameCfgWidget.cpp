@@ -1,8 +1,8 @@
-﻿#include "bodyFrame.h"
+﻿#include "bodyFrameCfgWidget.h"
 #include "ui_bodyFrame.h"
 #include <QDebug>
 
-BodyFrame::BodyFrame(QWidget *parent, QWidget *paraConfigWidget) :
+BodyFrameCfgWidget::BodyFrameCfgWidget(QWidget *parent, QWidget *paraConfigWidget) :
     QWidget(parent),
     ui(new Ui::BodyFrame)
 {
@@ -34,20 +34,20 @@ BodyFrame::BodyFrame(QWidget *parent, QWidget *paraConfigWidget) :
 
 }
 
-BodyFrame::~BodyFrame()
+BodyFrameCfgWidget::~BodyFrameCfgWidget()
 {
     delete ui;
 }
 
 
-void BodyFrame::setBodyFrameID(const uint &id)
+void BodyFrameCfgWidget::setBodyFrameID(const uint &id)
 {
     this->myBodyFrameID = id;
 
     //ui->lineEdit->setText(QString("编辑机架%1").arg(this->myBodyFrameID));
 }
 
-void BodyFrame::connectOkButtonToUpdateSignal()
+void BodyFrameCfgWidget::connectOkButtonToUpdateSignal()
 {
     disconnect(ui->buttonBox->button(QDialogButtonBox::Ok), 0, 0, 0);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
@@ -57,7 +57,7 @@ void BodyFrame::connectOkButtonToUpdateSignal()
     });
 }
 
-void BodyFrame::setStdTableHeader(QTableWidget *widget, const QStringList &headerList)
+void BodyFrameCfgWidget::setStdTableHeader(QTableWidget *widget, const QStringList &headerList)
 {
     //QStringList headerList;
     QTableWidgetItem *headerItem;
@@ -84,21 +84,21 @@ void BodyFrame::setStdTableHeader(QTableWidget *widget, const QStringList &heade
 }
 
 
-void BodyFrame::on_addModelBtn_clicked()
+void BodyFrameCfgWidget::on_addModelBtn_clicked()
 {
     HardwareModel *hm = new HardwareModel();
 
     hm->show();
 }
 
-void BodyFrame::on_newFrameBtn_clicked()
+void BodyFrameCfgWidget::on_newFrameBtn_clicked()
 {
     DataFrame *frame = new DataFrame();
 
     frame->show();
 }
 
-void BodyFrame::closeEvent(QCloseEvent *e)
+void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
 {
     if(ok){
         e->accept();
@@ -117,7 +117,7 @@ void BodyFrame::closeEvent(QCloseEvent *e)
     }
 }
 
-bool BodyFrame::eventFilter(QObject *watched, QEvent *event)
+bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
 {
     //qDebug() << event->type();
     QString input1 = ui->lineEdit->text();
@@ -132,13 +132,13 @@ bool BodyFrame::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched, event);
 }
 
-void BodyFrame::installEventFilter()
+void BodyFrameCfgWidget::installEventFilter()
 {
     ui->lineEdit->installEventFilter(this);
     ui->lineEdit_2->installEventFilter(this);
 }
 
-void BodyFrame::installValidator()
+void BodyFrameCfgWidget::installValidator()
 {
     validator = new QIntValidator(this);
     ui->lineEdit->setValidator(validator);

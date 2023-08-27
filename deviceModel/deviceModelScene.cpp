@@ -13,6 +13,8 @@ DeviceModelScene::DeviceModelScene()
 
 uint DeviceModelScene::addBodyFrameItem()
 {
+    this->addLine(0, 100, this->width(), 100);
+    qDebug() << this->width();
     uint minIdUnused = getMinIdUnused();
     if(minIdUnused > 0){
         std::shared_ptr<BodyFrameItem> item = std::make_shared<BodyFrameItem>(minIdUnused, this);
@@ -99,5 +101,5 @@ void DeviceModelScene::deleteBodyFrameItemSlot(uint bodyFrameId)
     this->bodyFrameItemMap.remove(bodyFrameId);
     flag[bodyFrameId] = false;
     bodyFrameItemMap.value(bodyFrameId)->deleteLater();
-    emit(deleteBodyFrameItemSignal(bodyFrameId));
+    emit(deleteBodyFrameSignal(bodyFrameId));
 }

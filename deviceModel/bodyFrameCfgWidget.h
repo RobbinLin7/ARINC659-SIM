@@ -19,13 +19,13 @@ namespace Ui {
 class BodyFrame;
 }
 
-class BodyFrame : public QWidget
+class BodyFrameCfgWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit BodyFrame(QWidget *parent = nullptr, QWidget *paraConfigWidget = nullptr);
-    ~BodyFrame();
+    explicit BodyFrameCfgWidget(QWidget *parent = nullptr, QWidget *paraConfigWidget = nullptr);
+    ~BodyFrameCfgWidget();
 
     void setBodyFrameID(const uint &id);
 

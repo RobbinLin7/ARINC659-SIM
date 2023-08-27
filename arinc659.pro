@@ -17,7 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    deviceModel/bodyFrame.cpp \
+    deviceModel/bodyFrameCfgWidget.cpp \
     deviceModel/bodyFrameItem.cpp \
     deviceModel/dataFrame.cpp \
     deviceModel/deviceModelScene.cpp \
@@ -34,7 +34,7 @@ SOURCES += \
     tools/myxml.cpp
 
 HEADERS += \
-    deviceModel/bodyFrame.h \
+    deviceModel/bodyFrameCfgWidget.h \
     deviceModel/bodyFrameItem.h \
     deviceModel/dataFrame.h \
     deviceModel/deviceModelScene.h \
@@ -50,7 +50,7 @@ HEADERS += \
     tools/myxml.h
 
 FORMS += \
-    deviceModel/bodyFrame.ui \
+    deviceModel/bodyFrameCfgWidget.ui \
     deviceModel/dataFrame.ui \
     deviceModel/hardwareModel.ui \
     dialog/stylesheetdialog.ui \

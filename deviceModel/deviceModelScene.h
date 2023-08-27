@@ -3,7 +3,7 @@
 #include <QGraphicsScene>
 #include <memory>
 #include "bodyFrameItem.h"
-#include "deviceModel/bodyFrame.h"
+#include "deviceModel/bodyFrameCfgWidget.h"
 #include <memory>
 #include <QMap>
 
@@ -49,7 +49,7 @@ private:
 signals:
 //    void cfgBFSignal(BodyFrameItem *selectedItem);
     void cfgBodyFrameItemSignal(uint);
-    void deleteBodyFrameItemSignal(uint);
+    void deleteBodyFrameSignal(uint);
 
 };
 
