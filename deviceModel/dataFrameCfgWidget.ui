@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DataFrame</class>
- <widget class="QWidget" name="DataFrame">
+ <class>DataFrameCfgWidget</class>
+ <widget class="QWidget" name="DataFrameCfgWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>939</width>
     <height>591</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="framePeriod_lineEdit"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_3">
@@ -57,7 +57,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_3"/>
+          <widget class="QLineEdit" name="frameIdentification_lineEdit"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_5">

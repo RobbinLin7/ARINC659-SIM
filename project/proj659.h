@@ -1,11 +1,16 @@
 #ifndef PROJ659_H
 #define PROJ659_H
 #include<QString>
-
+#include<QMap>
+#include<memory>
+#include"deviceModel/bodyFrameGraphicsItem.h"
+#include"data/bodyframe.h"
 class Proj659
 {
 public:
+
     Proj659();
+    ~Proj659();
     Proj659(QString name, QString description);
     const QString &getName() const;
     void setName(const QString &newName);
@@ -13,9 +18,21 @@ public:
     const QString &getDescription() const;
     void setDescription(const QString &newDescription);
 
+    bool getSave() const;
+    void setSave(bool newSave);
+    uint getMinUnusedId() const;
+    bool addBodyFrameItem(BodyFrameItem&);
+    bool deleteBodyFrameItem(uint id);
 private:
     QString name;
     QString description;
+    bool save = true;
+
+    QMap<uint, BodyFrameItem> bodyFrameItems;
+    bool used[maxFrameId] = {false};
+    //std::shared_ptr<BodyFrame> bodyFrame;
 };
+
+
 
 #endif // PROJ659_H

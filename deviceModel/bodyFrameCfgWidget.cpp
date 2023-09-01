@@ -1,15 +1,16 @@
 ﻿#include "bodyFrameCfgWidget.h"
-#include "ui_bodyFrame.h"
+#include "ui_bodyFrameCfgWidget.h"
 #include <QDebug>
 
-BodyFrameCfgWidget::BodyFrameCfgWidget(QWidget *parent, QWidget *paraConfigWidget) :
+BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::BodyFrame)
+    ui(new Ui::BodyFrameCfgWidget)
 {
     ui->setupUi(this);
-
+    ui->id_lineEdit->setText(QString::number(frameId));
+    ui->id_lineEdit->setEnabled(false);
     this->setWindowTitle(tr("机架配置"));
-    this->paraConfigWidget = paraConfigWidget;
+//    this->paraConfigWidget = paraConfigWidget;
     QStringList headerList;
     headerList << tr("模块号") << tr("名称") << tr("初始化等待时间");
     setStdTableHeader(ui->modelTableWidget, headerList);
@@ -24,11 +25,12 @@ BodyFrameCfgWidget::BodyFrameCfgWidget(QWidget *parent, QWidget *paraConfigWidge
     });
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
         ok = true;
-        emit(saveFrameSignal());
+        updateBodyFrameItem();
+        emit(saveFrameItemSignal(bodyFrameItem));
         this->close();
     });
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-    ui->lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
+    //ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+   // ui->id_lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
     installEventFilter();
     installValidator();
 
@@ -79,21 +81,22 @@ void BodyFrameCfgWidget::setStdTableHeader(QTableWidget *widget, const QStringLi
     }
     //ui->tableWidget->setItemDelegateForColumn(colScore,&spinDelegate);//设置自定义代理组件
 
-    //ui->tableWidget->resizeColumnsToContents();
+    widget->resizeColumnsToContents();
+    widget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     widget->horizontalHeader()->sectionResizeMode(QHeaderView::Interactive);
 }
 
 
 void BodyFrameCfgWidget::on_addModelBtn_clicked()
 {
-    HardwareModel *hm = new HardwareModel();
+    ModuleCfgWidget *hm = new ModuleCfgWidget();
 
     hm->show();
 }
 
 void BodyFrameCfgWidget::on_newFrameBtn_clicked()
 {
-    DataFrame *frame = new DataFrame();
+    DataFrameCfgWidget *frame = new DataFrameCfgWidget();
 
     frame->show();
 }
@@ -119,29 +122,68 @@ void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
 
 bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
 {
-    //qDebug() << event->type();
-    QString input1 = ui->lineEdit->text();
-    int pos = 0;
-    if(event->type() == QEvent::KeyRelease){
-        if(validator->validate(input1, pos) == QValidator::Acceptable){
-
-            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-            ui->lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
-        }
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(watched);
+    if(lineEdit != nullptr && (event->type() == QEvent::KeyRelease)){
+        dynamicSetLineEdit(lineEdit);
     }
     return QWidget::eventFilter(watched, event);
 }
 
 void BodyFrameCfgWidget::installEventFilter()
 {
-    ui->lineEdit->installEventFilter(this);
-    ui->lineEdit_2->installEventFilter(this);
+    ui->id_lineEdit->installEventFilter(this);
+    ui->arbitrationStepDuration_lineEdit->installEventFilter(this);
+    ui->timeCalibrationFactor_lineEdit->installEventFilter(this);
+    ui->messageInterval_lineEdit->installEventFilter(this);
+    ui->majorVersionNumber_lineEdit->installEventFilter(this);
+    ui->subVersionNumber_lineEdit->installEventFilter(this);
 }
 
 void BodyFrameCfgWidget::installValidator()
 {
-    validator = new QIntValidator(this);
-    ui->lineEdit->setValidator(validator);
+    idValidator = new QIntValidator(this);
+    idValidator->setRange(0, maxFrameId);
+    ui->id_lineEdit->setValidator(idValidator);
+
+    arbitrationStepDurationValidator = new QIntValidator(this);
+    arbitrationStepDurationValidator->setRange(minArbitrationStepDuration, maxArbitrationStepDuration);
+    ui->arbitrationStepDuration_lineEdit->setValidator(arbitrationStepDurationValidator);
+
+    timeCalibrationFactorValidator = new QIntValidator(this);
+    timeCalibrationFactorValidator->setRange(minTimeCalibrationFactor, maxTimeCalibrationFactor);
+    ui->timeCalibrationFactor_lineEdit->setValidator(timeCalibrationFactorValidator);
+
+    messageIntervalValidator = new QIntValidator(this);
+    messageIntervalValidator->setRange(minMessageInterval, maxMessageInterval);
+    ui->messageInterval_lineEdit->setValidator(messageIntervalValidator);
+
+    QRegExp hexRegExp("[0-9A-Fa-f]+");
+    majorAndSubVersionNumerValidator = new QRegExpValidator(hexRegExp, this);
+    ui->majorVersionNumber_lineEdit->setValidator(majorAndSubVersionNumerValidator);
+    ui->subVersionNumber_lineEdit->setValidator(majorAndSubVersionNumerValidator);
+}
+
+void BodyFrameCfgWidget::updateBodyFrameItem()
+{
+    bodyFrameItem.setArbitrationStepDuration(ui->arbitrationStepDuration_lineEdit->text().toUInt());
+    bodyFrameItem.setTimeCalibrationFactor(ui->timeCalibrationFactor_lineEdit->text().toUInt());
+    bodyFrameItem.setMajorVersionNumber(ui->majorVersionNumber_lineEdit->text().toUInt());
+    bodyFrameItem.setSubVersionNumber(ui->subVersionNumber_lineEdit->text().toUInt());
+    bodyFrameItem.setMessageInterval(ui->messageInterval_lineEdit->text().toUInt());
+}
+
+void BodyFrameCfgWidget::dynamicSetLineEdit(QLineEdit *lineEdit)
+{
+    QString input = lineEdit->text();
+    if(input == ""){
+        lineEdit->setStyleSheet("QLineEdit { border: 1px solid gray;}");
+    }
+    else if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
+        lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
+    }
+    else{
+        lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
+    }
 }
 
 

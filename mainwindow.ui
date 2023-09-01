@@ -46,14 +46,14 @@
         <item>
          <widget class="QTreeWidget" name="projectTreeWidget">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>150</width>
             <height>0</height>
            </size>
           </property>
@@ -68,7 +68,7 @@
          <widget class="QGraphicsView" name="graphicsView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-            <horstretch>0</horstretch>
+            <horstretch>1</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -146,7 +146,7 @@
      <x>0</x>
      <y>0</y>
      <width>1320</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuprojectManagement">
@@ -164,7 +164,7 @@
     <property name="title">
      <string>设备管理</string>
     </property>
-    <addaction name="actionNewBodyFrame"/>
+    <addaction name="actionNewBodyFrameItem"/>
     <addaction name="actionDeleteBodyFrame"/>
    </widget>
    <widget class="QMenu" name="menuCMDTableManagement">
@@ -247,7 +247,7 @@
     <string>退出</string>
    </property>
   </action>
-  <action name="actionNewBodyFrame">
+  <action name="actionNewBodyFrameItem">
    <property name="text">
     <string>新建机架</string>
    </property>

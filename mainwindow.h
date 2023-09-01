@@ -29,7 +29,7 @@ public:
 
 
 private slots:
-    void on_actionNewBodyFrame_triggered();
+    void on_actionNewBodyFrameItem_triggered();
 
 //    //void showBodyFrameCfgSlot();
 
@@ -47,9 +47,7 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveBodyFrameSlot();
-
-    void deleteBodyFrameSlot(uint);
+    void saveBodyFrameItemSlot(BodyFrameItem);
 
     void updateBodyFrameSlot();
 
@@ -57,7 +55,13 @@ private slots:
 
     void cfgBodyFrameItemSlot(uint);
 
+    void deleteBodyFrameItemSlot(uint);
+
     void on_actionChangeStyleSheet_triggered();
+
+    void onProjectItemPressed(QTreeWidgetItem *item, int column);
+
+    void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::MainWindow *ui;
@@ -66,7 +70,9 @@ private:
 
     uint bodyFrameNum;
 
-    QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> myBodyFrameList;
+    QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> currentBodyFrameList;
+
+    QMap<uint, std::shared_ptr<BodyFrameGraphicsItem>> bodyFrameGraphicsItems;
 
     QVBoxLayout *layout;
 
@@ -76,16 +82,17 @@ private:
 
     void addLogToDockWidget(const QString log);
 
+    void disableAllActionNeedAProject();
+
+    void enableAllActionNeedAProject();
+
     MyXml myXml;
 
     QAction *test = nullptr;
 
     QMap<QString, Proj659*> projectMap;
 
-private slots:
-    void onProjectItemPressed(QTreeWidgetItem *item, int column);
-
-    void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
+    std::shared_ptr<Proj659> currentProject = nullptr;
 
 };
 #endif // MAINWINDOW_H

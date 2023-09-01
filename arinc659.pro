@@ -17,11 +17,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    data/bodyframe.cpp \
+    data/bodyframeitem.cpp \
+    data/dataframe.cpp \
+    data/module.cpp \
     deviceModel/bodyFrameCfgWidget.cpp \
-    deviceModel/bodyFrameItem.cpp \
-    deviceModel/dataFrame.cpp \
+    deviceModel/bodyFrameGraphicsItem.cpp \
+    deviceModel/dataFrameCfgWidget.cpp \
     deviceModel/deviceModelScene.cpp \
-    deviceModel/hardwareModel.cpp \
+    deviceModel/modulecfgwidget.cpp \
     dialog/stylesheetdialog.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -34,11 +38,15 @@ SOURCES += \
     tools/myxml.cpp
 
 HEADERS += \
+    data/bodyframe.h \
+    data/bodyframeitem.h \
+    data/dataframe.h \
+    data/module.h \
     deviceModel/bodyFrameCfgWidget.h \
-    deviceModel/bodyFrameItem.h \
-    deviceModel/dataFrame.h \
+    deviceModel/bodyFrameGraphicsItem.h \
+    deviceModel/dataFrameCfgWidget.h \
     deviceModel/deviceModelScene.h \
-    deviceModel/hardwareModel.h \
+    deviceModel/modulecfgwidget.h \
     dialog/stylesheetdialog.h \
     mainwindow.h \
     monitor/monitorWidget.h \
@@ -51,8 +59,8 @@ HEADERS += \
 
 FORMS += \
     deviceModel/bodyFrameCfgWidget.ui \
-    deviceModel/dataFrame.ui \
-    deviceModel/hardwareModel.ui \
+    deviceModel/dataFrameCfgWidget.ui \
+    deviceModel/modulecfgwidget.ui \
     dialog/stylesheetdialog.ui \
     mainwindow.ui \
     monitor/monitorWidget.ui \

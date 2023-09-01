@@ -1,5 +1,5 @@
-﻿#ifndef BODYFRAME_H
-#define BODYFRAME_H
+﻿#ifndef BODYFRAMECFGWIDGET_H
+#define BODYFRAMECFGWIDGET_H
 
 #include <QWidget>
 
@@ -8,15 +8,16 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QValidator>
-#include "hardwareModel.h"
-#include "dataFrame.h"
+#include "modulecfgwidget.h"
+#include "dataFrameCfgWidget.h"
+#include "bodyFrameGraphicsItem.h"
 
 /**
  *  机架类描述
  */
 
 namespace Ui {
-class BodyFrame;
+class BodyFrameCfgWidget;
 }
 
 class BodyFrameCfgWidget : public QWidget
@@ -24,7 +25,7 @@ class BodyFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit BodyFrameCfgWidget(QWidget *parent = nullptr, QWidget *paraConfigWidget = nullptr);
+    explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
     ~BodyFrameCfgWidget();
 
     void setBodyFrameID(const uint &id);
@@ -36,13 +37,16 @@ private slots:
 
     void on_newFrameBtn_clicked();
 
-
 protected:
     void closeEvent(QCloseEvent *e);
     //void mouseReleaseEvent(QObject* sender, QMouseEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 private:
-    Ui::BodyFrame *ui;
+    Ui::BodyFrameCfgWidget *ui;
+
+    BodyFrameItem bodyFrameItem;
+
+    int dummy = 0;
 
     uint myBodyFrameID;
 
@@ -50,24 +54,36 @@ private:
 
     //保存模块
     //   模块ID   模块信息
-    QMap<uint, HardwareModel*> hardwareModelList;
+    QMap<uint, ModuleCfgWidget*> hardwareModelList;
 
     //保存帧
     //帧标识  帧信息
-    QMap<QString, DataFrame*> dataFrameList;
+    QMap<QString, DataFrameCfgWidget*> dataFrameList;
 
     //参数配置界面
     QWidget* paraConfigWidget;
 
     bool ok = false;
 
-    QIntValidator* validator;
+    QIntValidator* idValidator = nullptr;
+
+    QIntValidator* arbitrationStepDurationValidator = nullptr;
+
+    QIntValidator* timeCalibrationFactorValidator = nullptr;
+
+    QIntValidator* messageIntervalValidator = nullptr;
+
+    QRegExpValidator* majorAndSubVersionNumerValidator = nullptr;
 
     //安装事件过滤器
     void installEventFilter();
 
     //安装验证器
     void installValidator();
+
+    void updateBodyFrameItem();
+
+    void dynamicSetLineEdit(QLineEdit* lineEdit);
 
 
 private:
@@ -76,12 +92,9 @@ private:
 
 signals:
 
-    void saveFrameSignal();
+    void saveFrameItemSignal(BodyFrameItem);
 
     void updateFrameSignal();
-
-
-
 
     // QObject interface
 public:

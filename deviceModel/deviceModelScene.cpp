@@ -10,38 +10,17 @@ DeviceModelScene::DeviceModelScene()
 {
 
 }
-
-uint DeviceModelScene::addBodyFrameItem()
+bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
 {
-    this->addLine(0, 100, this->width(), 100);
-    qDebug() << this->width();
-    uint minIdUnused = getMinIdUnused();
-    if(minIdUnused > 0){
-        std::shared_ptr<BodyFrameItem> item = std::make_shared<BodyFrameItem>(minIdUnused, this);
-        connect(item.get(), &BodyFrameItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
-        connect(item.get(), &BodyFrameItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
-        flag[minIdUnused] = true;
-        this->bodyFrameItemMap.insert(minIdUnused, item);
-        item->setPos(QPointF(10, 10));
-        item->setBodyFrameID(minIdUnused);
-        this->addItem(item.get());
-        return minIdUnused;
-    }
-    else{
-        qDebug() << QString(tr("bodyFrameId 分配失败"));
-        return 0;
-    }
-}
-
-
-uint DeviceModelScene::getMinIdUnused()
-{
-    for(uint i = 1; i <= maxBodyFrameId; i++){
-        if(flag[i] == false){
-            return i;
-        }
-    }
-    return 0;
+    if(item == nullptr) return false;
+//    this->addLine(0, 100, this->width(), 100);
+//    qDebug() << this->width();
+    item->setParent(this);
+    connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
+    connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
+    item->setPos(QPointF(10, 10));
+    this->addItem(item.get());
+    return true;
 }
 
 void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -98,8 +77,8 @@ void DeviceModelScene::cfgBodyFrameItemSlot(uint bodyFrameId)
 
 void DeviceModelScene::deleteBodyFrameItemSlot(uint bodyFrameId)
 {
-    this->bodyFrameItemMap.remove(bodyFrameId);
-    flag[bodyFrameId] = false;
-    bodyFrameItemMap.value(bodyFrameId)->deleteLater();
-    emit(deleteBodyFrameSignal(bodyFrameId));
+//    this->bodyFrameItemMap.remove(bodyFrameId);
+//    flag[bodyFrameId] = false;
+//    bodyFrameItemMap.value(bodyFrameId)->deleteLater();
+//    emit(deleteBodyFrameSignal(bodyFrameId));
 }

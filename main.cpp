@@ -9,11 +9,11 @@ int main(int argc, char *argv[])
 #endif
     QApplication a(argc, argv);
     //加载QSS文件
-    QFile qssFile(":/resources/qss/Aqua.qss");
-    if(qssFile.open(QFile::ReadOnly)){
-        a.setStyleSheet(qssFile.readAll());
-    }
-    qssFile.close();
+//    QFile qssFile(":/resources/qss/Aqua.qss");
+//    if(qssFile.open(QFile::ReadOnly)){
+//        a.setStyleSheet(qssFile.readAll());
+//    }
+//    qssFile.close();
 
     MainWindow w;
     w.show();

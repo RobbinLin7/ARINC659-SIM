@@ -2,7 +2,7 @@
 #define DEVICEMODELSCENE_H
 #include <QGraphicsScene>
 #include <memory>
-#include "bodyFrameItem.h"
+#include "bodyFrameGraphicsItem.h"
 #include "deviceModel/bodyFrameCfgWidget.h"
 #include <memory>
 #include <QMap>
@@ -24,10 +24,8 @@ class DeviceModelScene : public QGraphicsScene
 public:
     enum DeviceModel{BodyFrame};
     DeviceModelScene();
-    uint addBodyFrameItem();
+    bool addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem>);
     void deleteBodyFrameItem();
-    uint getMinIdUnused();
-
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -41,10 +39,10 @@ private slots:
     void deleteBodyFrameItemSlot(uint);
 
 private:
-    static const int maxBodyFrameId = 1000;
+    static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
-    BodyFrameItem *selectedItem;
-    QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
+    BodyFrameGraphicsItem *selectedItem;
+    //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:
 //    void cfgBFSignal(BodyFrameItem *selectedItem);

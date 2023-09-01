@@ -1,4 +1,4 @@
-﻿#include "bodyFrameItem.h"
+﻿#include "bodyFrameGraphicsItem.h"
 
 #include <QImageReader>
 
@@ -6,30 +6,33 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-BodyFrameItem::BodyFrameItem(uint frameId, QObject* parent)
-    :QObject(parent), myBodyFrameID(frameId)
+BodyFrameGraphicsItem::~BodyFrameGraphicsItem()
 {
-    setZValue(1);
-
-    setFlags(ItemIsSelectable | ItemIsMovable);
-    setAcceptHoverEvents(true);
-
-    this->myHardwareModelNum = 0;
+    delete treeWidgetItem;
 }
 
-QRectF BodyFrameItem::boundingRect() const
+BodyFrameGraphicsItem::BodyFrameGraphicsItem(BodyFrameItem bodyFrameItem, QObject* parent)
+    :QObject(parent)
+{
+    this->bodyFrameItem = bodyFrameItem;
+    setZValue(1);
+    setFlags(ItemIsSelectable | ItemIsMovable);
+    setAcceptHoverEvents(true);
+}
+
+QRectF BodyFrameGraphicsItem::boundingRect() const
 {
     return imageRect;
 }
 
-QPainterPath BodyFrameItem::shape() const
+QPainterPath BodyFrameGraphicsItem::shape() const
 {
     QPainterPath path;
     path.addRect(imageRect);
     return path;
 }
 
-void BodyFrameItem::paint(QPainter *painter,
+void BodyFrameGraphicsItem::paint(QPainter *painter,
                           const QStyleOptionGraphicsItem *item,
                           QWidget *widget)
 {
@@ -52,19 +55,15 @@ void BodyFrameItem::paint(QPainter *painter,
     painter->restore();
 }
 
-void BodyFrameItem::setBodyFrameID(const uint &id)
-{
-    this->myBodyFrameID = id;
-}
 
-void BodyFrameItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() != Qt::LeftButton) return;
     QGraphicsItem::mousePressEvent(event);
     update();
 }
 
-void BodyFrameItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     qDebug() << "contextMenuEvent";
     QMenu menu;
     QAction *cfgBF = new QAction("配置机架");
@@ -73,16 +72,16 @@ void BodyFrameItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     menu.addAction(deleteBF);
     QPoint point(event->screenPos().x(), event->screenPos().y());
     QObject::connect(cfgBF, &QAction::triggered, this, [=](){
-       emit(cfgBodyFrameItemSignal(this->myBodyFrameID));
+       emit(cfgBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID()));
     });
     connect(deleteBF, &QAction::triggered, this, [=](){
-       emit(deleteBodyFrameItemSignal(this->myBodyFrameID));
+       emit(deleteBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID()));
     });
     menu.exec(point);
 
 }
 
-void BodyFrameItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->modifiers() & Qt::ShiftModifier) {
         //stuff << event->pos();
@@ -92,20 +91,20 @@ void BodyFrameItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mouseMoveEvent(event);
 }
 
-void BodyFrameItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     update();
 }
 
-void BodyFrameItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void BodyFrameGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseDoubleClickEvent(event);
     qDebug() << "mouse double click";
     update();
 }
 
-QSize BodyFrameItem::bodyFrameImageSize()
+QSize BodyFrameGraphicsItem::bodyFrameImageSize()
 {
     QString filename = ":/resources/Image/bodyFrame.png";
     QImageReader reader(filename);
@@ -117,4 +116,15 @@ QSize BodyFrameItem::bodyFrameImageSize()
     imageRect.setWidth(img.size().width() / 3);
     imageRect.setHeight(img.size().height() / 3);
     return img.size();
+}
+
+QTreeWidgetItem *BodyFrameGraphicsItem::getTreeWidgetItem() const
+{
+    return treeWidgetItem;
+}
+
+void BodyFrameGraphicsItem::setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem)
+{
+    treeWidgetItem = newTreeWidgetItem;
+    //connect(newTreeWidgetItem, &QTreeWidgetItem::)
 }
