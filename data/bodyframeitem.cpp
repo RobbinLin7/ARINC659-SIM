@@ -1,4 +1,4 @@
-#include "bodyframeitem.h"
+﻿#include "bodyframeitem.h"
 
 BodyFrameItem::BodyFrameItem()
 {
@@ -55,7 +55,28 @@ BodyFrameItem &BodyFrameItem::operator=(const BodyFrameItem &bodyFrameItem)
     for(uint i = 0; i < this->dataFramesCnt; i++){
         this->dataFrames[i] = bodyFrameItem.dataFrames[i];
     }
+    return *this;
 }
+
+
+BodyFrameItem &BodyFrameItem::operator=(BodyFrameItem&& bodyFrameItem){
+    std::cout << "move assignment" << std::endl;
+    if(this != &bodyFrameItem){
+        std::cout << "move constructor" <<  std::endl;
+        this->bodyFrameItemID = bodyFrameItem.bodyFrameItemID;
+        this->arbitrationStepDuration = bodyFrameItem.arbitrationStepDuration;
+        this->timeCalibrationFactor = bodyFrameItem.timeCalibrationFactor;
+        this->messageInterval = bodyFrameItem.messageInterval;
+        this->modules = bodyFrameItem.modules;
+        bodyFrameItem.modules = nullptr;
+        this->modulesCnt = bodyFrameItem.modulesCnt;
+        this->dataFrames = bodyFrameItem.dataFrames;
+        bodyFrameItem.dataFrames = nullptr;
+        this->dataFramesCnt = bodyFrameItem.dataFramesCnt;
+    }
+    return *this;
+}
+
 
 BodyFrameItem::~BodyFrameItem()
 {

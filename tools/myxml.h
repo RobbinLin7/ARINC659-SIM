@@ -1,4 +1,4 @@
-#ifndef MYXML_H
+﻿#ifndef MYXML_H
 #define MYXML_H
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -13,9 +13,9 @@ public:
     MyXml(QString path);
     MyXml();
     ~MyXml();
-    bool loadXmlFile(QString path);
+    bool loadXmlFile(const QString path);
     bool loadXmlFile();
-    bool writeXmlFile(QString path);
+    bool writeXmlFile(const Proj659& project659, const QString path);
     bool writeXmlFile();
     void setPath(const QString &newPath);
 
@@ -24,7 +24,7 @@ public:
 
 private:
     QString path;   //存储XML文件路径
-    Proj659 project659;
+    Proj659 project659; //保存从文件里面读取到的项目信息
 };
 
 #endif // MYXML_H

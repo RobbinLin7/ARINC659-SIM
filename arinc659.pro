@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    data/bodyframe.cpp \
     data/bodyframeitem.cpp \
     data/dataframe.cpp \
     data/module.cpp \
@@ -38,7 +37,6 @@ SOURCES += \
     tools/myxml.cpp
 
 HEADERS += \
-    data/bodyframe.h \
     data/bodyframeitem.h \
     data/dataframe.h \
     data/module.h \

@@ -1,8 +1,9 @@
-#ifndef BODYFRAMEITEM_H
+﻿#ifndef BODYFRAMEITEM_H
 #define BODYFRAMEITEM_H
 #include "data/module.h"
 #include "data/dataframe.h"
 #include <iostream>
+#include <utility>
 typedef unsigned int uint;
 const uint maxFrameId = 15;
 const uint minArbitrationStepDuration = 3, maxArbitrationStepDuration = 10;
@@ -19,7 +20,9 @@ public:
 
     BodyFrameItem(BodyFrameItem&&);         //移动构造函数
 
-    BodyFrameItem& operator=(const BodyFrameItem&); //拷贝赋值运算符
+    BodyFrameItem &operator=(const BodyFrameItem&); //拷贝赋值运算符
+
+    BodyFrameItem &operator=(BodyFrameItem&&);      //移动运算符
 
     ~BodyFrameItem();
 

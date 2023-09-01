@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    BodyFrameItem hhhItem = getBodyFrameItem();
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
@@ -334,6 +335,12 @@ void MainWindow::enableAllActionNeedAProject()
     this->ui->menuCMDTableManagement->setEnabled(true);
     this->ui->menuMonitor->setEnabled(true);
     this->ui->menuSimulink->setEnabled(true);
+}
+
+BodyFrameItem MainWindow::getBodyFrameItem()
+{
+    BodyFrameItem item;
+    return std::move(item);
 }
 
 void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)

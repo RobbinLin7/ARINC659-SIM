@@ -1,4 +1,4 @@
-#ifndef PROJ659_H
+﻿#ifndef PROJ659_H
 #define PROJ659_H
 #include<QString>
 #include<QMap>
@@ -8,7 +8,6 @@
 class Proj659
 {
 public:
-
     Proj659();
     ~Proj659();
     Proj659(QString name, QString description);
@@ -27,7 +26,6 @@ private:
     QString name;
     QString description;
     bool save = true;
-
     QMap<uint, BodyFrameItem> bodyFrameItems;
     bool used[maxFrameId] = {false};
     //std::shared_ptr<BodyFrame> bodyFrame;

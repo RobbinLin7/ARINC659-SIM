@@ -1,4 +1,4 @@
-#include "myxml.h"
+﻿#include "myxml.h"
 
 MyXml::MyXml(QString path)
 {
@@ -50,7 +50,7 @@ bool MyXml::loadXmlFile()
     return loadXmlFile(path);
 }
 
-bool MyXml::writeXmlFile(QString path)
+bool MyXml::writeXmlFile(Proj659& project659, QString path)
 {
     QFile file(path);
     if(file.open(QIODevice::ReadWrite)){

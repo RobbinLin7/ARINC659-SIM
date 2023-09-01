@@ -86,6 +86,8 @@ private:
 
     void enableAllActionNeedAProject();
 
+    BodyFrameItem getBodyFrameItem();
+
     MyXml myXml;
 
     QAction *test = nullptr;
