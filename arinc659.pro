@@ -34,7 +34,8 @@ SOURCES += \
     project/proj659.cpp \
     simulation/faultwidget.cpp \
     simulation/simulinkwidget.cpp \
-    tools/myxml.cpp
+    tools/myxml.cpp \
+    validator/stringidvalidator.cpp
 
 HEADERS += \
     data/bodyframeitem.h \
@@ -53,7 +54,8 @@ HEADERS += \
     project/proj659.h \
     simulation/faultwidget.h \
     simulation/simulinkwidget.h \
-    tools/myxml.h
+    tools/myxml.h \
+    validator/stringidvalidator.h
 
 FORMS += \
     deviceModel/bodyFrameCfgWidget.ui \

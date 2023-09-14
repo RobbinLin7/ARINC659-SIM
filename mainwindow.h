@@ -47,9 +47,9 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveBodyFrameItemSlot(BodyFrameItem);
+    void saveBodyFrameItemSlot(const BodyFrameItem&);
 
-    void updateBodyFrameSlot();
+    void updateBodyFrameSlot(const BodyFrameItem&);
 
     void changeStyleSheetSlot(QString);
 

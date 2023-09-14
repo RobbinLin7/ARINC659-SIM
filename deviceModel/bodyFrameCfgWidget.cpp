@@ -4,37 +4,46 @@
 
 BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::BodyFrameCfgWidget)
+    ui(new Ui::BodyFrameCfgWidget),
+    openMode(New)
 {
     ui->setupUi(this);
     ui->id_lineEdit->setText(QString::number(frameId));
-    ui->id_lineEdit->setEnabled(false);
-    this->setWindowTitle(tr("机架配置"));
-//    this->paraConfigWidget = paraConfigWidget;
-    QStringList headerList;
-    headerList << tr("模块号") << tr("名称") << tr("初始化等待时间");
-    setStdTableHeader(ui->modelTableWidget, headerList);
-
-    headerList.clear();
-    headerList << tr("帧标识") << tr("窗口数") << tr("帧周期") << tr("空闲方式") << tr("子帧");
-    setStdTableHeader(ui->frameTableWidget, headerList);
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(QString(tr("确认")));
-    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(QString(tr("取消")));
-    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, [=](){
-        this->close();
-    });
-    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
-        ok = true;
-        updateBodyFrameItem();
-        emit(saveFrameItemSignal(bodyFrameItem));
-        this->close();
-    });
-    //ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-   // ui->id_lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
+    this->initWidget();
     installEventFilter();
     installValidator();
-
 }
+
+BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent):
+    QWidget(parent),
+    ui(new Ui::BodyFrameCfgWidget),
+    openMode(Modified),
+    bodyFrameItem(bodyFrameItem)
+{
+    ui->setupUi(this);
+    this->initWidget();
+    installEventFilter();
+    installValidator();
+}
+
+//BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameCfgWidget &bodyFrameWidget)
+//{
+//    this->ui = new Ui::BodyFrameCfgWidget(*ui);
+
+//}
+
+//BodyFrameCfgWidget::BodyFrameCfgWidget(BodyFrameItem &bodyFrameItem, QWidget *parent):
+//    QWidget(parent),
+//    ui(new Ui::BodyFrameCfgWidget),
+//    bodyFrameItem(bodyFrameItem)
+//{
+//    ui->setupUi(this);
+//    this->bodyFrameItem = bodyFrameItem;
+//    this->initWidget(bodyFrameItem);
+//    installEventFilter();
+//    installValidator();
+//}
+
 
 BodyFrameCfgWidget::~BodyFrameCfgWidget()
 {
@@ -51,12 +60,12 @@ void BodyFrameCfgWidget::setBodyFrameID(const uint &id)
 
 void BodyFrameCfgWidget::connectOkButtonToUpdateSignal()
 {
-    disconnect(ui->buttonBox->button(QDialogButtonBox::Ok), 0, 0, 0);
-    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
-        ok = true;
-        emit(updateFrameSignal());
-        this->close();
-    });
+    //disconnect(ui->buttonBox->button(QDialogButtonBox::Ok), 0, 0, 0);
+//    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){
+//        ok = true;
+//        emit(updateBodyFrameItemSignal(bodyFrameItem));
+//        this->close();
+//    });
 }
 
 void BodyFrameCfgWidget::setStdTableHeader(QTableWidget *widget, const QStringList &headerList)
@@ -86,19 +95,156 @@ void BodyFrameCfgWidget::setStdTableHeader(QTableWidget *widget, const QStringLi
     widget->horizontalHeader()->sectionResizeMode(QHeaderView::Interactive);
 }
 
-
-void BodyFrameCfgWidget::on_addModelBtn_clicked()
+void BodyFrameCfgWidget::addModuleSlot()
 {
-    ModuleCfgWidget *hm = new ModuleCfgWidget();
+    bodyFrameItem.addModule(*module.get());
+    int rowIndex = ui->moduleTableWidget->rowCount();
+    ui->moduleTableWidget->insertRow(rowIndex);
+    QTableWidgetItem *moduleNumberItem = new QTableWidgetItem(QString::number(module->getModuleNumber()));
+    QTableWidgetItem *initialWaitTimeItem = new QTableWidgetItem(QString::number(module->getInitialWaitTime()));
+    QTableWidgetItem *moduleNameItem = new QTableWidgetItem(QString::fromStdString(module->getModuleName()));
+    moduleNumberItem->setTextAlignment(Qt::AlignCenter);
+    initialWaitTimeItem->setTextAlignment(Qt::AlignCenter);
+    moduleNameItem->setTextAlignment(Qt::AlignCenter);
+    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
+    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
+    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
+    addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
+}
 
+void BodyFrameCfgWidget::addDataFrameSlot(const DataFrame &dataFrame)
+{
+    bodyFrameItem.addDataFrame(dataFrame);
+    int rowIndex = ui->dataFrameTableWidget->rowCount();
+    ui->dataFrameTableWidget->insertRow(rowIndex);
+    QTableWidgetItem* dataFrameIdentificationItem = nullptr;
+    (dataFrameIdentificationItem = new QTableWidgetItem(QString::fromStdString(dataFrame.getFrameIdentification())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameTotalWindowItem = nullptr;
+    (dataFrameTotalWindowItem = new QTableWidgetItem(QString::number(dataFrame.getTotalWindow())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFramePeriodItem = nullptr;
+    (dataFramePeriodItem = new QTableWidgetItem(QString::number(dataFrame.getFramePeriod())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameIdleWayItem = nullptr;
+    (dataFrameIdleWayItem = new QTableWidgetItem("不知道是什么东西"))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameChildFramesItem = nullptr;
+    (dataFrameChildFramesItem = new QTableWidgetItem("不知道啥*2"))->setTextAlignment(Qt::AlignCenter);
+    addTableItems(ui->dataFrameTableWidget, rowIndex, dataFrameIdentificationItem, dataFrameTotalWindowItem, dataFramePeriodItem, dataFrameIdleWayItem,
+                  dataFrameChildFramesItem, nullptr);
+//    ui->dataFrameTableWidget->setItem(rowIndex, 0, dataFrameIdentificationItem);
+//    ui->dataFrameTableWidget->setItem(rowIndex, 1, dataFrameTotalWindowItem);
+//    ui->dataFrameTableWidget->setItem(rowIndex, 2, dataFramePeriodItem);
+//    ui->dataFrameTableWidget->setItem(rowIndex, 3, dataFrameIdleWayItem);
+//    ui->dataFrameTableWidget->setItem(rowIndex, 4, dataFrameChildFramesItem);
+}
+
+void BodyFrameCfgWidget::modifyModuleSlot(const Module& module)
+{
+    for(int i = 0; i < ui->moduleTableWidget->rowCount(); i++){
+        if(ui->moduleTableWidget->item(i, 0)->text() == QString::number(module.getModuleNumber())){
+            ui->moduleTableWidget->item(i, 1)->setText(QString::number(module.getInitialWaitTime()));
+            ui->moduleTableWidget->item(i, 2)->setText(QString::fromStdString(module.getModuleName()));
+        }
+    }
+}
+
+void BodyFrameCfgWidget::on_modifyModuleBtn_clicked(bool)
+{
+    if(ui->moduleTableWidget->currentItem() != nullptr){
+        int row = ui->moduleTableWidget->currentRow();
+        qDebug() << ui->moduleTableWidget->item(row, 0)->text();
+        uint moduleId = ui->moduleTableWidget->item(row, 0)->text().toUInt();
+        Module& module = bodyFrameItem.getModule(moduleId);
+        ModuleCfgWidget *hm = new ModuleCfgWidget(bodyFrameItem.getMinUnusedModuleId(), module, ModuleCfgWidget::modify, this);
+        connect(hm, &ModuleCfgWidget::modifyModuleSignal, this, &BodyFrameCfgWidget::modifyModuleSlot);
+        hm->setWindowFlag(Qt::Dialog);
+        hm->show();
+    }
+    else{
+        qDebug() << "currentItem is null";
+    }
+}
+
+void BodyFrameCfgWidget::on_deleteModuleBtn_clicked(bool)
+{
+    if(ui->moduleTableWidget->currentItem() != nullptr){
+        int row = ui->moduleTableWidget->currentRow();
+        qDebug() << ui->moduleTableWidget->item(row, 0)->text();
+        uint moduleNumber = ui->moduleTableWidget->item(row, 0)->text().toUInt();
+        ui->moduleTableWidget->removeRow(row);
+        bodyFrameItem.deleteModule(moduleNumber);
+    }
+    else{
+        qDebug() << "currentItem is null";
+    }
+}
+
+
+void BodyFrameCfgWidget::on_addModuleBtn_clicked()
+{
+    module = std::shared_ptr<Module>(new Module());
+    ModuleCfgWidget *hm = new ModuleCfgWidget(bodyFrameItem.getMinUnusedModuleId(), *module, ModuleCfgWidget::add, this);
+    hm->setWindowFlag(Qt::Dialog);
+    connect(hm, &ModuleCfgWidget::addModuleSignal, this, &BodyFrameCfgWidget::addModuleSlot);
     hm->show();
 }
 
-void BodyFrameCfgWidget::on_newFrameBtn_clicked()
+void BodyFrameCfgWidget::on_newDataFrameBtn_clicked()
 {
-    DataFrameCfgWidget *frame = new DataFrameCfgWidget();
+    DataFrame dataFrame;
+
+    dataFrame.setFrameIdentification("b123");
+
+    bodyFrameItem.addDataFrame(dataFrame);
+
+    //const std::map<std::string, DataFrame>& dataFrames = bodyFrameItem.getDataFrames();
+
+    DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem.getDataFrames(), this);
+
+    connect(frame, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::addDataFrameSlot);
+
+    frame->setWindowFlag(Qt::Dialog);
 
     frame->show();
+
+}
+
+void BodyFrameCfgWidget::on_okButton_clicked(bool)
+{
+    if(check(ui->arbitrationStepDuration_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "主/后备仲裁步进时长参数有误");
+        return;
+    }
+    else if(check(ui->timeCalibrationFactor_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "时间标定因子参数有误");
+        return;
+    }
+    else if(check(ui->messageInterval_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "消息间隔参数有误");
+        return;
+    }
+    else if(check(ui->majorVersionNumber_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "主版本号参数有误");
+        return;
+    }
+    else if(check(ui->subVersionNumber_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "次版本号参数有误");
+        return;
+    }
+    else{
+        ok = true;
+        bodyFrameItem.setBodyFrameItemID(ui->id_lineEdit->text().toUInt());
+        bodyFrameItem.setArbitrationStepDuration(ui->arbitrationStepDuration_lineEdit->text().toUInt());
+        bodyFrameItem.setTimeCalibrationFactor(ui->timeCalibrationFactor_lineEdit->text().toUInt());
+        bodyFrameItem.setMajorVersionNumber(ui->majorVersionNumber_lineEdit->text().toUInt());
+        bodyFrameItem.setSubVersionNumber(ui->subVersionNumber_lineEdit->text().toUInt());
+        bodyFrameItem.setMessageInterval(ui->messageInterval_lineEdit->text().toUInt());
+        emit saveBodyFrameItemSignal(bodyFrameItem);
+        this->close();
+    }
+}
+
+void BodyFrameCfgWidget::on_cancelButton_clicked(bool)
+{
+    this->close();
 }
 
 void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
@@ -107,9 +253,10 @@ void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
         e->accept();
         return;
     }
+    QString message = (openMode == New ? "确定要放弃新建机架吗?" : "确定要放弃修改机架吗?");
     bool exit = QMessageBox::question(this,
-                                  tr("退出"),
-                                  tr("确定要放弃新建机架吗?"),
+                                  "退出",
+                                  message,
                                   QMessageBox::Yes | QMessageBox::No,
                                   QMessageBox::No) == QMessageBox::Yes;
     if(exit){
@@ -123,7 +270,19 @@ void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
 bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
 {
     QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(watched);
-    if(lineEdit != nullptr && (event->type() == QEvent::KeyRelease)){
+    if(watched == ui->moduleTableWidget->viewport() && event->type() == QEvent::MouseButtonPress){
+        QPoint globalPos = QCursor::pos();
+        QPoint localPos = ui->moduleTableWidget->viewport()->mapFromGlobal(globalPos);
+        if(ui->moduleTableWidget->itemAt(localPos) != nullptr){
+            ui->modifyModuleBtn->setEnabled(true);
+            ui->deleteModuleBtn->setEnabled(true);
+        }
+        else{
+            ui->modifyModuleBtn->setEnabled(false);
+            ui->deleteModuleBtn->setEnabled(false);
+        }
+    }
+    else if(lineEdit != nullptr && (event->type() == QEvent::KeyRelease)){
         dynamicSetLineEdit(lineEdit);
     }
     return QWidget::eventFilter(watched, event);
@@ -137,6 +296,37 @@ void BodyFrameCfgWidget::installEventFilter()
     ui->messageInterval_lineEdit->installEventFilter(this);
     ui->majorVersionNumber_lineEdit->installEventFilter(this);
     ui->subVersionNumber_lineEdit->installEventFilter(this);
+    //ui->moduleTableWidget->viewport->installEventFilter(this);
+    ui->moduleTableWidget->viewport()->installEventFilter(this);
+}
+
+bool BodyFrameCfgWidget::check(QWidget *widget)
+{
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(widget);
+    if(lineEdit != nullptr){
+        QString input = lineEdit->text();
+        if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    return false;
+}
+
+bool BodyFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, QTableWidgetItem *firstItem, ...)
+{
+    int colIndex = 0;
+    QTableWidgetItem* currentItem = firstItem;
+    va_list args;
+    va_start(args, firstItem);
+    while(currentItem){
+        tableWidget->setItem(rowIndex, colIndex++, currentItem);
+        currentItem = va_arg(args, QTableWidgetItem*);
+    }
+    va_end(args);
+    return true;
 }
 
 void BodyFrameCfgWidget::installValidator()
@@ -185,6 +375,27 @@ void BodyFrameCfgWidget::dynamicSetLineEdit(QLineEdit *lineEdit)
         lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
     }
 }
+
+void BodyFrameCfgWidget::initWidget()
+{
+    ui->id_lineEdit->setEnabled(false);
+    ui->modifyModuleBtn->setEnabled(false);
+    ui->deleteModuleBtn->setEnabled(false);
+    this->setWindowTitle(tr("机架配置"));
+    QStringList headerList;
+    headerList << tr("模块号") << tr("名称") << tr("初始化等待时间");
+    setStdTableHeader(ui->moduleTableWidget, headerList);
+    headerList.clear();
+    headerList << tr("帧标识") << tr("窗口数") << tr("帧周期") << tr("空闲方式") << tr("子帧");
+    setStdTableHeader(ui->dataFrameTableWidget, headerList);
+//    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(QString(tr("确认")));
+//    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(QString(tr("取消")));
+//    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, [=](){
+//        this->close();
+//    });
+//    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &BodyFrameCfgWidget::on_okButton_clicked);
+}
+
 
 
 

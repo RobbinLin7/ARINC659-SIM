@@ -50,7 +50,7 @@ bool MyXml::loadXmlFile()
     return loadXmlFile(path);
 }
 
-bool MyXml::writeXmlFile(Proj659& project659, QString path)
+bool MyXml::writeXmlFile(const Proj659& project659, const QString path)
 {
     QFile file(path);
     if(file.open(QIODevice::ReadWrite)){
@@ -98,7 +98,7 @@ bool MyXml::writeXmlFile(Proj659& project659, QString path)
 bool MyXml::writeXmlFile()
 {
     if(path == "") return false;
-    return writeXmlFile(path);
+    return writeXmlFile(project659, path);
 }
 
 void MyXml::setPath(const QString &newPath)

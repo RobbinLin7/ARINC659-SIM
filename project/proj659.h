@@ -20,7 +20,7 @@ public:
     bool getSave() const;
     void setSave(bool newSave);
     uint getMinUnusedId() const;
-    bool addBodyFrameItem(BodyFrameItem&);
+    bool addBodyFrameItem(const BodyFrameItem&);
     bool deleteBodyFrameItem(uint id);
 private:
     QString name;
@@ -28,7 +28,6 @@ private:
     bool save = true;
     QMap<uint, BodyFrameItem> bodyFrameItems;
     bool used[maxFrameId] = {false};
-    //std::shared_ptr<BodyFrame> bodyFrame;
 };
 
 

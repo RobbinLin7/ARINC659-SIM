@@ -11,5 +11,6 @@
         <file>resources/qss/NeonButtons.qss</file>
         <file>resources/qss/Ubuntu.qss</file>
         <file>resources/qss/new1.qss</file>
+        <file>resources/qss/jyong.qss</file>
     </qresource>
 </RCC>

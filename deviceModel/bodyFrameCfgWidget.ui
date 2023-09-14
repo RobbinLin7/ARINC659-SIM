@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -23,8 +23,8 @@
       <attribute name="title">
        <string>机架配置</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
         <widget class="QWidget" name="widget" native="true">
          <property name="toolTip">
           <string/>
@@ -122,7 +122,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="2" column="2">
@@ -181,6 +181,37 @@
          </layout>
         </widget>
        </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="okButton">
+           <property name="text">
+            <string>确定</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cancelButton">
+           <property name="text">
+            <string>取消</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -189,7 +220,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QTableWidget" name="modelTableWidget"/>
+        <widget class="QTableWidget" name="moduleTableWidget"/>
        </item>
        <item>
         <widget class="QWidget" name="widget_3" native="true">
@@ -215,21 +246,21 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="addModelBtn">
+           <widget class="QPushButton" name="addModuleBtn">
             <property name="text">
              <string>增加</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="ModifyModelBtn">
+           <widget class="QPushButton" name="modifyModuleBtn">
             <property name="text">
              <string>修改</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteModelBtn">
+           <widget class="QPushButton" name="deleteModuleBtn">
             <property name="text">
              <string>删除</string>
             </property>
@@ -237,6 +268,9 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3"/>
        </item>
       </layout>
      </widget>
@@ -246,7 +280,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QTableWidget" name="frameTableWidget"/>
+        <widget class="QTableWidget" name="dataFrameTableWidget"/>
        </item>
        <item>
         <widget class="QWidget" name="widget_4" native="true">
@@ -279,7 +313,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="newFrameBtn">
+           <widget class="QPushButton" name="newDataFrameBtn">
             <property name="text">
              <string>新建帧</string>
             </property>
@@ -317,13 +351,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
   </layout>

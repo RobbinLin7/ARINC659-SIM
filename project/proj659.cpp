@@ -1,4 +1,4 @@
-#include "proj659.h"
+﻿#include "proj659.h"
 
 Proj659::Proj659()
 {
@@ -67,15 +67,15 @@ uint Proj659::getMinUnusedId() const
 
 
 
-bool Proj659::addBodyFrameItem(BodyFrameItem& bodyFrameItem)
+bool Proj659::addBodyFrameItem(const BodyFrameItem& bodyFrameItem)
 {
-    uint minUnusedId = getMinUnusedId();
-    bodyFrameItem.setBodyFrameItemID(minUnusedId);
+    //uint minUnusedId = getMinUnusedId();
+    //bodyFrameItem.setBodyFrameItemID(minUnusedId);
     //std::shared_ptr<BodyFrameItem> item = std::shared_ptr<BodyFrameItem>(new BodyFrameItem());
     //item->setBodyFrameItemID(minUnusedId);
     //std::shared_ptr<BodyFrameGraphicsItem> item = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(item));
-    bodyFrameItems.insert(minUnusedId, bodyFrameItem);
-    used[minUnusedId] = true;
+    bodyFrameItems.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrameItem);
+    used[bodyFrameItem.getBodyFrameItemID()] = true;
     return true;
 }
 

@@ -2,15 +2,16 @@
 #define BODYFRAMECFGWIDGET_H
 
 #include <QWidget>
-
 #include <QMap>
 #include <QTableWidget>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QValidator>
+#include <QDebug>
 #include "modulecfgwidget.h"
 #include "dataFrameCfgWidget.h"
 #include "bodyFrameGraphicsItem.h"
+
 
 /**
  *  机架类描述
@@ -25,17 +26,17 @@ class BodyFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
+    enum OpenMode{New, Modified};
     explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
+    explicit BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent = nullptr);
+    //explicit BodyFrameCfgWidget(BodyFrameItem& bodyFrameItem, QWidget *parent = nullptr);
+    //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     ~BodyFrameCfgWidget();
-
     void setBodyFrameID(const uint &id);
-
     void connectOkButtonToUpdateSignal();
 
 private slots:
-    void on_addModelBtn_clicked();
 
-    void on_newFrameBtn_clicked();
 
 protected:
     void closeEvent(QCloseEvent *e);
@@ -44,7 +45,11 @@ protected:
 private:
     Ui::BodyFrameCfgWidget *ui;
 
+    OpenMode openMode;
+
     BodyFrameItem bodyFrameItem;
+
+
 
     int dummy = 0;
 
@@ -85,19 +90,32 @@ private:
 
     void dynamicSetLineEdit(QLineEdit* lineEdit);
 
+    void initWidget(const BodyFrameItem& bodyFrameItem);
+
+    void initWidget();
 
 private:
-
+    std::shared_ptr<Module> module = nullptr;
     void setStdTableHeader(QTableWidget *widget, const QStringList &headerList);
+    bool check(QWidget *widget);
 
+    bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
 signals:
 
-    void saveFrameItemSignal(BodyFrameItem);
+    void saveBodyFrameItemSignal(BodyFrameItem&);
 
-    void updateFrameSignal();
+    void updateBodyFrameItemSignal(const BodyFrameItem&);
 
-    // QObject interface
-public:
+private slots:
+    void addModuleSlot();
+    void addDataFrameSlot(const DataFrame&);
+    void modifyModuleSlot(const Module&);
+    void on_modifyModuleBtn_clicked(bool);
+    void on_deleteModuleBtn_clicked(bool);
+    void on_addModuleBtn_clicked();
+    void on_newDataFrameBtn_clicked();
+    void on_okButton_clicked(bool);
+    void on_cancelButton_clicked(bool);
 
 };
 

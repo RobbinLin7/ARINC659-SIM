@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    BodyFrameItem hhhItem = getBodyFrameItem();
+    //BodyFrameItem hhhItem = getBodyFrameItem();
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
@@ -47,8 +47,8 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
     //bodyFrameNum++;
     bodyFrame = std::make_shared<BodyFrameCfgWidget>(currentProject->getMinUnusedId(), this);
     //BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateFrameSignal, this, &MainWindow::updateBodyFrameSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateBodyFrameItemSignal, this, &MainWindow::updateBodyFrameSlot);
     //myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
@@ -59,7 +59,7 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
 /**
  * @brief MainWindow::saveFrame
  */
-void MainWindow::saveBodyFrameItemSlot(BodyFrameItem bodyFrameItem){
+void MainWindow::saveBodyFrameItemSlot(const BodyFrameItem& bodyFrameItem){
     currentProject->addBodyFrameItem(bodyFrameItem);
     std::shared_ptr<BodyFrameGraphicsItem> graphicsItem = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(bodyFrameItem, this));
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
@@ -80,7 +80,7 @@ void MainWindow::saveBodyFrameItemSlot(BodyFrameItem bodyFrameItem){
 }
 
 
-void MainWindow::updateBodyFrameSlot()
+void MainWindow::updateBodyFrameSlot(const BodyFrameItem& bodyFrameItem)
 {
     qDebug() << "update success";
 }
@@ -110,7 +110,8 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         return;
     }
     else{
-        std::shared_ptr<BodyFrameCfgWidget> bodyFrame = currentBodyFrameList.value(frameId);
+        std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWiget = currentBodyFrameList.value(frameId);
+        disconnect(bodyFrameCfgWiget.get());
         bodyFrame->connectOkButtonToUpdateSignal();
         bodyFrame->setParent(ui->paraConfigWidget);
         bodyFrame->setMinimumHeight(501);
@@ -146,7 +147,7 @@ void MainWindow::initMainWindow()
     this->setWindowTitle(tr("ARINC659配置工具"));
 
     //输出日志信息
-    ui->logTextBrowser->append(tr("等待用户操作"));
+    ui->logTextBrowser->append(tr("开始"));
 
     //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
 
@@ -337,11 +338,6 @@ void MainWindow::enableAllActionNeedAProject()
     this->ui->menuSimulink->setEnabled(true);
 }
 
-BodyFrameItem MainWindow::getBodyFrameItem()
-{
-    BodyFrameItem item;
-    return std::move(item);
-}
 
 void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
 {

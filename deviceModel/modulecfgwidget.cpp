@@ -1,17 +1,26 @@
-#include "modulecfgwidget.h"
+﻿#include "modulecfgwidget.h"
 #include "ui_modulecfgwidget.h"
+#include <QMessageBox>
 
-ModuleCfgWidget::ModuleCfgWidget(QWidget *parent) :
+ModuleCfgWidget::ModuleCfgWidget(uint moduleNumber, Module& module, Type type, QWidget *parent):
     QWidget(parent),
+    type(type),
+    module(module),
     ui(new Ui::ModuleCfgWidget)
 {
     ui->setupUi(this);
-
     installValidator();
-
-    connect(ui->moduleNumber_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditText);
-    connect(ui->initialWaitTime_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditText);
-
+    ui->moduleNumber_lineEdit->setText(QString::number(moduleNumber));
+    ui->moduleNumber_lineEdit->setEnabled(false);
+    if(type == modify){
+        ui->moduleName_lineEdit->setText(QString::fromStdString(module.getModuleName()));
+        ui->moduleNumber_lineEdit->setText(QString::number(module.getModuleNumber()));
+        ui->moduleNumber_lineEdit->setEnabled(false);
+        ui->initialWaitTime_lineEdit->setText(QString::number(module.getInitialWaitTime()));
+        ui->moduleTypeComboBox->setCurrentIndex(module.getModuleType() == Module::physicalModule ? 0 : 1);
+    }
+    connect(ui->moduleNumber_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
+    connect(ui->initialWaitTime_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
     this->setWindowTitle(tr("模块配置"));
 }
 
@@ -30,18 +39,58 @@ void ModuleCfgWidget::installValidator()
     ui->initialWaitTime_lineEdit->setValidator(initialWaitTimeValidator);
 }
 
-void ModuleCfgWidget::checkLineEditText()
+bool ModuleCfgWidget::check(QWidget *widget)
+{
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(widget);
+    if(lineEdit != nullptr){
+        QString input = lineEdit->text();
+        if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    return false;
+}
+
+void ModuleCfgWidget::checkLineEditTextSlot()
 {
     QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(sender());
     if(lineEdit == nullptr) return;
-    QString input = lineEdit->text();
-    if(input == ""){
-        lineEdit->setStyleSheet("QLineEdit { border: 1px solid gray;}");
-    }
-    else if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
+    bool flag = check(lineEdit);
+    if(flag == true){
         lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
     }
     else{
         lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
     }
+}
+
+void ModuleCfgWidget::on_okPushButton_clicked(bool)
+{
+    module.setModuleName(ui->moduleName_lineEdit->text().toStdString());
+    if(check(ui->moduleNumber_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "模块号参数有误");
+        return;
+    }
+    module.setModuleNumber(ui->moduleNumber_lineEdit->text().toUInt());
+    if(check(ui->initialWaitTime_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "初始等待时间参数有误");
+        return;
+    }
+    module.setInitialWaitTime(ui->initialWaitTime_lineEdit->text().toUInt());
+    module.setModuleType(ui->moduleTypeComboBox->currentIndex() == 0 ? Module::physicalModule : Module::simulationModule);
+    if(type == add){
+        emit addModuleSignal();
+    }
+    else{
+        emit modifyModuleSignal(module);
+    }
+    this->close();
+}
+
+void ModuleCfgWidget::on_cancelPushButton_clicked(bool)
+{
+    this->close();
 }

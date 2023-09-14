@@ -17,6 +17,7 @@ public:
     bool loadXmlFile();
     bool writeXmlFile(const Proj659& project659, const QString path);
     bool writeXmlFile();
+
     void setPath(const QString &newPath);
 
     Proj659 &getProject659();
