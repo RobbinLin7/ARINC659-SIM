@@ -14,22 +14,30 @@ BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
     installValidator();
 }
 
-BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent):
-    QWidget(parent),
-    ui(new Ui::BodyFrameCfgWidget),
-    openMode(Modified),
-    bodyFrameItem(bodyFrameItem)
-{
-    ui->setupUi(this);
-    this->initWidget();
-    installEventFilter();
-    installValidator();
-}
-
-//BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameCfgWidget &bodyFrameWidget)
+//BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent):
+//    QWidget(parent),
+//    ui(new Ui::BodyFrameCfgWidget),
+//    openMode(Modified),
+//    bodyFrameItem(bodyFrameItem.getBodyFrameItemID())
 //{
-//    this->ui = new Ui::BodyFrameCfgWidget(*ui);
+//    ui->setupUi(this);
+//    this->initWidget();
+//    installEventFilter();
+//    installValidator();
+//}
 
+
+//BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameCfgWidget &bodyFrameWidget):
+//    QWidget(bodyFrameWidget.parentWidget()),
+//    ui(new Ui::BodyFrameCfgWidget),
+//    openMode(Modified),
+//    bodyFrameItem(bodyFrameWidget.getBodyFrameItem())
+
+//{
+//    ui->setupUi(this);
+//    this->initWidget();
+//    installEventFilter();
+//    installValidator();
 //}
 
 //BodyFrameCfgWidget::BodyFrameCfgWidget(BodyFrameItem &bodyFrameItem, QWidget *parent):
@@ -146,6 +154,11 @@ void BodyFrameCfgWidget::modifyModuleSlot(const Module& module)
     }
 }
 
+void BodyFrameCfgWidget::modifyDataFrameSlot(const DataFrame &dataFrame)
+{
+    bodyFrameItem.modifyDataFrame(dataFrame);
+}
+
 void BodyFrameCfgWidget::on_modifyModuleBtn_clicked(bool)
 {
     if(ui->moduleTableWidget->currentItem() != nullptr){
@@ -187,24 +200,36 @@ void BodyFrameCfgWidget::on_addModuleBtn_clicked()
     hm->show();
 }
 
-void BodyFrameCfgWidget::on_newDataFrameBtn_clicked()
+void BodyFrameCfgWidget::on_deleteDataFrameBtn_clicked()
 {
-    DataFrame dataFrame;
+    if(ui->dataFrameTableWidget->currentItem() != nullptr){
+        int row = ui->dataFrameTableWidget->currentRow();
+        qDebug() << ui->dataFrameTableWidget->item(row, 0)->text();
+        std::string dataFrameIdentification = ui->dataFrameTableWidget->item(row, 0)->text().toStdString();
+        ui->moduleTableWidget->removeRow(row);
+        bodyFrameItem.deleteDataFrame(dataFrameIdentification);
+    }
+    else{
+        qDebug() << "currentItem is null";
+    }
+}
 
-    dataFrame.setFrameIdentification("b123");
+void BodyFrameCfgWidget::on_modifyDataFrameBtn_clicked()
+{
+    int row = ui->dataFrameTableWidget->currentRow();
+    std::string bodyFrameIdentification = ui->dataFrameTableWidget->item(row, 0)->text().toStdString();
+    DataFrameCfgWidget* dataFrameCfgWidget = new DataFrameCfgWidget(bodyFrameItem.getDataFrame(bodyFrameIdentification), bodyFrameItem.getDataFrames(), this);
+    connect(dataFrameCfgWidget, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::modifyDataFrameSlot);
+    dataFrameCfgWidget->setWindowFlag(Qt::Dialog);
+    dataFrameCfgWidget->show();
+}
 
-    bodyFrameItem.addDataFrame(dataFrame);
-
-    //const std::map<std::string, DataFrame>& dataFrames = bodyFrameItem.getDataFrames();
-
+void BodyFrameCfgWidget::on_addDataFrameBtn_clicked()
+{
     DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem.getDataFrames(), this);
-
     connect(frame, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::addDataFrameSlot);
-
     frame->setWindowFlag(Qt::Dialog);
-
     frame->show();
-
 }
 
 void BodyFrameCfgWidget::on_okButton_clicked(bool)
@@ -247,9 +272,24 @@ void BodyFrameCfgWidget::on_cancelButton_clicked(bool)
     this->close();
 }
 
+void BodyFrameCfgWidget::on_moveUpBtn_clicked()
+{
+    int row1 = ui->dataFrameTableWidget->currentRow();
+    int row2 = row1 - 1;
+    exchangeDataFrameItemOrder(row1, row2);
+}
+
+void BodyFrameCfgWidget::on_moveDownBtn_clicked()
+{
+    int row1 = ui->dataFrameTableWidget->currentRow();
+    int row2 = row1 + 1;
+    exchangeDataFrameItemOrder(row1, row2);
+}
+
 void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
 {
     if(ok){
+        ok = false;
         e->accept();
         return;
     }
@@ -282,10 +322,41 @@ bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
             ui->deleteModuleBtn->setEnabled(false);
         }
     }
+    else if(watched == ui->dataFrameTableWidget->viewport() && event->type() == QEvent::MouseButtonPress){
+        QPoint globalPos = QCursor::pos();
+        QPoint localPos = ui->dataFrameTableWidget->viewport()->mapFromGlobal(globalPos);
+        if(ui->dataFrameTableWidget->itemAt(localPos) != nullptr){
+            ui->modifyDataFrameBtn->setEnabled(true);
+            ui->deleteDataFrameBtn->setEnabled(true);
+            if(ui->dataFrameTableWidget->itemAt(localPos)->row() > 0){
+                ui->moveUpBtn->setEnabled(true);
+            }
+            else{
+                ui->moveUpBtn->setEnabled(false);
+            }
+            if(ui->dataFrameTableWidget->itemAt(localPos)->row() < ui->dataFrameTableWidget->rowCount() - 1){
+                ui->moveDownBtn->setEnabled(true);
+            }
+            else{
+                ui->moveDownBtn->setEnabled(false);
+            }
+        }
+        else{
+            ui->modifyDataFrameBtn->setEnabled(false);
+            ui->deleteDataFrameBtn->setEnabled(false);
+            ui->moveUpBtn->setEnabled(false);
+            ui->moveDownBtn->setEnabled(false);
+        }
+    }
     else if(lineEdit != nullptr && (event->type() == QEvent::KeyRelease)){
         dynamicSetLineEdit(lineEdit);
     }
     return QWidget::eventFilter(watched, event);
+}
+
+const BodyFrameItem &BodyFrameCfgWidget::getBodyFrameItem() const
+{
+    return bodyFrameItem;
 }
 
 void BodyFrameCfgWidget::installEventFilter()
@@ -298,6 +369,7 @@ void BodyFrameCfgWidget::installEventFilter()
     ui->subVersionNumber_lineEdit->installEventFilter(this);
     //ui->moduleTableWidget->viewport->installEventFilter(this);
     ui->moduleTableWidget->viewport()->installEventFilter(this);
+    ui->dataFrameTableWidget->viewport()->installEventFilter(this);
 }
 
 bool BodyFrameCfgWidget::check(QWidget *widget)
@@ -326,6 +398,20 @@ bool BodyFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, 
         currentItem = va_arg(args, QTableWidgetItem*);
     }
     va_end(args);
+    return true;
+}
+
+bool BodyFrameCfgWidget::exchangeDataFrameItemOrder(int row1, int row2)
+{
+    for (int column = 0; column < ui->dataFrameTableWidget->columnCount(); ++column) {
+        QTableWidgetItem* item1 = ui->dataFrameTableWidget->takeItem(row1, column);
+        QTableWidgetItem* item2 = ui->dataFrameTableWidget->takeItem(row2, column);
+
+        // 将单元格项设置回表格中的另一个行
+        ui->dataFrameTableWidget->setItem(row1, column, item2);
+        ui->dataFrameTableWidget->setItem(row2, column, item1);
+    }
+    bodyFrameItem.changeDataFramesOrder(row1, row2);
     return true;
 }
 
@@ -381,6 +467,10 @@ void BodyFrameCfgWidget::initWidget()
     ui->id_lineEdit->setEnabled(false);
     ui->modifyModuleBtn->setEnabled(false);
     ui->deleteModuleBtn->setEnabled(false);
+    ui->modifyDataFrameBtn->setEnabled(false);
+    ui->deleteDataFrameBtn->setEnabled(false);
+    ui->moveUpBtn->setEnabled(false);
+    ui->moveDownBtn->setEnabled(false);
     this->setWindowTitle(tr("机架配置"));
     QStringList headerList;
     headerList << tr("模块号") << tr("名称") << tr("初始化等待时间");
@@ -388,12 +478,6 @@ void BodyFrameCfgWidget::initWidget()
     headerList.clear();
     headerList << tr("帧标识") << tr("窗口数") << tr("帧周期") << tr("空闲方式") << tr("子帧");
     setStdTableHeader(ui->dataFrameTableWidget, headerList);
-//    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(QString(tr("确认")));
-//    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(QString(tr("取消")));
-//    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, [=](){
-//        this->close();
-//    });
-//    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &BodyFrameCfgWidget::on_okButton_clicked);
 }
 
 

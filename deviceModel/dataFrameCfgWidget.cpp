@@ -9,14 +9,27 @@ DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& d
     frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes)
 {
     ui->setupUi(this);
-    ui->radioButton->setChecked(true);
+    ui->equalAllocRadioButton->setChecked(true);
     ui->framePeriod_lineEdit->setText("30");
     ui->framePeriod_lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
     this->setWindowTitle(tr("帧配置"));
     installValidator();
     connect(ui->framePeriod_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
     connect(ui->frameIdentification_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
-    //ui->label_6->setText("你好呀");
+}
+
+DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+    ui(new Ui::DataFrameCfgWidget),
+    dataframes(dataframes),
+    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
+    dataFrame(dataFrame)
+{
+    ui->setupUi(this);
+    ui->frameIdentification_lineEdit->setEnabled(false);
+    this->setWindowTitle(tr("帧配置"));
+    setForm();
+    connect(ui->framePeriod_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
+    installValidator();
 }
 
 DataFrameCfgWidget::~DataFrameCfgWidget()
@@ -44,6 +57,14 @@ bool DataFrameCfgWidget::check(QWidget *widget)
         }
     }
     return false;
+}
+
+void DataFrameCfgWidget::setForm()
+{
+    ui->frameIdentification_lineEdit->setText(QString::fromStdString(dataFrame.getFrameIdentification()));
+    ui->framePeriod_lineEdit->setText(QString::number(dataFrame.getFramePeriod()));
+    ui->idleWaitTime_lineEdit->setText(QString::number(dataFrame.getIdleWaitTime()));
+    dataFrame.getTimeAllocationType() == DataFrame::equalAlloc ? ui->equalAllocRadioButton->setChecked(true) : ui->downConcentrationAllocRadioButton->setChecked(true);
 }
 
 void DataFrameCfgWidget::checkLineEditText()
@@ -79,7 +100,7 @@ void DataFrameCfgWidget::on_okPushButton_clicked(bool)
     dataFrame.setFrameIdentification(ui->frameIdentification_lineEdit->text().toStdString());
     dataFrame.setIdleWaitTime(ui->idleWaitTime_lineEdit->text().toUInt());
     dataFrame.setTotalWindow(ui->totalWindow_lineEdit->text().toUInt());
-    dataFrame.setTimeAllocationType(ui->radioButton->isChecked() ? DataFrame::equalAlloc : DataFrame::downConcentrationAlloc);
+    dataFrame.setTimeAllocationType(ui->equalAllocRadioButton->isChecked() ? DataFrame::equalAlloc : DataFrame::downConcentrationAlloc);
     emit saveDataFrameSignal(dataFrame);
     this->close();
 }

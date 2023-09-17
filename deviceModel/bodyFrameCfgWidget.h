@@ -29,11 +29,14 @@ public:
     enum OpenMode{New, Modified};
     explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
     explicit BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent = nullptr);
+    BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     //explicit BodyFrameCfgWidget(BodyFrameItem& bodyFrameItem, QWidget *parent = nullptr);
     //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     ~BodyFrameCfgWidget();
     void setBodyFrameID(const uint &id);
     void connectOkButtonToUpdateSignal();
+
+    const BodyFrameItem &getBodyFrameItem() const;
 
 private slots:
 
@@ -100,6 +103,8 @@ private:
     bool check(QWidget *widget);
 
     bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
+
+    bool exchangeDataFrameItemOrder(int row1, int row2);
 signals:
 
     void saveBodyFrameItemSignal(BodyFrameItem&);
@@ -110,12 +115,17 @@ private slots:
     void addModuleSlot();
     void addDataFrameSlot(const DataFrame&);
     void modifyModuleSlot(const Module&);
+    void modifyDataFrameSlot(const DataFrame&);
     void on_modifyModuleBtn_clicked(bool);
     void on_deleteModuleBtn_clicked(bool);
     void on_addModuleBtn_clicked();
-    void on_newDataFrameBtn_clicked();
+    void on_addDataFrameBtn_clicked();
+    void on_deleteDataFrameBtn_clicked();
+    void on_modifyDataFrameBtn_clicked();
     void on_okButton_clicked(bool);
     void on_cancelButton_clicked(bool);
+    void on_moveUpBtn_clicked();
+    void on_moveDownBtn_clicked();
 
 };
 

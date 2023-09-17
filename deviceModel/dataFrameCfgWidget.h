@@ -16,6 +16,7 @@ class DataFrameCfgWidget : public QWidget
 
 public:
     explicit DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
     ~DataFrameCfgWidget();
 
 private:
@@ -28,6 +29,7 @@ private:
     int dummy = 0;
     void installValidator();
     bool check(QWidget*);
+    void setForm();
 
 private slots:
     void checkLineEditText();

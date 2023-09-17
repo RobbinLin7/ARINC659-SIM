@@ -62,6 +62,8 @@ public:
     const std::map<std::string, DataFrame> &getDataFrames() const;
     void setDataFrames(const std::map<std::string, DataFrame> &newDataFrames);
 
+    void changeDataFramesOrder(int index1, int index2);
+
 private:
      mutable uint bodyFrameItemID;                  //机架号
      uint arbitrationStepDuration;                  //主/后备仲裁步进时长
@@ -71,6 +73,7 @@ private:
      uint subVersionNumber;                         //次版本号
      std::map<uint, Module> modules;                //模块数组
      std::map<std::string, DataFrame> dataFrames;   //帧数组
+     std::vector<std::string> dataFramesOrder;      //帧数组顺序
 };
 
 #endif // BODYFRAMEITEM_H

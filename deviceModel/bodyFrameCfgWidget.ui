@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -313,38 +313,25 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="newDataFrameBtn">
+           <widget class="QPushButton" name="addDataFrameBtn">
             <property name="text">
-             <string>新建帧</string>
+             <string>新建</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteFrameBtn">
+           <widget class="QPushButton" name="deleteDataFrameBtn">
             <property name="text">
-             <string>删除帧</string>
+             <string>删除</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="moreInfoBtn">
+           <widget class="QPushButton" name="modifyDataFrameBtn">
             <property name="text">
-             <string>查看帧信息</string>
+             <string>修改</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>

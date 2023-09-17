@@ -130,14 +130,14 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QRadioButton" name="radioButton">
+          <widget class="QRadioButton" name="equalAllocRadioButton">
            <property name="text">
             <string>平均分配</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_2">
+          <widget class="QRadioButton" name="downConcentrationAllocRadioButton">
            <property name="text">
             <string>向下集中</string>
            </property>

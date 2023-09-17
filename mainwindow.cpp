@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    //BodyFrameItem hhhItem = getBodyFrameItem();
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
@@ -25,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     test = new QAction("关闭项目", ui->projectTreeWidget);
     this->initMainWindow();
     disableAllActionNeedAProject();
-//    connect(scene, &DeviceModelScene::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
-//    connect(scene, &DeviceModelScene::deleteBodyFrameSignal, this, &MainWindow::deleteBodyFrameSlot);
     connect(ui->projectTreeWidget, &QTreeWidget::itemPressed, this, &MainWindow::onProjectItemPressed);
     connect(ui->projectTreeWidget, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onProjectItemDoubleClicked);
 }
@@ -111,13 +108,22 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
     }
     else{
         std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWiget = currentBodyFrameList.value(frameId);
-        disconnect(bodyFrameCfgWiget.get());
-        bodyFrame->connectOkButtonToUpdateSignal();
-        bodyFrame->setParent(ui->paraConfigWidget);
-        bodyFrame->setMinimumHeight(501);
-        ui->paraConfigLayout->addWidget(bodyFrame.get());
+        BodyFrameCfgWidget* widget = new BodyFrameCfgWidget(*bodyFrameCfgWiget.get());
+        widget->setParent(ui->paraConfigWidget);
+        ui->paraConfigLayout->addWidget(widget);
         ui->paraConfigWidget->show();
-        bodyFrame->show();
+        widget->show();
+//        bodyFrameCfgWiget->setParent(ui->paraConfigWidget);
+//        ui->paraConfigLayout->addWidget(bodyFrameCfgWiget.get());
+//        ui->paraConfigWidget->show();
+//        bodyFrameCfgWiget->show();
+//        disconnect(bodyFrameCfgWiget.get());
+//        bodyFrame->connectOkButtonToUpdateSignal();
+//        bodyFrame->setParent(ui->paraConfigWidget);
+//        bodyFrame->setMinimumHeight(501);
+//        ui->paraConfigLayout->addWidget(bodyFrame.get());
+//        ui->paraConfigWidget->show();
+//        bodyFrame->show();
     }
 }
 

@@ -163,6 +163,7 @@ Module& BodyFrameItem::getModule(uint moduleId)
 void BodyFrameItem::addDataFrame(const DataFrame &dataFrame)
 {
     dataFrames[dataFrame.getFrameIdentification()] = dataFrame;
+    dataFramesOrder.push_back(dataFrame.getFrameIdentification());
 }
 
 void BodyFrameItem::modifyDataFrame(const DataFrame& dataFrame)
@@ -202,4 +203,9 @@ const std::map<std::string, DataFrame> &BodyFrameItem::getDataFrames() const
 void BodyFrameItem::setDataFrames(const std::map<std::string, DataFrame> &newDataFrames)
 {
     dataFrames = newDataFrames;
+}
+
+void BodyFrameItem::changeDataFramesOrder(int index1, int index2)
+{
+    std::swap(dataFramesOrder.at(index1), dataFramesOrder.at(index2));
 }
