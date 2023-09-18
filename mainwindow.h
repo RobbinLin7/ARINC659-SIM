@@ -24,7 +24,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    BodyFrameItem getItem(){
+        BodyFrameItem item;
+        return item;
+    }
     void forTest();
 
 
@@ -85,8 +88,6 @@ private:
     void disableAllActionNeedAProject();
 
     void enableAllActionNeedAProject();
-
-    BodyFrameItem getBodyFrameItem();
 
     MyXml myXml;
 

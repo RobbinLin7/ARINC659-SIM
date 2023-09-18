@@ -70,6 +70,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
+QMAKE_CXXFLAGS += --std=c++11 -fno-elide-constructors
 RESOURCES += \
     resources.qrc

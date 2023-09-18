@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    BodyFrameItem hhhItem = getBodyFrameItem();
+    BodyFrameItem hhhItem = getItem();
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
@@ -337,11 +337,6 @@ void MainWindow::enableAllActionNeedAProject()
     this->ui->menuSimulink->setEnabled(true);
 }
 
-BodyFrameItem MainWindow::getBodyFrameItem()
-{
-    BodyFrameItem item;
-    return std::move(item);
-}
 
 void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
 {
@@ -404,5 +399,6 @@ void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
 void MainWindow::onProjectItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     qDebug() << "double clicked";
-
 }
+
+

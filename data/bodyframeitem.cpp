@@ -2,7 +2,7 @@
 
 BodyFrameItem::BodyFrameItem()
 {
-
+    std::cout << "constructor" << std::endl;
 }
 
 BodyFrameItem::BodyFrameItem(const BodyFrameItem &bodyFrameItem)
