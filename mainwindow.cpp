@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    BodyFrameItem hhhItem = getItem();
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     scene = new DeviceModelScene();
@@ -25,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     test = new QAction("关闭项目", ui->projectTreeWidget);
     this->initMainWindow();
     disableAllActionNeedAProject();
-//    connect(scene, &DeviceModelScene::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
-//    connect(scene, &DeviceModelScene::deleteBodyFrameSignal, this, &MainWindow::deleteBodyFrameSlot);
     connect(ui->projectTreeWidget, &QTreeWidget::itemPressed, this, &MainWindow::onProjectItemPressed);
     connect(ui->projectTreeWidget, &QTreeWidget::itemDoubleClicked, this, &MainWindow::onProjectItemDoubleClicked);
 }
@@ -47,8 +44,8 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
     //bodyFrameNum++;
     bodyFrame = std::make_shared<BodyFrameCfgWidget>(currentProject->getMinUnusedId(), this);
     //BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateFrameSignal, this, &MainWindow::updateBodyFrameSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
+    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateBodyFrameItemSignal, this, &MainWindow::updateBodyFrameSlot);
     //myBodyFrameList.insert(bodyFrameNum, bodyFrame);
     bodyFrame->setBodyFrameID(bodyFrameNum);
     bodyFrame->setWindowFlags(Qt::Dialog);
@@ -59,7 +56,7 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
 /**
  * @brief MainWindow::saveFrame
  */
-void MainWindow::saveBodyFrameItemSlot(BodyFrameItem bodyFrameItem){
+void MainWindow::saveBodyFrameItemSlot(const BodyFrameItem& bodyFrameItem){
     currentProject->addBodyFrameItem(bodyFrameItem);
     std::shared_ptr<BodyFrameGraphicsItem> graphicsItem = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(bodyFrameItem, this));
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
@@ -80,7 +77,7 @@ void MainWindow::saveBodyFrameItemSlot(BodyFrameItem bodyFrameItem){
 }
 
 
-void MainWindow::updateBodyFrameSlot()
+void MainWindow::updateBodyFrameSlot(const BodyFrameItem& bodyFrameItem)
 {
     qDebug() << "update success";
 }
@@ -110,13 +107,23 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         return;
     }
     else{
-        std::shared_ptr<BodyFrameCfgWidget> bodyFrame = currentBodyFrameList.value(frameId);
-        bodyFrame->connectOkButtonToUpdateSignal();
-        bodyFrame->setParent(ui->paraConfigWidget);
-        bodyFrame->setMinimumHeight(501);
-        ui->paraConfigLayout->addWidget(bodyFrame.get());
+        std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWiget = currentBodyFrameList.value(frameId);
+        BodyFrameCfgWidget* widget = new BodyFrameCfgWidget(*bodyFrameCfgWiget.get());
+        widget->setParent(ui->paraConfigWidget);
+        ui->paraConfigLayout->addWidget(widget);
         ui->paraConfigWidget->show();
-        bodyFrame->show();
+        widget->show();
+//        bodyFrameCfgWiget->setParent(ui->paraConfigWidget);
+//        ui->paraConfigLayout->addWidget(bodyFrameCfgWiget.get());
+//        ui->paraConfigWidget->show();
+//        bodyFrameCfgWiget->show();
+//        disconnect(bodyFrameCfgWiget.get());
+//        bodyFrame->connectOkButtonToUpdateSignal();
+//        bodyFrame->setParent(ui->paraConfigWidget);
+//        bodyFrame->setMinimumHeight(501);
+//        ui->paraConfigLayout->addWidget(bodyFrame.get());
+//        ui->paraConfigWidget->show();
+//        bodyFrame->show();
     }
 }
 
@@ -146,7 +153,7 @@ void MainWindow::initMainWindow()
     this->setWindowTitle(tr("ARINC659配置工具"));
 
     //输出日志信息
-    ui->logTextBrowser->append(tr("等待用户操作"));
+    ui->logTextBrowser->append(tr("开始"));
 
     //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
 

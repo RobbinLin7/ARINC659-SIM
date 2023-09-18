@@ -1,4 +1,4 @@
-#ifndef MODULECFGWIDGET_H
+﻿#ifndef MODULECFGWIDGET_H
 #define MODULECFGWIDGET_H
 
 #include <QWidget>
@@ -15,7 +15,9 @@ class ModuleCfgWidget : public QWidget
     Q_OBJECT
 
 public:
+    enum Type{add, modify};
     explicit ModuleCfgWidget(QWidget *parent = nullptr);
+    explicit ModuleCfgWidget(uint moduleNumber, Module& module, Type type, QWidget* parent = nullptr);
     ~ModuleCfgWidget();
 
 private:
@@ -24,9 +26,16 @@ private:
     QValidator* initialWaitTimeValidator = nullptr;
     int dummy = 0;
     void installValidator();
-    uint moduleNumber;      //妯″潡鍙
+    bool check(QWidget*);
+    Module &module;
+    Type type;
 private slots:
-    void checkLineEditText();
+    void checkLineEditTextSlot();
+    void on_okPushButton_clicked(bool);
+    void on_cancelPushButton_clicked(bool);
+signals:
+    void addModuleSignal();
+    void modifyModuleSignal(const Module&);
 };
 
 #endif // MODULECFGWIDGET_H

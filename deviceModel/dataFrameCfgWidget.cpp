@@ -1,17 +1,35 @@
-#include "dataFrameCfgWidget.h"
+﻿#include "dataFrameCfgWidget.h"
 #include "ui_dataFrameCfgWidget.h"
+#include <QMessageBox>
 
-DataFrameCfgWidget::DataFrameCfgWidget(QWidget *parent) :
+DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::DataFrameCfgWidget)
+    ui(new Ui::DataFrameCfgWidget),
+    dataframes(dataframes),
+    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes)
 {
     ui->setupUi(this);
+    ui->equalAllocRadioButton->setChecked(true);
     ui->framePeriod_lineEdit->setText("30");
     ui->framePeriod_lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
     this->setWindowTitle(tr("帧配置"));
     installValidator();
     connect(ui->framePeriod_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
     connect(ui->frameIdentification_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
+}
+
+DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+    ui(new Ui::DataFrameCfgWidget),
+    dataframes(dataframes),
+    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
+    dataFrame(dataFrame)
+{
+    ui->setupUi(this);
+    ui->frameIdentification_lineEdit->setEnabled(false);
+    this->setWindowTitle(tr("帧配置"));
+    setForm();
+    connect(ui->framePeriod_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
+    installValidator();
 }
 
 DataFrameCfgWidget::~DataFrameCfgWidget()
@@ -23,12 +41,30 @@ void DataFrameCfgWidget::installValidator()
 {
     framePeriodValidator = new QIntValidator(minFramePeriod, maxFramePeriod, this);
     ui->framePeriod_lineEdit->setValidator(framePeriodValidator);
+    ui->frameIdentification_lineEdit->setValidator(&frameIdentificationValidator);
+}
 
-    QRegExp regExp("[a-zA-Z][a-zA-Z0-9]*");
+bool DataFrameCfgWidget::check(QWidget *widget)
+{
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(widget);
+    if(lineEdit != nullptr){
+        QString input = lineEdit->text();
+        if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    return false;
+}
 
-    frameIdentificationValidator = new QRegExpValidator(regExp, this);
-    if(frameIdentificationValidator == nullptr) qDebug() << "wssb";
-    ui->frameIdentification_lineEdit->setValidator(frameIdentificationValidator);
+void DataFrameCfgWidget::setForm()
+{
+    ui->frameIdentification_lineEdit->setText(QString::fromStdString(dataFrame.getFrameIdentification()));
+    ui->framePeriod_lineEdit->setText(QString::number(dataFrame.getFramePeriod()));
+    ui->idleWaitTime_lineEdit->setText(QString::number(dataFrame.getIdleWaitTime()));
+    dataFrame.getTimeAllocationType() == DataFrame::equalAlloc ? ui->equalAllocRadioButton->setChecked(true) : ui->downConcentrationAllocRadioButton->setChecked(true);
 }
 
 void DataFrameCfgWidget::checkLineEditText()
@@ -48,4 +84,28 @@ void DataFrameCfgWidget::checkLineEditText()
     else{
         lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
     }
+}
+
+void DataFrameCfgWidget::on_okPushButton_clicked(bool)
+{
+    if(check(ui->framePeriod_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "帧周期参数有误");
+        return;
+    }
+    else if(check(ui->frameIdentification_lineEdit) == false){
+        QMessageBox::warning(this, "错误", "模标识参数有误");
+        return;
+    }
+    dataFrame.setFramePeriod(ui->framePeriod_lineEdit->text().toUInt());
+    dataFrame.setFrameIdentification(ui->frameIdentification_lineEdit->text().toStdString());
+    dataFrame.setIdleWaitTime(ui->idleWaitTime_lineEdit->text().toUInt());
+    dataFrame.setTotalWindow(ui->totalWindow_lineEdit->text().toUInt());
+    dataFrame.setTimeAllocationType(ui->equalAllocRadioButton->isChecked() ? DataFrame::equalAlloc : DataFrame::downConcentrationAlloc);
+    emit saveDataFrameSignal(dataFrame);
+    this->close();
+}
+
+void DataFrameCfgWidget::on_cancelPushButton_clicked(bool)
+{
+    this->close();
 }

@@ -4,13 +4,13 @@
 #include "data/dataframe.h"
 #include <iostream>
 #include <utility>
+#include <vector>
+#include <map>
 typedef unsigned int uint;
-const uint maxFrameId = 15;
+const uint minFrameId = 0, maxFrameId = 15;
 const uint minArbitrationStepDuration = 3, maxArbitrationStepDuration = 10;
 const uint minTimeCalibrationFactor = 0, maxTimeCalibrationFactor = 63;
 const uint minMessageInterval = 2, maxMessageInterval = 9;
-const uint minModuleNumber = 0, maxModuleNumber = 31;
-const uint minFramePeriod = 0, maxFramePeriod = 10000;
 class BodyFrameItem
 {
 public:
@@ -18,13 +18,13 @@ public:
 
     BodyFrameItem(const BodyFrameItem&);    //拷贝构造函数
 
-    BodyFrameItem(BodyFrameItem&&);         //移动构造函数
+//    BodyFrameItem(BodyFrameItem&&);         //移动构造函数
 
-    BodyFrameItem &operator=(const BodyFrameItem&); //拷贝赋值运算符
+//    BodyFrameItem &operator=(const BodyFrameItem&); //拷贝赋值运算符
 
-    BodyFrameItem &operator=(BodyFrameItem&&);      //移动运算符
+//    BodyFrameItem &operator=(BodyFrameItem&&);      //移动运算符
 
-    ~BodyFrameItem();
+    //~BodyFrameItem();
 
     uint getArbitrationStepDuration() const;
     void setArbitrationStepDuration(uint newArbitrationStepDuration);
@@ -44,17 +44,36 @@ public:
     uint getMessageInterval() const;
     void setMessageInterval(uint newMessageInterval);
 
+
+    const std::vector<Module> &getModules() const;
+    void setModules(const std::vector<Module> &newModules);
+
+    //模块数组和帧数组的增、删、改、查
+    void addModule(const Module&);
+    void modifyModule(const Module&);
+    void deleteModule(uint);
+    Module& getModule(uint);
+    void addDataFrame(const DataFrame&);
+    void modifyDataFrame(const DataFrame&);
+    void deleteDataFrame(std::string);
+    DataFrame& getDataFrame(std::string);
+    uint getMinUnusedModuleId();
+
+    const std::map<std::string, DataFrame> &getDataFrames() const;
+    void setDataFrames(const std::map<std::string, DataFrame> &newDataFrames);
+
+    void changeDataFramesOrder(int index1, int index2);
+
 private:
-     uint bodyFrameItemID;           //机架号
-     uint arbitrationStepDuration;   //主/后备仲裁步进时长
-     uint timeCalibrationFactor;     //时间标定因子
-     uint messageInterval;           //消息间隔
-     uint majorVersionNumber;        //主版本号
-     uint subVersionNumber;          //次版本号
-     Module* modules = nullptr;      //模块数组
-     uint modulesCnt = 0;            //模块数组大小
-     DataFrame* dataFrames = nullptr;//帧数组
-     uint dataFramesCnt = 0;         //帧数组大小
+     mutable uint bodyFrameItemID;                  //机架号
+     uint arbitrationStepDuration;                  //主/后备仲裁步进时长
+     uint timeCalibrationFactor;                    //时间标定因子
+     uint messageInterval;                          //消息间隔
+     uint majorVersionNumber;                       //主版本号
+     uint subVersionNumber;                         //次版本号
+     std::map<uint, Module> modules;                //模块数组
+     std::map<std::string, DataFrame> dataFrames;   //帧数组
+     std::vector<std::string> dataFramesOrder;      //帧数组顺序
 };
 
 #endif // BODYFRAMEITEM_H
