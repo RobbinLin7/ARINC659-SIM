@@ -14,6 +14,18 @@ BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
     installValidator();
 }
 
+BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem bodyFrameItem, QWidget *parent):
+    QWidget(parent),
+    ui(new Ui::BodyFrameCfgWidget),
+    bodyFrameItem(bodyFrameItem)
+{
+    ui->setupUi(this);
+    this->initWidget();
+    setForm();
+    installEventFilter();
+    installValidator();
+}
+
 //BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent):
 //    QWidget(parent),
 //    ui(new Ui::BodyFrameCfgWidget),
@@ -103,40 +115,42 @@ void BodyFrameCfgWidget::setStdTableHeader(QTableWidget *widget, const QStringLi
     widget->horizontalHeader()->sectionResizeMode(QHeaderView::Interactive);
 }
 
-void BodyFrameCfgWidget::addModuleSlot()
+void BodyFrameCfgWidget::addModuleSlot(const Module& module)
 {
-    bodyFrameItem.addModule(*module.get());
-    int rowIndex = ui->moduleTableWidget->rowCount();
-    ui->moduleTableWidget->insertRow(rowIndex);
-    QTableWidgetItem *moduleNumberItem = new QTableWidgetItem(QString::number(module->getModuleNumber()));
-    QTableWidgetItem *initialWaitTimeItem = new QTableWidgetItem(QString::number(module->getInitialWaitTime()));
-    QTableWidgetItem *moduleNameItem = new QTableWidgetItem(QString::fromStdString(module->getModuleName()));
-    moduleNumberItem->setTextAlignment(Qt::AlignCenter);
-    initialWaitTimeItem->setTextAlignment(Qt::AlignCenter);
-    moduleNameItem->setTextAlignment(Qt::AlignCenter);
-    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
-    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
-    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
-    addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
+    bodyFrameItem.addModule(module);
+    addModuleToTableWidget(module);
+//    int rowIndex = ui->moduleTableWidget->rowCount();
+//    ui->moduleTableWidget->insertRow(rowIndex);
+//    QTableWidgetItem *moduleNumberItem = new QTableWidgetItem(QString::number(module.getModuleNumber()));
+//    QTableWidgetItem *initialWaitTimeItem = new QTableWidgetItem(QString::number(module.getInitialWaitTime()));
+//    QTableWidgetItem *moduleNameItem = new QTableWidgetItem(QString::fromStdString(module.getModuleName()));
+//    moduleNumberItem->setTextAlignment(Qt::AlignCenter);
+//    initialWaitTimeItem->setTextAlignment(Qt::AlignCenter);
+//    moduleNameItem->setTextAlignment(Qt::AlignCenter);
+//    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
+//    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
+//    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
+//    addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
 }
 
 void BodyFrameCfgWidget::addDataFrameSlot(const DataFrame &dataFrame)
 {
     bodyFrameItem.addDataFrame(dataFrame);
-    int rowIndex = ui->dataFrameTableWidget->rowCount();
-    ui->dataFrameTableWidget->insertRow(rowIndex);
-    QTableWidgetItem* dataFrameIdentificationItem = nullptr;
-    (dataFrameIdentificationItem = new QTableWidgetItem(QString::fromStdString(dataFrame.getFrameIdentification())))->setTextAlignment(Qt::AlignCenter);
-    QTableWidgetItem* dataFrameTotalWindowItem = nullptr;
-    (dataFrameTotalWindowItem = new QTableWidgetItem(QString::number(dataFrame.getTotalWindow())))->setTextAlignment(Qt::AlignCenter);
-    QTableWidgetItem* dataFramePeriodItem = nullptr;
-    (dataFramePeriodItem = new QTableWidgetItem(QString::number(dataFrame.getFramePeriod())))->setTextAlignment(Qt::AlignCenter);
-    QTableWidgetItem* dataFrameIdleWayItem = nullptr;
-    (dataFrameIdleWayItem = new QTableWidgetItem("不知道是什么东西"))->setTextAlignment(Qt::AlignCenter);
-    QTableWidgetItem* dataFrameChildFramesItem = nullptr;
-    (dataFrameChildFramesItem = new QTableWidgetItem("不知道啥*2"))->setTextAlignment(Qt::AlignCenter);
-    addTableItems(ui->dataFrameTableWidget, rowIndex, dataFrameIdentificationItem, dataFrameTotalWindowItem, dataFramePeriodItem, dataFrameIdleWayItem,
-                  dataFrameChildFramesItem, nullptr);
+    addDataFrameToTableWidget(dataFrame);
+//    int rowIndex = ui->dataFrameTableWidget->rowCount();
+//    ui->dataFrameTableWidget->insertRow(rowIndex);
+//    QTableWidgetItem* dataFrameIdentificationItem = nullptr;
+//    (dataFrameIdentificationItem = new QTableWidgetItem(QString::fromStdString(dataFrame.getFrameIdentification())))->setTextAlignment(Qt::AlignCenter);
+//    QTableWidgetItem* dataFrameTotalWindowItem = nullptr;
+//    (dataFrameTotalWindowItem = new QTableWidgetItem(QString::number(dataFrame.getTotalWindow())))->setTextAlignment(Qt::AlignCenter);
+//    QTableWidgetItem* dataFramePeriodItem = nullptr;
+//    (dataFramePeriodItem = new QTableWidgetItem(QString::number(dataFrame.getFramePeriod())))->setTextAlignment(Qt::AlignCenter);
+//    QTableWidgetItem* dataFrameIdleWayItem = nullptr;
+//    (dataFrameIdleWayItem = new QTableWidgetItem("不知道是什么东西"))->setTextAlignment(Qt::AlignCenter);
+//    QTableWidgetItem* dataFrameChildFramesItem = nullptr;
+//    (dataFrameChildFramesItem = new QTableWidgetItem("不知道啥*2"))->setTextAlignment(Qt::AlignCenter);
+//    addTableItems(ui->dataFrameTableWidget, rowIndex, dataFrameIdentificationItem, dataFrameTotalWindowItem, dataFramePeriodItem, dataFrameIdleWayItem,
+//                  dataFrameChildFramesItem, nullptr);
 //    ui->dataFrameTableWidget->setItem(rowIndex, 0, dataFrameIdentificationItem);
 //    ui->dataFrameTableWidget->setItem(rowIndex, 1, dataFrameTotalWindowItem);
 //    ui->dataFrameTableWidget->setItem(rowIndex, 2, dataFramePeriodItem);
@@ -166,8 +180,8 @@ void BodyFrameCfgWidget::on_modifyModuleBtn_clicked(bool)
         qDebug() << ui->moduleTableWidget->item(row, 0)->text();
         uint moduleId = ui->moduleTableWidget->item(row, 0)->text().toUInt();
         Module& module = bodyFrameItem.getModule(moduleId);
-        ModuleCfgWidget *hm = new ModuleCfgWidget(bodyFrameItem.getMinUnusedModuleId(), module, ModuleCfgWidget::modify, this);
-        connect(hm, &ModuleCfgWidget::modifyModuleSignal, this, &BodyFrameCfgWidget::modifyModuleSlot);
+        ModuleCfgWidget *hm = new ModuleCfgWidget(module, this);
+        connect(hm, &ModuleCfgWidget::saveModuleSignal, this, &BodyFrameCfgWidget::modifyModuleSlot);
         hm->setWindowFlag(Qt::Dialog);
         hm->show();
     }
@@ -194,9 +208,9 @@ void BodyFrameCfgWidget::on_deleteModuleBtn_clicked(bool)
 void BodyFrameCfgWidget::on_addModuleBtn_clicked()
 {
     module = std::shared_ptr<Module>(new Module());
-    ModuleCfgWidget *hm = new ModuleCfgWidget(bodyFrameItem.getMinUnusedModuleId(), *module, ModuleCfgWidget::add, this);
+    ModuleCfgWidget *hm = new ModuleCfgWidget(bodyFrameItem.getMinUnusedModuleId(), this);
     hm->setWindowFlag(Qt::Dialog);
-    connect(hm, &ModuleCfgWidget::addModuleSignal, this, &BodyFrameCfgWidget::addModuleSlot);
+    connect(hm, &ModuleCfgWidget::saveModuleSignal, this, &BodyFrameCfgWidget::addModuleSlot);
     hm->show();
 }
 
@@ -286,8 +300,31 @@ void BodyFrameCfgWidget::on_moveDownBtn_clicked()
     exchangeDataFrameItemOrder(row1, row2);
 }
 
+void BodyFrameCfgWidget::showEvent(QShowEvent *event)
+{
+    if(openMode == Modified){
+        ui->id_lineEdit->setText(QString::number(bodyFrameItem.getBodyFrameItemID()));
+        ui->arbitrationStepDuration_lineEdit->setText(QString::number(bodyFrameItem.getArbitrationStepDuration()));
+        ui->timeCalibrationFactor_lineEdit->setText(QString::number(bodyFrameItem.getTimeCalibrationFactor()));
+        ui->messageInterval_lineEdit->setText(QString::number(bodyFrameItem.getMessageInterval()));
+        ui->majorVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getMajorVersionNumber()));
+        ui->subVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getSubVersionNumber()));
+        auto dataFrames = bodyFrameItem.getDataFrames();
+        ui->dataFrameTableWidget->clear();
+        ui->moduleTableWidget->clear();
+        for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
+            addDataFrameSlot(dataFrames.at(dataFrameId));
+        }
+        for(auto& module : bodyFrameItem.getModules()){
+            addModuleSlot(module.second);
+        }
+    }
+    QWidget::showEvent(event);
+}
+
 void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
 {
+    openMode = Modified;
     if(ok){
         ok = false;
         e->accept();
@@ -354,9 +391,40 @@ bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched, event);
 }
 
+void BodyFrameCfgWidget::setForm()
+{
+    ui->id_lineEdit->setText(QString::number(bodyFrameItem.getBodyFrameItemID()));
+    ui->arbitrationStepDuration_lineEdit->setText(QString::number(bodyFrameItem.getArbitrationStepDuration()));
+    ui->timeCalibrationFactor_lineEdit->setText(QString::number(bodyFrameItem.getTimeCalibrationFactor()));
+    ui->messageInterval_lineEdit->setText(QString::number(bodyFrameItem.getMessageInterval()));
+    ui->majorVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getMajorVersionNumber()));
+    ui->subVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getSubVersionNumber()));
+    auto dataFrames = bodyFrameItem.getDataFrames();
+//    removeTableWidgetItems(ui->dataFrameTableWidget);
+//    removeTableWidgetItems(ui->moduleTableWidget);
+//    ui->moduleTableWidget->clear();
+    for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
+        addDataFrameToTableWidget(dataFrames.at(dataFrameId));
+    }
+    for(auto& module : bodyFrameItem.getModules()){
+        addModuleToTableWidget(module.second);
+    }
+}
+
 const BodyFrameItem &BodyFrameCfgWidget::getBodyFrameItem() const
 {
     return bodyFrameItem;
+}
+
+void BodyFrameCfgWidget::removeTableWidgetItems(QTableWidget *tableWidget)
+{
+    // 获取表格的行数和列数
+    int rowCount = tableWidget->rowCount();
+
+    // 清除除标题行以外的所有行
+    for (int row = rowCount - 1; row > 0; row--) {
+        tableWidget->removeRow(row);
+    }
 }
 
 void BodyFrameCfgWidget::installEventFilter()
@@ -398,6 +466,42 @@ bool BodyFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, 
         currentItem = va_arg(args, QTableWidgetItem*);
     }
     va_end(args);
+    return true;
+}
+
+bool BodyFrameCfgWidget::addModuleToTableWidget(const Module& module)
+{
+    int rowIndex = ui->moduleTableWidget->rowCount();
+    ui->moduleTableWidget->insertRow(rowIndex);
+    QTableWidgetItem *moduleNumberItem = new QTableWidgetItem(QString::number(module.getModuleNumber()));
+    QTableWidgetItem *initialWaitTimeItem = new QTableWidgetItem(QString::number(module.getInitialWaitTime()));
+    QTableWidgetItem *moduleNameItem = new QTableWidgetItem(QString::fromStdString(module.getModuleName()));
+    moduleNumberItem->setTextAlignment(Qt::AlignCenter);
+    initialWaitTimeItem->setTextAlignment(Qt::AlignCenter);
+    moduleNameItem->setTextAlignment(Qt::AlignCenter);
+    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
+    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
+    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
+    addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
+    return true;
+}
+
+bool BodyFrameCfgWidget::addDataFrameToTableWidget(const DataFrame &dataFrame)
+{
+    int rowIndex = ui->dataFrameTableWidget->rowCount();
+    ui->dataFrameTableWidget->insertRow(rowIndex);
+    QTableWidgetItem* dataFrameIdentificationItem = nullptr;
+    (dataFrameIdentificationItem = new QTableWidgetItem(QString::fromStdString(dataFrame.getFrameIdentification())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameTotalWindowItem = nullptr;
+    (dataFrameTotalWindowItem = new QTableWidgetItem(QString::number(dataFrame.getTotalWindow())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFramePeriodItem = nullptr;
+    (dataFramePeriodItem = new QTableWidgetItem(QString::number(dataFrame.getFramePeriod())))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameIdleWayItem = nullptr;
+    (dataFrameIdleWayItem = new QTableWidgetItem("不知道是什么东西"))->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* dataFrameChildFramesItem = nullptr;
+    (dataFrameChildFramesItem = new QTableWidgetItem("不知道啥*2"))->setTextAlignment(Qt::AlignCenter);
+    addTableItems(ui->dataFrameTableWidget, rowIndex, dataFrameIdentificationItem, dataFrameTotalWindowItem, dataFramePeriodItem, dataFrameIdleWayItem,
+                  dataFrameChildFramesItem, nullptr);
     return true;
 }
 
@@ -479,6 +583,9 @@ void BodyFrameCfgWidget::initWidget()
     headerList << tr("帧标识") << tr("窗口数") << tr("帧周期") << tr("空闲方式") << tr("子帧");
     setStdTableHeader(ui->dataFrameTableWidget, headerList);
 }
+
+
+
 
 
 

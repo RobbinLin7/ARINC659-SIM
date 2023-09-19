@@ -79,7 +79,7 @@ private:
 
     QVBoxLayout *layout;
 
-    std::shared_ptr<BodyFrameCfgWidget> bodyFrame;
+    std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWidget;
 
     void initMainWindow();
 

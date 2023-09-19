@@ -2,23 +2,27 @@
 #include "ui_modulecfgwidget.h"
 #include <QMessageBox>
 
-ModuleCfgWidget::ModuleCfgWidget(uint moduleNumber, Module& module, Type type, QWidget *parent):
+ModuleCfgWidget::ModuleCfgWidget(const Module &module, QWidget *parent):
     QWidget(parent),
-    type(type),
-    module(module),
+    ui(new Ui::ModuleCfgWidget)
+{
+    ui->setupUi(this);
+    installValidator();
+    this->module = module;
+    setForm();
+    connect(ui->moduleNumber_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
+    connect(ui->initialWaitTime_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
+    this->setWindowTitle(tr("模块配置"));
+}
+
+ModuleCfgWidget::ModuleCfgWidget(uint moduleNumber, QWidget *parent):
+    QWidget(parent),
     ui(new Ui::ModuleCfgWidget)
 {
     ui->setupUi(this);
     installValidator();
     ui->moduleNumber_lineEdit->setText(QString::number(moduleNumber));
     ui->moduleNumber_lineEdit->setEnabled(false);
-    if(type == modify){
-        ui->moduleName_lineEdit->setText(QString::fromStdString(module.getModuleName()));
-        ui->moduleNumber_lineEdit->setText(QString::number(module.getModuleNumber()));
-        ui->moduleNumber_lineEdit->setEnabled(false);
-        ui->initialWaitTime_lineEdit->setText(QString::number(module.getInitialWaitTime()));
-        ui->moduleTypeComboBox->setCurrentIndex(module.getModuleType() == Module::physicalModule ? 0 : 1);
-    }
     connect(ui->moduleNumber_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
     connect(ui->initialWaitTime_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
     this->setWindowTitle(tr("模块配置"));
@@ -54,6 +58,15 @@ bool ModuleCfgWidget::check(QWidget *widget)
     return false;
 }
 
+void ModuleCfgWidget::setForm()
+{
+    ui->moduleName_lineEdit->setText(QString::fromStdString(module.getModuleName()));
+    ui->moduleNumber_lineEdit->setText(QString::number(module.getModuleNumber()));
+    ui->moduleNumber_lineEdit->setEnabled(false);
+    ui->initialWaitTime_lineEdit->setText(QString::number(module.getInitialWaitTime()));
+    ui->moduleTypeComboBox->setCurrentIndex(module.getModuleType() == Module::physicalModule ? 0 : 1);
+}
+
 void ModuleCfgWidget::checkLineEditTextSlot()
 {
     QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(sender());
@@ -81,12 +94,7 @@ void ModuleCfgWidget::on_okPushButton_clicked(bool)
     }
     module.setInitialWaitTime(ui->initialWaitTime_lineEdit->text().toUInt());
     module.setModuleType(ui->moduleTypeComboBox->currentIndex() == 0 ? Module::physicalModule : Module::simulationModule);
-    if(type == add){
-        emit addModuleSignal();
-    }
-    else{
-        emit modifyModuleSignal(module);
-    }
+    emit saveModuleSignal(module);
     this->close();
 }
 
@@ -94,3 +102,4 @@ void ModuleCfgWidget::on_cancelPushButton_clicked(bool)
 {
     this->close();
 }
+

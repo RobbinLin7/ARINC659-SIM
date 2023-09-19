@@ -28,15 +28,15 @@ class BodyFrameCfgWidget : public QWidget
 public:
     enum OpenMode{New, Modified};
     explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
-    explicit BodyFrameCfgWidget(const BodyFrameItem &bodyFrameItem, QWidget *parent = nullptr);
-    BodyFrameCfgWidget(const BodyFrameCfgWidget&);
+    explicit BodyFrameCfgWidget(const BodyFrameItem bodyFrameItem, QWidget *parent = nullptr);
+    //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     //explicit BodyFrameCfgWidget(BodyFrameItem& bodyFrameItem, QWidget *parent = nullptr);
     //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     ~BodyFrameCfgWidget();
     void setBodyFrameID(const uint &id);
     void connectOkButtonToUpdateSignal();
-
     const BodyFrameItem &getBodyFrameItem() const;
+    static void removeTableWidgetItems(QTableWidget* tableWidget);
 
 private slots:
 
@@ -46,6 +46,8 @@ protected:
     //void mouseReleaseEvent(QObject* sender, QMouseEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 private:
+    void setForm();
+
     Ui::BodyFrameCfgWidget *ui;
 
     OpenMode openMode;
@@ -103,7 +105,8 @@ private:
     bool check(QWidget *widget);
 
     bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
-
+    bool addModuleToTableWidget(const Module&);
+    bool addDataFrameToTableWidget(const DataFrame&);
     bool exchangeDataFrameItemOrder(int row1, int row2);
 signals:
 
@@ -112,7 +115,7 @@ signals:
     void updateBodyFrameItemSignal(const BodyFrameItem&);
 
 private slots:
-    void addModuleSlot();
+    void addModuleSlot(const Module&);
     void addDataFrameSlot(const DataFrame&);
     void modifyModuleSlot(const Module&);
     void modifyDataFrameSlot(const DataFrame&);
@@ -127,6 +130,10 @@ private slots:
     void on_moveUpBtn_clicked();
     void on_moveDownBtn_clicked();
 
+
+    // QWidget interface
+protected:
+    void showEvent(QShowEvent *event);
 };
 
 #endif // BODYFRAME_H

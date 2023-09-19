@@ -9,7 +9,7 @@ DataFrame &DataFrame::operator=(const DataFrame &dataFrame)
 {
     this->framePeriod = dataFrame.framePeriod;
     this->totalWindow = dataFrame.totalWindow;
-    //this->frameIdentification = dataFrame.frameIdentification;
+    this->frameIdentification = dataFrame.frameIdentification;
     this->idleWaitTime = dataFrame.idleWaitTime;
     this->timeAllocationType = dataFrame.timeAllocationType;
     return *this;

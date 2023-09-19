@@ -16,7 +16,7 @@ class BodyFrameItem
 public:
     BodyFrameItem();
 
-    BodyFrameItem(const BodyFrameItem&);    //拷贝构造函数
+//    BodyFrameItem(const BodyFrameItem&);    //拷贝构造函数
 
 //    BodyFrameItem(BodyFrameItem&&);         //移动构造函数
 
@@ -45,9 +45,6 @@ public:
     void setMessageInterval(uint newMessageInterval);
 
 
-    const std::vector<Module> &getModules() const;
-    void setModules(const std::vector<Module> &newModules);
-
     //模块数组和帧数组的增、删、改、查
     void addModule(const Module&);
     void modifyModule(const Module&);
@@ -63,6 +60,10 @@ public:
     void setDataFrames(const std::map<std::string, DataFrame> &newDataFrames);
 
     void changeDataFramesOrder(int index1, int index2);
+    const std::vector<std::string>& getDataFramesOrder() const;
+
+    const std::map<uint, Module> &getModules() const;
+    void setModules(const std::map<uint, Module> &newModules);
 
 private:
      mutable uint bodyFrameItemID;                  //机架号

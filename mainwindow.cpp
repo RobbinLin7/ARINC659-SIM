@@ -42,16 +42,16 @@ void MainWindow::forTest()
 void MainWindow::on_actionNewBodyFrameItem_triggered()
 {
     //bodyFrameNum++;
-    bodyFrame = std::make_shared<BodyFrameCfgWidget>(currentProject->getMinUnusedId(), this);
+    bodyFrameCfgWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getMinUnusedId(), this);
     //BodyFrame *bodyFrame = new BodyFrame(this);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
-    connect(bodyFrame.get(), &BodyFrameCfgWidget::updateBodyFrameItemSignal, this, &MainWindow::updateBodyFrameSlot);
+    connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
+    //connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::updateBodyFrameItemSignal, this, &MainWindow::updateBodyFrameSlot);
     //myBodyFrameList.insert(bodyFrameNum, bodyFrame);
-    bodyFrame->setBodyFrameID(bodyFrameNum);
-    bodyFrame->setWindowFlags(Qt::Dialog);
+    bodyFrameCfgWidget->setBodyFrameID(bodyFrameNum);
+    bodyFrameCfgWidget->setWindowFlags(Qt::Dialog);
     //bodyFrame->setWindowModality(Qt::WindowModal);
-    bodyFrame->setWindowModality(Qt::WindowModal);
-    bodyFrame->show();
+    bodyFrameCfgWidget->setWindowModality(Qt::WindowModal);
+    bodyFrameCfgWidget->show();
 }
 /**
  * @brief MainWindow::saveFrame
@@ -64,7 +64,7 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrameItem& bodyFrameItem){
         qDebug() << "scene addbodyframeitem failed";
         return;
     }
-    currentBodyFrameList.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrame);
+    currentBodyFrameList.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrameCfgWidget);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
     auto p = ui->projectTreeWidget->findItems("机架配置", Qt::MatchContains | Qt::MatchRecursive);
@@ -107,16 +107,22 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         return;
     }
     else{
-        std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWiget = currentBodyFrameList.value(frameId);
-        BodyFrameCfgWidget* widget = new BodyFrameCfgWidget(*bodyFrameCfgWiget.get());
-        widget->setParent(ui->paraConfigWidget);
-        ui->paraConfigLayout->addWidget(widget);
-        ui->paraConfigWidget->show();
-        widget->show();
-//        bodyFrameCfgWiget->setParent(ui->paraConfigWidget);
-//        ui->paraConfigLayout->addWidget(bodyFrameCfgWiget.get());
+//        std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWiget = currentBodyFrameList.value(frameId);
+//        BodyFrameCfgWidget* widget = new BodyFrameCfgWidget(*bodyFrameCfgWiget.get());
+//        widget->setParent(ui->paraConfigWidget);
+//        ui->paraConfigLayout->addWidget(widget);
 //        ui->paraConfigWidget->show();
-//        bodyFrameCfgWiget->show();
+//        widget->show();
+        BodyFrameItem item = currentProject->getBodyFrameItem(frameId);
+        bodyFrameCfgWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
+        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const BodyFrameItem& item){
+            currentProject->addBodyFrameItem(item);
+        });
+        //connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, &MainWindow::saveBodyFrameItemSlot);
+        bodyFrameCfgWidget->setParent(ui->paraConfigWidget);
+        ui->paraConfigLayout->addWidget(bodyFrameCfgWidget.get());
+        ui->paraConfigWidget->show();
+        bodyFrameCfgWidget->show();
 //        disconnect(bodyFrameCfgWiget.get());
 //        bodyFrame->connectOkButtonToUpdateSignal();
 //        bodyFrame->setParent(ui->paraConfigWidget);

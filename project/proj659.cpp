@@ -88,3 +88,8 @@ bool Proj659::deleteBodyFrameItem(uint id)
         return true;
     }
 }
+
+BodyFrameItem Proj659::getBodyFrameItem(uint id) const
+{
+    return bodyFrameItems.value(id);
+}

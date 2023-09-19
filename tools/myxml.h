@@ -15,7 +15,7 @@ public:
     ~MyXml();
     bool loadXmlFile(const QString path);
     bool loadXmlFile();
-    bool writeXmlFile(Proj659& project659, const QString path);
+    bool writeXmlFile(const Proj659& project659, const QString path);
     bool writeXmlFile();
 
     void setPath(const QString &newPath);

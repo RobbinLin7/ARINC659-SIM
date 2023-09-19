@@ -19,6 +19,7 @@ DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& d
 }
 
 DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+    QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
     frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),

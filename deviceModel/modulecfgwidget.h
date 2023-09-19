@@ -16,8 +16,8 @@ class ModuleCfgWidget : public QWidget
 
 public:
     enum Type{add, modify};
-    explicit ModuleCfgWidget(QWidget *parent = nullptr);
-    explicit ModuleCfgWidget(uint moduleNumber, Module& module, Type type, QWidget* parent = nullptr);
+    explicit ModuleCfgWidget(const Module& module, QWidget *parent = nullptr);
+    explicit ModuleCfgWidget(uint moduleNumber, QWidget* parent = nullptr);
     ~ModuleCfgWidget();
 
 private:
@@ -27,15 +27,15 @@ private:
     int dummy = 0;
     void installValidator();
     bool check(QWidget*);
-    Module &module;
-    Type type;
+    Module module;
+    Type type = add;
+    void setForm();
 private slots:
     void checkLineEditTextSlot();
     void on_okPushButton_clicked(bool);
     void on_cancelPushButton_clicked(bool);
 signals:
-    void addModuleSignal();
-    void modifyModuleSignal(const Module&);
+    void saveModuleSignal(const Module&);
 };
 
 #endif // MODULECFGWIDGET_H

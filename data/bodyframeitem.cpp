@@ -5,16 +5,18 @@ BodyFrameItem::BodyFrameItem()
     std::cout << "constructor" << std::endl;
 }
 
-BodyFrameItem::BodyFrameItem(const BodyFrameItem &bodyFrameItem)
-{
-    std::cout << "copy constructor" << std::endl;
-    this->bodyFrameItemID = bodyFrameItem.bodyFrameItemID;
-    this->arbitrationStepDuration = bodyFrameItem.arbitrationStepDuration;
-    this->timeCalibrationFactor = bodyFrameItem.timeCalibrationFactor;
-    this->messageInterval = bodyFrameItem.messageInterval;
-    this->modules = bodyFrameItem.modules;
-    this->dataFrames = bodyFrameItem.dataFrames;
-}
+//BodyFrameItem::BodyFrameItem(const BodyFrameItem &bodyFrameItem)
+//{
+//    std::cout << "copy constructor" << std::endl;
+//    this->bodyFrameItemID = bodyFrameItem.bodyFrameItemID;
+//    this->arbitrationStepDuration = bodyFrameItem.arbitrationStepDuration;
+//    this->timeCalibrationFactor = bodyFrameItem.timeCalibrationFactor;
+//    this->messageInterval = bodyFrameItem.messageInterval;
+//    this->modules = bodyFrameItem.modules;
+//    this->dataFrames = bodyFrameItem.dataFrames;
+//    this->majorVersionNumber = bodyFrameItem.majorVersionNumber;
+//    this->subVersionNumber = bodyFrameItem.subVersionNumber;
+//}
 
 //BodyFrameItem::BodyFrameItem(BodyFrameItem &&bodyFrameItem)
 //{
@@ -137,7 +139,6 @@ void BodyFrameItem::setMessageInterval(uint newTimeInterval)
     messageInterval = newTimeInterval;
 }
 
-
 void BodyFrameItem::addModule(const Module &module)
 {
     modules.insert(std::make_pair(module.getModuleNumber(), module));
@@ -208,4 +209,19 @@ void BodyFrameItem::setDataFrames(const std::map<std::string, DataFrame> &newDat
 void BodyFrameItem::changeDataFramesOrder(int index1, int index2)
 {
     std::swap(dataFramesOrder.at(index1), dataFramesOrder.at(index2));
+}
+
+const std::vector<std::string> &BodyFrameItem::getDataFramesOrder() const
+{
+    return dataFramesOrder;
+}
+
+const std::map<uint, Module> &BodyFrameItem::getModules() const
+{
+    return modules;
+}
+
+void BodyFrameItem::setModules(const std::map<uint, Module> &newModules)
+{
+    modules = newModules;
 }

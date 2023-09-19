@@ -22,6 +22,7 @@ public:
     uint getMinUnusedId() const;
     bool addBodyFrameItem(const BodyFrameItem&);
     bool deleteBodyFrameItem(uint id);
+    BodyFrameItem getBodyFrameItem(uint id) const;
 private:
     QString name;
     QString description;
