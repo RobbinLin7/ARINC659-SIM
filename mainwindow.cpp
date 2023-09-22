@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->projectTreeWidget->clear();
     QStringList headerList;
     headerList << tr("项目信息");
+    //ui->graphicsView->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
     ui->projectTreeWidget->setHeaderLabels(headerList);
     bodyFrameNum = 0;
     test = new QAction("关闭项目", ui->projectTreeWidget);

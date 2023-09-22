@@ -24,6 +24,7 @@ SOURCES += \
     deviceModel/bodyFrameGraphicsItem.cpp \
     deviceModel/dataFrameCfgWidget.cpp \
     deviceModel/deviceModelScene.cpp \
+    deviceModel/linegraphicsitem.cpp \
     deviceModel/modulecfgwidget.cpp \
     dialog/stylesheetdialog.cpp \
     main.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     deviceModel/bodyFrameGraphicsItem.h \
     deviceModel/dataFrameCfgWidget.h \
     deviceModel/deviceModelScene.h \
+    deviceModel/linegraphicsitem.h \
     deviceModel/modulecfgwidget.h \
     dialog/stylesheetdialog.h \
     mainwindow.h \

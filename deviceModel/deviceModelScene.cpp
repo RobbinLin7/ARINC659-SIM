@@ -6,9 +6,22 @@
 #include <QAction>
 #include <QDebug>
 
-DeviceModelScene::DeviceModelScene()
+DeviceModelScene::DeviceModelScene():
+    Ax("Ax", QPoint(200, 700), QPoint(1000, 700)),
+    Ay("Ay", QPoint(200, 725), QPoint(1000, 725)),
+    Bx("Bx", QPoint(200, 750), QPoint(1000, 750)),
+    By("By", QPoint(200, 775), QPoint(1000, 775))
 {
+    Ax.setParent(this);
+    this->addItem(&Ax);
+    Ay.setParent(this);
+    this->addItem(&Ay);
+    Bx.setParent(this);
+    this->addItem(&Bx);
+    By.setParent(this);
+    this->addItem(&By);
 
+    this->setBackgroundBrush(QBrush(Qt::gray));
 }
 bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
 {
@@ -18,8 +31,9 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     item->setParent(this);
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
-    item->setPos(QPointF(10, 10));
+    item->setPos(QPointF(0, 0));
     this->addItem(item.get());
+
     return true;
 }
 
@@ -27,7 +41,7 @@ void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
-    qDebug() << "mousePressEvent";
+    //qDebug() << "mousePressEvent";
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 

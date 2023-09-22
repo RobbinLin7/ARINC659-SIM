@@ -4,6 +4,7 @@
 #include <memory>
 #include "bodyFrameGraphicsItem.h"
 #include "deviceModel/bodyFrameCfgWidget.h"
+#include "deviceModel/linegraphicsitem.h"
 #include <memory>
 #include <QMap>
 
@@ -42,6 +43,10 @@ private:
     static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
     BodyFrameGraphicsItem *selectedItem;
+    linegraphicsitem Ax;
+    linegraphicsitem Ay;
+    linegraphicsitem Bx;
+    linegraphicsitem By;
     //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:
