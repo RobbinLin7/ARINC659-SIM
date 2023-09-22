@@ -163,8 +163,8 @@ void MainWindow::initMainWindow()
 
     //qDebug() << ui->projectTreeWidget->width() << " " << ui->projectTreeWidget->height();
 
-    qDebug() << ui->projectTreeWidget->sizeHint().width() << ui->projectTreeWidget->sizeHint().height();
-    qDebug() << ui->projectTreeWidget->width() << ui->projectTreeWidget->height();
+    //qDebug() << ui->projectTreeWidget->sizeHint().width() << ui->projectTreeWidget->sizeHint().height();
+    //qDebug() << ui->projectTreeWidget->width() << ui->projectTreeWidget->height();
     ui->projectTreeWidget->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 
@@ -348,6 +348,18 @@ void MainWindow::enableAllActionNeedAProject()
     this->ui->menuCMDTableManagement->setEnabled(true);
     this->ui->menuMonitor->setEnabled(true);
     this->ui->menuSimulink->setEnabled(true);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    qDebug() << "scene" << scene->width() << scene->height();
+    qDebug() << "resize event graphicview" <<  ui->graphicsView->x() << ui->graphicsView->y() << ui->graphicsView->width() << " " << ui->graphicsView->height();
+    //scene->addLine(0, scene->height() - 200, scene->width() - 50, scene->height() - 200);
+    //scene->addLine(0, scene->height() - 150, scene->width() - 50, scene->height() - 150);
+    //scene->addLine(0, scene->height() - 100, scene->width() - 50, scene->height() - 100);
+    scene->addLine(scene->height() - 50, 0, scene->height() - 50, scene->width() - 50);
+    //scene->addLine(0, scene->height() - 200, scene->width() - 50, scene->height() - 200);
+    //scene->addLine(ui->graphicsView->x(), ui->graphicsView->y(), ui->graphicsView->x() + scene->width(), ui->graphicsView->y() + scene->height());
 }
 
 

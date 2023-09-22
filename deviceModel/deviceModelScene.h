@@ -26,6 +26,10 @@ public:
     DeviceModelScene();
     bool addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem>);
     void deleteBodyFrameItem();
+    void setAx(int x1, int y1, int x2, int y2);
+    void setAy(int, int, int, int);
+    void setBx(int, int, int, int);
+    void setBy(int, int, int, int);
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -38,10 +42,15 @@ private slots:
     void cfgBodyFrameItemSlot(uint);
     void deleteBodyFrameItemSlot(uint);
 
+
 private:
     static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
     BodyFrameGraphicsItem *selectedItem;
+    QLine Ax;
+    QLine Ay;
+    QLine Bx;
+    QLine By;
     //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:

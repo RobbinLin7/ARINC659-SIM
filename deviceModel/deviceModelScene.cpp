@@ -8,13 +8,25 @@
 
 DeviceModelScene::DeviceModelScene()
 {
-
+    //qDebug()
+    //qDebug() << "width" << this->width() << "height" << this->height();
+    //this->addLine(QLineF(0, 0, this->width(), this->height()), QPen());
+    //this->addLine(0, 100, 100, 100);
+    //update();
+    //this->addText("哈哈哈哈哈啊哈哈");
+    //qDebug() << "haha";
+    this->addLine(Ax);
+    this->addLine(Ay);
+    this->addLine(Bx);
+    this->addLine(By);
 }
 bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
 {
     if(item == nullptr) return false;
-//    this->addLine(0, 100, this->width(), 100);
+
 //    qDebug() << this->width();
+    //qDebug() << "width" << this->width() << "height" << this->height();
+    //this->addLine(QLineF(0, 600, 1800, 600), QPen());
     item->setParent(this);
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
@@ -23,11 +35,31 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     return true;
 }
 
+void DeviceModelScene::setAx(int x1, int y1, int x2, int y2){
+    Ax.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+}
+
+void DeviceModelScene::setAy(int x1, int y1, int x2, int y2)
+{
+    Ay.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+}
+
+void DeviceModelScene::setBx(int x1, int y1, int x2, int y2)
+{
+    Bx.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+}
+
+void DeviceModelScene::setBy(int x1, int y1, int x2, int y2)
+{
+    By.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+}
+
 void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
     qDebug() << "mousePressEvent";
+    qDebug() << QCursor::pos().x() << QCursor::pos().y();
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 

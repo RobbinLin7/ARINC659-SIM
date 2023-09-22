@@ -97,5 +97,9 @@ private:
 
     std::shared_ptr<Proj659> currentProject = nullptr;
 
+
+    // QWidget interface
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 #endif // MAINWINDOW_H

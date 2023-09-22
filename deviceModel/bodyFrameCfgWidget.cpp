@@ -568,6 +568,7 @@ void BodyFrameCfgWidget::dynamicSetLineEdit(QLineEdit *lineEdit)
 
 void BodyFrameCfgWidget::initWidget()
 {
+    ui->tabWidget->setCurrentWidget(ui->tabWidget);
     ui->id_lineEdit->setEnabled(false);
     ui->modifyModuleBtn->setEnabled(false);
     ui->deleteModuleBtn->setEnabled(false);
