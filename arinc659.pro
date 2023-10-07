@@ -20,11 +20,15 @@ SOURCES += \
     data/bodyframeitem.cpp \
     data/dataframe.cpp \
     data/module.cpp \
+    deviceModel/arrow.cpp \
     deviceModel/bodyFrameCfgWidget.cpp \
     deviceModel/bodyFrameGraphicsItem.cpp \
+    deviceModel/bodyframetobuslineitem.cpp \
+    deviceModel/busgraphicsitem.cpp \
     deviceModel/dataFrameCfgWidget.cpp \
     deviceModel/deviceModelScene.cpp \
     deviceModel/modulecfgwidget.cpp \
+    dialog/datatransferwindowcfgdialog.cpp \
     dialog/stylesheetdialog.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -41,11 +45,15 @@ HEADERS += \
     data/bodyframeitem.h \
     data/dataframe.h \
     data/module.h \
+    deviceModel/arrow.h \
     deviceModel/bodyFrameCfgWidget.h \
     deviceModel/bodyFrameGraphicsItem.h \
+    deviceModel/bodyframetobuslineitem.h \
+    deviceModel/busgraphicsitem.h \
     deviceModel/dataFrameCfgWidget.h \
     deviceModel/deviceModelScene.h \
     deviceModel/modulecfgwidget.h \
+    dialog/datatransferwindowcfgdialog.h \
     dialog/stylesheetdialog.h \
     mainwindow.h \
     monitor/monitorWidget.h \
@@ -61,6 +69,7 @@ FORMS += \
     deviceModel/bodyFrameCfgWidget.ui \
     deviceModel/dataFrameCfgWidget.ui \
     deviceModel/modulecfgwidget.ui \
+    dialog/datatransferwindowcfgdialog.ui \
     dialog/stylesheetdialog.ui \
     mainwindow.ui \
     monitor/monitorWidget.ui \

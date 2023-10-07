@@ -308,7 +308,58 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableWidget"/>
+    <widget class="QTableWidget" name="tableWidget">
+     <column>
+      <property name="text">
+       <string>序号</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>窗口类型</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>中断号</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>发送模块</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>发送地址</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>接收模块</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>接收地址</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>同步码</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>其他</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>位时</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">

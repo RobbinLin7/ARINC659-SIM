@@ -48,6 +48,8 @@ private slots:
 
     void on_actionOpenProject_triggered();
 
+    void on_actionSaveProject_triggered();
+
     void addNewProjectSlot(QString name, QString info);
 
     void saveBodyFrameItemSlot(const BodyFrameItem&);
@@ -89,17 +91,15 @@ private:
 
     void enableAllActionNeedAProject();
 
-    MyXml myXml;
-
     QAction *test = nullptr;
 
     QMap<QString, Proj659*> projectMap;
 
     std::shared_ptr<Proj659> currentProject = nullptr;
 
-
     // QWidget interface
 protected:
     void resizeEvent(QResizeEvent *event);
+    void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H

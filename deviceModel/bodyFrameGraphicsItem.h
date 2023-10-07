@@ -1,4 +1,4 @@
-#ifndef BODYFRAMEGRAPHICSITEM_H
+﻿#ifndef BODYFRAMEGRAPHICSITEM_H
 #define BODYFRAMEGRAPHICSITEM_H
 
 #include <QGraphicsItem>
@@ -10,54 +10,48 @@
 #include <QAction>
 #include <memory>
 #include "data/bodyframeitem.h"
+#include "busgraphicsitem.h"
+#include "bodyframetobuslineitem.h"
 
 class BodyFrameGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
     ~BodyFrameGraphicsItem();
-    BodyFrameGraphicsItem(BodyFrameItem bodyFrameItem, QObject* parent = nullptr);
+    BodyFrameGraphicsItem(const BusGraphicsItem* Ax, const BusGraphicsItem* Ay, const BusGraphicsItem* Bx, const BusGraphicsItem* By,
+                          BodyFrameItem bodyFrameItem, QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
-
-//    void setBodyFrameID(const uint &id);
-
-//    uint getBodyFrameID()const{ return myBodyFrameID;}
-
     QTreeWidgetItem *getTreeWidgetItem() const;
     void setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem);
 
 protected:
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
 
-    QRectF imageRect;
-    //获取机架图片大小
-    QSize bodyFrameImageSize();
-
-//    uint myBodyFrameID;             //机架号
-
     uint myHardwareModelNum;
-
-//    uint arbitrationStepDuration;   //主/后备仲裁步进时长
-
-//    uint timeCalibrationFactor;     //时间标定因子
-
-//    uint majorVersionNumber;        //主版本号
-
-//    uint subVersionNumber;          //次版本号
 
     QTreeWidgetItem* treeWidgetItem = nullptr;
 
     BodyFrameItem bodyFrameItem;
+
+    const QImage img;
+
+    QPointF m_pos;
+    QPointF m_pressedPos;
+    QPointF m_startPos;
+
+    BodyFrameToBusLineItem toAx;
+    BodyFrameToBusLineItem toAy;
+    BodyFrameToBusLineItem toBx;
+    BodyFrameToBusLineItem toBy;
+
+    void computeLineToBus();
+
 
 signals:
 
@@ -65,6 +59,20 @@ signals:
 
     void deleteBodyFrameItemSignal(uint frameId);
 
+
+    // QGraphicsItem interface
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+    // QGraphicsItem interface
+protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+
+    // QGraphicsItem interface
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 };
 
 #endif // BODYFRAMEGRAPHICSITEM_H

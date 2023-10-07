@@ -8,13 +8,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication a(argc, argv);
-    //加载QSS文件
-//    QFile qssFile(":/resources/qss/Aqua.qss");
-//    if(qssFile.open(QFile::ReadOnly)){
-//        a.setStyleSheet(qssFile.readAll());
-//    }
-//    qssFile.close();
-
     MainWindow w;
     w.show();
     return a.exec();

@@ -4,6 +4,8 @@
 #include <memory>
 #include "bodyFrameGraphicsItem.h"
 #include "deviceModel/bodyFrameCfgWidget.h"
+#include "deviceModel/busgraphicsitem.h"
+#include "arrow.h"
 #include <memory>
 #include <QMap>
 
@@ -30,6 +32,12 @@ public:
     void setAy(int, int, int, int);
     void setBx(int, int, int, int);
     void setBy(int, int, int, int);
+    const BusGraphicsItem* getAx() const;
+    const BusGraphicsItem* getAy() const;
+    const BusGraphicsItem* getBx() const;
+    const BusGraphicsItem *getBy() const;
+
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -47,10 +55,10 @@ private:
     static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
     BodyFrameGraphicsItem *selectedItem;
-    QLine Ax;
-    QLine Ay;
-    QLine Bx;
-    QLine By;
+    BusGraphicsItem Ax;
+    BusGraphicsItem Ay;
+    BusGraphicsItem Bx;
+    BusGraphicsItem By;
     //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:

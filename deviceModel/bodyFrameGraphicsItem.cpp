@@ -5,62 +5,51 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QToolTip>
 
 BodyFrameGraphicsItem::~BodyFrameGraphicsItem()
 {
     delete treeWidgetItem;
 }
 
-BodyFrameGraphicsItem::BodyFrameGraphicsItem(BodyFrameItem bodyFrameItem, QObject* parent)
-    :QObject(parent)
+BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, BodyFrameItem bodyFrameItem, QGraphicsItem *parent):
+    QGraphicsItem(parent),
+    img(":/resources/Image/bodyFrame.png"),
+    toAx(Ax, this),
+    toAy(Ay, this),
+    toBx(Bx, this),
+    toBy(By, this)
 {
+
     this->bodyFrameItem = bodyFrameItem;
     setZValue(1);
-    setFlags(ItemIsSelectable | ItemIsMovable);
+    setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
+    update();
 }
+
 
 QRectF BodyFrameGraphicsItem::boundingRect() const
 {
-    return imageRect;
+    return QRectF(0, 0, img.width() / 4, img.height() / 4);
 }
 
 QPainterPath BodyFrameGraphicsItem::shape() const
 {
     QPainterPath path;
-    path.addRect(imageRect);
+    path.addRect(boundingRect());
     return path;
 }
 
 void BodyFrameGraphicsItem::paint(QPainter *painter,
-                          const QStyleOptionGraphicsItem *item,
-                          QWidget *widget)
+                          const QStyleOptionGraphicsItem *,
+                          QWidget *)
 {
 
-    //int width = bodyFrameImageSize().width();
-
-    bodyFrameImageSize();
-
-
-    painter->drawImage(imageRect, QImage(":/resources/Image/bodyFrame.png"));
-
-    //在图片右上角标注出机架中的模块数
-
-    QFont font("Times", 10);
-    font.setStyleStrategy(QFont::ForceOutline);
-    painter->setFont(font);
+    painter->drawImage(QRectF(0, 0, img.width() / 4, img.height() / 4), img);
     painter->save();
-    //painter->scale(0.1, 0.1);
-    painter->drawText(imageRect.width() - 20, imageRect.height() - 20, QString(this->myHardwareModelNum));
     painter->restore();
-}
-
-
-void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if(event->button() != Qt::LeftButton) return;
-    QGraphicsItem::mousePressEvent(event);
-    update();
+    computeLineToBus();
 }
 
 void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
@@ -78,44 +67,58 @@ void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *eve
        emit(deleteBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID()));
     });
     menu.exec(point);
+}
 
+void BodyFrameGraphicsItem::computeLineToBus()
+{
+    qreal width = this->boundingRect().width() ;
+    qreal height = this->boundingRect().height();
+    toAx.setPos(width / 5, (2470 - this->y() + height) / 2);
+    toAy.setPos(width * 2 / 5, (2490 - this->y() + height) / 2);
+    toBx.setPos(width * 3 / 5, (2510 - this->y() + height) / 2);
+    toBy.setPos(width * 4 / 5, (2530 - this->y() + height) / 2);
+//    qDebug() << this->x() << toAx.x() << toAy.x() << toBx.x() << toBy.x();
+    toAx.update();
+    toAy.update();
+    toBx.update();
+    toBy.update();
+}
+
+
+void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    return QGraphicsItem::mousePressEvent(event);
 }
 
 void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->modifiers() & Qt::ShiftModifier) {
-        //stuff << event->pos();
-        update();
-        return;
-    }
-    QGraphicsItem::mouseMoveEvent(event);
+    return QGraphicsItem::mouseMoveEvent(event);
 }
 
 void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem::mouseReleaseEvent(event);
-    update();
+    computeLineToBus();
+    return QGraphicsItem::mouseReleaseEvent(event);
 }
 
-void BodyFrameGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void BodyFrameGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    QGraphicsItem::mouseDoubleClickEvent(event);
-    qDebug() << "mouse double click";
-    update();
+    QToolTip::showText(QCursor::pos(), QString("机架%1").arg(this->bodyFrameItem.getBodyFrameItemID()));
+    return QGraphicsItem::hoverEnterEvent(event);
 }
 
-QSize BodyFrameGraphicsItem::bodyFrameImageSize()
+QVariant BodyFrameGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    QString filename = ":/resources/Image/bodyFrame.png";
-    QImageReader reader(filename);
-    reader.setAutoTransform(true);
-    const QImage img = reader.read();
-
-    imageRect.setX(0);
-    imageRect.setY(0);
-    imageRect.setWidth(img.size().width() / 3);
-    imageRect.setHeight(img.size().height() / 3);
-    return img.size();
+    if(change == QGraphicsItem::ItemPositionChange && this->scene()){
+        QPointF newPos = value.toPointF();
+        QRectF limitRec(500, 0, 4000 - this->boundingRect().height(), 2470 - this->boundingRect().width());
+        if(limitRec.contains(newPos) == false){
+            newPos.setX(qMin(limitRec.right(), qMax(newPos.x(), limitRec.left())));
+            newPos.setY(qMin(limitRec.bottom(), qMax(newPos.y(), limitRec.top())));
+            return newPos;
+        }
+    }
+    return QGraphicsItem::itemChange(change, value);
 }
 
 QTreeWidgetItem *BodyFrameGraphicsItem::getTreeWidgetItem() const
@@ -126,5 +129,4 @@ QTreeWidgetItem *BodyFrameGraphicsItem::getTreeWidgetItem() const
 void BodyFrameGraphicsItem::setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem)
 {
     treeWidgetItem = newTreeWidgetItem;
-    //connect(newTreeWidgetItem, &QTreeWidgetItem::)
 }

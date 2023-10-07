@@ -8,6 +8,7 @@
 class Proj659
 {
 public:
+    enum Status{saved, unsaved};
     Proj659();
     ~Proj659();
     Proj659(QString name, QString description);
@@ -23,12 +24,18 @@ public:
     bool addBodyFrameItem(const BodyFrameItem&);
     bool deleteBodyFrameItem(uint id);
     BodyFrameItem getBodyFrameItem(uint id) const;
+    Status getStatus() const;
+    void setStatus(Status newStatus);
+
+    const QMap<uint, BodyFrameItem> &getBodyFrameItems() const;
+
 private:
     QString name;
     QString description;
     bool save = true;
     QMap<uint, BodyFrameItem> bodyFrameItems;
     bool used[maxFrameId] = {false};
+    Status status = unsaved;
 };
 
 

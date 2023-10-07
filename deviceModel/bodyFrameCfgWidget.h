@@ -54,8 +54,6 @@ private:
 
     BodyFrameItem bodyFrameItem;
 
-
-
     int dummy = 0;
 
     uint myBodyFrameID;
@@ -98,22 +96,17 @@ private:
     void initWidget(const BodyFrameItem& bodyFrameItem);
 
     void initWidget();
-
 private:
     std::shared_ptr<Module> module = nullptr;
     void setStdTableHeader(QTableWidget *widget, const QStringList &headerList);
     bool check(QWidget *widget);
-
     bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
     bool addModuleToTableWidget(const Module&);
     bool addDataFrameToTableWidget(const DataFrame&);
     bool exchangeDataFrameItemOrder(int row1, int row2);
 signals:
-
     void saveBodyFrameItemSignal(BodyFrameItem&);
-
     void updateBodyFrameItemSignal(const BodyFrameItem&);
-
 private slots:
     void addModuleSlot(const Module&);
     void addDataFrameSlot(const DataFrame&);
@@ -129,9 +122,6 @@ private slots:
     void on_cancelButton_clicked(bool);
     void on_moveUpBtn_clicked();
     void on_moveDownBtn_clicked();
-
-
-    // QWidget interface
 protected:
     void showEvent(QShowEvent *event);
 };

@@ -93,3 +93,19 @@ BodyFrameItem Proj659::getBodyFrameItem(uint id) const
 {
     return bodyFrameItems.value(id);
 }
+
+Proj659::Status Proj659::getStatus() const
+{
+    return status;
+}
+
+void Proj659::setStatus(Status newStatus)
+{
+    status = newStatus;
+}
+
+const QMap<uint, BodyFrameItem> &Proj659::getBodyFrameItems() const
+{
+    return bodyFrameItems;
+}
+

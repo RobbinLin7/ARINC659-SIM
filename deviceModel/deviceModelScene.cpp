@@ -5,20 +5,27 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
 #include <QDebug>
-
-DeviceModelScene::DeviceModelScene()
+//#include "arrow.h"
+DeviceModelScene::DeviceModelScene():
+    Ax("Ax", QPoint(500, 2470), QPoint(4500, 2470)),
+    Ay("Ay", QPoint(500, 2490), QPoint(4500, 2490)),
+    Bx("Bx", QPoint(500, 2510), QPoint(4500, 2510)),
+    By("By", QPoint(500, 2530), QPoint(4500, 2530))
 {
-    //qDebug()
-    //qDebug() << "width" << this->width() << "height" << this->height();
-    //this->addLine(QLineF(0, 0, this->width(), this->height()), QPen());
-    //this->addLine(0, 100, 100, 100);
-    //update();
-    //this->addText("哈哈哈哈哈啊哈哈");
-    //qDebug() << "haha";
-    this->addLine(Ax);
-    this->addLine(Ay);
-    this->addLine(Bx);
-    this->addLine(By);
+    Ax.setParent(this);
+    Ax.setPos(2500, 2470);
+    this->addItem(&Ax);
+    Ay.setParent(this);
+    Ay.setPos(2500, 2490);
+    this->addItem(&Ay);
+    Bx.setParent(this);
+    Bx.setPos(2500, 2510);
+    this->addItem(&Bx);
+    By.setParent(this);
+    By.setPos(2500, 2530);
+    this->addItem(&By);
+    this->setBackgroundBrush(QBrush(Qt::gray));
+
 }
 bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
 {
@@ -30,36 +37,43 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     item->setParent(this);
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
-    item->setPos(QPointF(10, 10));
+    item->setPos(QPoint(550, 2000));
+    qreal width = item->boundingRect().width() ;
+    qreal height = item->boundingRect().height();
+//    this->addLine(250 + width / 5,item->y() + height, 250 + width / 5, 700);
+//    this->addLine(250 + width * 2 / 5,item->y() + height, 250 + width * 2 / 5, 725);
+//    this->addLine(250 + width * 3 / 5,item->y() + height, 250 + width * 3 / 5, 750);
+//    this->addLine(250 + width * 4 / 5,item->y() + height, 250 + width * 4 / 5, 775);
+    //this->addLine(item->x() + item->boundingRect().width() / 5, item->y() + item->boundingRect().height(), item->x() + item->boundingRect().width() / 5, 2470);
     this->addItem(item.get());
     return true;
 }
 
-void DeviceModelScene::setAx(int x1, int y1, int x2, int y2){
-    Ax.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+const BusGraphicsItem *DeviceModelScene::getAx() const
+{
+    return &Ax;
 }
 
-void DeviceModelScene::setAy(int x1, int y1, int x2, int y2)
+const BusGraphicsItem *DeviceModelScene::getAy() const
 {
-    Ay.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+    return &Ay;
 }
 
-void DeviceModelScene::setBx(int x1, int y1, int x2, int y2)
+const BusGraphicsItem *DeviceModelScene::getBx() const
 {
-    Bx.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+    return &Bx;
 }
 
-void DeviceModelScene::setBy(int x1, int y1, int x2, int y2)
+const BusGraphicsItem *DeviceModelScene::getBy() const
 {
-    By.setPoints(QPoint(x1, y1), QPoint(x2, y2));
+    return &By;
 }
+
 
 void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() != Qt::LeftButton)
         return;
-    qDebug() << "mousePressEvent";
-    qDebug() << QCursor::pos().x() << QCursor::pos().y();
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
@@ -73,34 +87,6 @@ void DeviceModelScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
-//void DeviceModelScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-//{
-
-//    const QList<QGraphicsItem *> items = selectedItems();
-
-//    if(items.size() <= 0)
-//    {
-//        return;
-//    }else
-//    {
-//        qDebug() << "selected :" << items.size();
-//        this->selectedItem = (BodyFrameItem *)items.at(0);
-//    }
-//    QMenu menu;
-
-//    QAction *cfgBF = new QAction("配置机架", this);
-//    QAction *deleteBF = new QAction("删除机架", this);
-
-//    menu.addAction(cfgBF);
-//    menu.addAction(deleteBF);
-
-//    QPoint point(event->screenPos().x(), event->screenPos().y());
-
-//    connect(cfgBF, SIGNAL(triggered()), this, SLOT(cfgBFSlot()));
-
-//    menu.exec(point);
-//}
-
 
 void DeviceModelScene::cfgBodyFrameItemSlot(uint bodyFrameId)
 {
@@ -112,5 +98,5 @@ void DeviceModelScene::deleteBodyFrameItemSlot(uint bodyFrameId)
 //    this->bodyFrameItemMap.remove(bodyFrameId);
 //    flag[bodyFrameId] = false;
 //    bodyFrameItemMap.value(bodyFrameId)->deleteLater();
-//    emit(deleteBodyFrameSignal(bodyFrameId));
+    //    emit(deleteBodyFrameSignal(bodyFrameId));
 }
