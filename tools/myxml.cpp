@@ -145,7 +145,7 @@ void MyXml::readBodyFrames(QXmlStreamReader* xmlReader, Proj659& project)
 void MyXml::readBodyFrame(QXmlStreamReader *xmlReader, Proj659& project)
 {
     xmlReader->readNext();
-    BodyFrameItem bodyFrame;
+    BodyFrame bodyFrame;
     while(xmlReader->name() != "bodyFrame"){
         if(xmlReader->isStartElement()){
             if(xmlReader->name() == "bodyFrameId"){
@@ -175,7 +175,7 @@ void MyXml::readBodyFrame(QXmlStreamReader *xmlReader, Proj659& project)
     project.addBodyFrameItem(bodyFrame);
 }
 
-void MyXml::readModules(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
+void MyXml::readModules(QXmlStreamReader *xmlReader, BodyFrame &bodyFrame)
 {
     xmlReader->readNext();
     while (xmlReader->name() != "modules") {
@@ -186,7 +186,7 @@ void MyXml::readModules(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
     }
 }
 
-void MyXml::readModule(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
+void MyXml::readModule(QXmlStreamReader *xmlReader, BodyFrame &bodyFrame)
 {
     xmlReader->readNext();
     Module module;
@@ -215,7 +215,7 @@ void MyXml::readModule(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
     bodyFrame.addModule(module);
 }
 
-void MyXml::readDataFrames(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
+void MyXml::readDataFrames(QXmlStreamReader *xmlReader, BodyFrame &bodyFrame)
 {
     xmlReader->readNext();
     while (xmlReader->name() != "dataFrames") {
@@ -226,7 +226,7 @@ void MyXml::readDataFrames(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame
     }
 }
 
-void MyXml::readDataFrame(QXmlStreamReader *xmlReader, BodyFrameItem &bodyFrame)
+void MyXml::readDataFrame(QXmlStreamReader *xmlReader, BodyFrame &bodyFrame)
 {
     xmlReader->readNext();
     DataFrame dataFrame;

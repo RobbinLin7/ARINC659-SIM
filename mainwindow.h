@@ -10,6 +10,8 @@
 #include "simulation/simulinkwidget.h"
 #include "tools/myxml.h"
 #include "dialog/stylesheetdialog.h"
+#include "tools/commandfile.h"
+#include "deviceModel/commandfilewidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,8 +26,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    BodyFrameItem getItem(){
-        BodyFrameItem item;
+    BodyFrame getItem(){
+        BodyFrame item;
         return item;
     }
     void forTest();
@@ -52,9 +54,9 @@ private slots:
 
     void addNewProjectSlot(QString name, QString info);
 
-    void saveBodyFrameItemSlot(const BodyFrameItem&);
+    void saveBodyFrameItemSlot(const BodyFrame&);
 
-    void updateBodyFrameSlot(const BodyFrameItem&);
+    void updateBodyFrameSlot(const BodyFrame&);
 
     void changeStyleSheetSlot(QString);
 
@@ -64,6 +66,10 @@ private slots:
 
     void on_actionChangeStyleSheet_triggered();
 
+    void on_actionCreateCMDTable_triggered();
+
+    void on_actionCompileCMDTable_triggered();
+
     void onProjectItemPressed(QTreeWidgetItem *item, int column);
 
     void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -71,7 +77,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    DeviceModelScene *scene;
+    std::shared_ptr<DeviceModelScene> scene;
 
     uint bodyFrameNum;
 
@@ -81,7 +87,11 @@ private:
 
     QVBoxLayout *layout;
 
-    std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWidget;
+    std::shared_ptr<QWidget> currentWidget = nullptr;
+
+    std::shared_ptr<BodyFrameCfgWidget> bodyFrameCfgWidget = nullptr;
+
+    std::shared_ptr<CommandFileWidget> commandFileWidget = nullptr;
 
     void initMainWindow();
 
@@ -91,6 +101,10 @@ private:
 
     void enableAllActionNeedAProject();
 
+    QTreeWidgetItem* createProjectTree(QString);
+
+    void createNewScene();
+
     QAction *test = nullptr;
 
     QMap<QString, Proj659*> projectMap;
@@ -99,7 +113,7 @@ private:
 
     // QWidget interface
 protected:
-    void resizeEvent(QResizeEvent *event);
+    //void resizeEvent(QResizeEvent *event);
     void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H

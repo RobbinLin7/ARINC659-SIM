@@ -3,8 +3,18 @@
 
 #include <QWidget>
 #include <QValidator>
+#include <QTableWidgetItem>
 #include "bodyFrameGraphicsItem.h"
 #include "validator/stringidvalidator.h"
+#include "dialog/datatransferwindowcfgdialog.h"
+#include "dialog/frameswitchwindowcfgdialog.h"
+#include "dialog/freewindowcfgdialog.h"
+#include "dialog/interruptionwindowcfgdialog.h"
+#include "dialog/jumpwindowcfgdialog.h"
+#include "dialog/longsyncwindowcfgdialog.h"
+#include "dialog/stylesheetdialog.h"
+#include "dialog/subframecallwindowdialog.h"
+#include "dialog/versiondetectionwindowcfgdialog.h"
 
 namespace Ui {
 class DataFrameCfgWidget;
@@ -30,14 +40,32 @@ private:
     void installValidator();
     bool check(QWidget*);
     void setForm();
+    void addWindow(const FrameWindow&);
+    bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
+    std::list<FrameWindow> frameWindows;
 
 private slots:
     void checkLineEditText();
     void on_okPushButton_clicked(bool);
     void on_cancelPushButton_clicked(bool);
+    void on_dataTransferPushButton_clicked(bool);
+    void on_interruptionPushButton_clicked(bool);
+    void on_longSyncPushButton_clicked(bool);
+    void on_jumpPushButton_clicked(bool);
+    void on_versionDetectionPushButton_clicked(bool);
+    void on_subFrameCallPushButton_clicked(bool);
+    void on_freePushButton_clicked(bool);
+    void on_frameSwitchPushButton_clicked(bool);
+    void on_shortSyncPushButton_clicked(bool);
+    void addNewWindow(const FrameWindow& frameWindow);
+
 
 signals:
     void saveDataFrameSignal(const DataFrame&);
+
+    // QObject interface
+public:
+    bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // DATAFRAMECFGWIDGET_H

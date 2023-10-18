@@ -9,7 +9,7 @@
 #include <QMenu>
 #include <QAction>
 #include <memory>
-#include "data/bodyframeitem.h"
+#include "data/bodyframe.h"
 #include "busgraphicsitem.h"
 #include "bodyframetobuslineitem.h"
 
@@ -19,7 +19,7 @@ class BodyFrameGraphicsItem : public QObject, public QGraphicsItem
 public:
     ~BodyFrameGraphicsItem();
     BodyFrameGraphicsItem(const BusGraphicsItem* Ax, const BusGraphicsItem* Ay, const BusGraphicsItem* Bx, const BusGraphicsItem* By,
-                          BodyFrameItem bodyFrameItem, QGraphicsItem* parent = nullptr);
+                          BodyFrame bodyFrameItem, QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
@@ -37,13 +37,15 @@ private:
 
     QTreeWidgetItem* treeWidgetItem = nullptr;
 
-    BodyFrameItem bodyFrameItem;
+    BodyFrame bodyFrameItem;
 
     const QImage img;
 
     QPointF m_pos;
     QPointF m_pressedPos;
     QPointF m_startPos;
+
+    QPointF previousPos;
 
     BodyFrameToBusLineItem toAx;
     BodyFrameToBusLineItem toAy;
@@ -62,17 +64,17 @@ signals:
 
     // QGraphicsItem interface
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event)override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)override;
 
     // QGraphicsItem interface
 protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event)override;
 
     // QGraphicsItem interface
 protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value)override;
 };
 
 #endif // BODYFRAMEGRAPHICSITEM_H

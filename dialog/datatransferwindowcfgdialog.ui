@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>数据传输窗口</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -190,16 +190,16 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="okPushButton">
          <property name="text">
-          <string>退出</string>
+          <string>确定</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="cancelPushButton">
          <property name="text">
-          <string>确定</string>
+          <string>取消</string>
          </property>
         </widget>
        </item>

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>939</width>
+    <width>1025</width>
     <height>591</height>
    </rect>
   </property>
@@ -156,63 +156,63 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="dataTransferPushButton">
         <property name="text">
          <string>数据传送</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="interruptionPushButton">
         <property name="text">
          <string>中断</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="longSyncPushButton">
         <property name="text">
          <string>长同步</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="jumpPushButton">
         <property name="text">
          <string>跳转</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_5">
+       <widget class="QPushButton" name="versionDetectionPushButton">
         <property name="text">
          <string>版本校验</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_6">
+       <widget class="QPushButton" name="frameSwitchPushButton">
         <property name="text">
          <string>帧切换</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_7">
+       <widget class="QPushButton" name="subFrameCallPushButton">
         <property name="text">
          <string>子帧调用</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_8">
+       <widget class="QPushButton" name="freePushButton">
         <property name="text">
          <string>FREE</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_9">
+       <widget class="QPushButton" name="shortSyncPushButton">
         <property name="text">
          <string>短同步</string>
         </property>
@@ -228,28 +228,28 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QPushButton" name="pushButton_10">
+       <widget class="QPushButton" name="editWindowPushButton">
         <property name="text">
          <string>编辑</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_11">
+       <widget class="QPushButton" name="deleteWindowPushButton">
         <property name="text">
          <string>删除</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_12">
+       <widget class="QPushButton" name="moveUpWindowPushButton">
         <property name="text">
          <string>上移</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_13">
+       <widget class="QPushButton" name="moveDownWindowPushButton">
         <property name="text">
          <string>下移</string>
         </property>
@@ -308,7 +308,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTableWidget" name="windowTableWidget">
      <column>
       <property name="text">
        <string>序号</string>

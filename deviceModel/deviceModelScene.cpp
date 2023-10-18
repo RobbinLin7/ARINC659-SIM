@@ -26,18 +26,43 @@ DeviceModelScene::DeviceModelScene():
     this->addItem(&By);
     this->setBackgroundBrush(QBrush(Qt::gray));
 
+    positionSet.insert(500);
+    positionSet.insert(4000);
+
 }
 bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
 {
     if(item == nullptr) return false;
-
-//    qDebug() << this->width();
-    //qDebug() << "width" << this->width() << "height" << this->height();
-    //this->addLine(QLineF(0, 600, 1800, 600), QPen());
     item->setParent(this);
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
-    item->setPos(QPoint(550, 2000));
+//    if(positionSet.empty()){
+//        item->setPos(QPoint(550, 2000));
+//    }
+//    else{
+
+//    }
+    auto left = positionSet.cbegin();
+    auto right = positionSet.cbegin();
+    ++right;
+    for(;;){
+        if(left == positionSet.cend()) break;
+        if(*right - *left > item->boundingRect().width() + 50){
+            if(*left != 500){
+                item->setPos(QPoint(*left + 50 + item->boundingRect().width(), 2200));
+                positionSet.insert(*left + 50 + item->boundingRect().width());
+            }
+            else{
+                qDebug() << "left =" << *left + 10 + item->boundingRect().width() / 2;
+                item->setPos(QPoint(*left + item->boundingRect().width() / 2, 2200));
+                positionSet.insert(*left + item->boundingRect().width() / 2);
+            }
+            break;
+        }
+        ++left;
+        ++right;
+    }
+    //item->setPos(QPoint(550, 2000));
     qreal width = item->boundingRect().width() ;
     qreal height = item->boundingRect().height();
 //    this->addLine(250 + width / 5,item->y() + height, 250 + width / 5, 700);
@@ -47,6 +72,11 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     //this->addLine(item->x() + item->boundingRect().width() / 5, item->y() + item->boundingRect().height(), item->x() + item->boundingRect().width() / 5, 2470);
     this->addItem(item.get());
     return true;
+}
+
+void DeviceModelScene::deleteBodyFrameItem(int x)
+{
+    positionSet.erase(x);
 }
 
 const BusGraphicsItem *DeviceModelScene::getAx() const

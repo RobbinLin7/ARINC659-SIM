@@ -1,8 +1,9 @@
 ﻿#include "dataframe.h"
+#include<cstring>
 
 DataFrame::DataFrame()
 {
-
+    memset(windowIdUsed, 0, sizeof (windowIdUsed));
 }
 
 DataFrame &DataFrame::operator=(const DataFrame &dataFrame)
@@ -63,4 +64,24 @@ DataFrame::TimeAllocationType DataFrame::getTimeAllocationType() const
 void DataFrame::setTimeAllocationType(TimeAllocationType newTimeAllocationType)
 {
     timeAllocationType = newTimeAllocationType;
+}
+
+DataFrame::DataFrameType DataFrame::getDataFrameType() const
+{
+    return dataFrameType;
+}
+
+void DataFrame::setDataFrameType(DataFrameType newDataFrameType)
+{
+    dataFrameType = newDataFrameType;
+}
+
+const std::list<FrameWindow> &DataFrame::getFrameWindows() const
+{
+    return frameWindows;
+}
+
+bool DataFrame::getRetWithGap() const
+{
+    return retWithGap;
 }

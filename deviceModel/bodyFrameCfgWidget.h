@@ -28,14 +28,14 @@ class BodyFrameCfgWidget : public QWidget
 public:
     enum OpenMode{New, Modified};
     explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
-    explicit BodyFrameCfgWidget(const BodyFrameItem bodyFrameItem, QWidget *parent = nullptr);
+    explicit BodyFrameCfgWidget(const BodyFrame bodyFrameItem, QWidget *parent = nullptr);
     //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     //explicit BodyFrameCfgWidget(BodyFrameItem& bodyFrameItem, QWidget *parent = nullptr);
     //BodyFrameCfgWidget(const BodyFrameCfgWidget&);
     ~BodyFrameCfgWidget();
     void setBodyFrameID(const uint &id);
     void connectOkButtonToUpdateSignal();
-    const BodyFrameItem &getBodyFrameItem() const;
+    const BodyFrame &getBodyFrameItem() const;
     static void removeTableWidgetItems(QTableWidget* tableWidget);
 
 private slots:
@@ -52,7 +52,7 @@ private:
 
     OpenMode openMode;
 
-    BodyFrameItem bodyFrameItem;
+    BodyFrame bodyFrameItem;
 
     int dummy = 0;
 
@@ -93,7 +93,7 @@ private:
 
     void dynamicSetLineEdit(QLineEdit* lineEdit);
 
-    void initWidget(const BodyFrameItem& bodyFrameItem);
+    void initWidget(const BodyFrame& bodyFrameItem);
 
     void initWidget();
 private:
@@ -105,8 +105,8 @@ private:
     bool addDataFrameToTableWidget(const DataFrame&);
     bool exchangeDataFrameItemOrder(int row1, int row2);
 signals:
-    void saveBodyFrameItemSignal(BodyFrameItem&);
-    void updateBodyFrameItemSignal(const BodyFrameItem&);
+    void saveBodyFrameItemSignal(BodyFrame&);
+    void updateBodyFrameItemSignal(const BodyFrame&);
 private slots:
     void addModuleSlot(const Module&);
     void addDataFrameSlot(const DataFrame&);

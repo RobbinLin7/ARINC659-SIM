@@ -172,13 +172,6 @@
     <addaction name="actioncloseProject"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuDeviceManagement">
-    <property name="title">
-     <string>设备管理</string>
-    </property>
-    <addaction name="actionNewBodyFrameItem"/>
-    <addaction name="actionDeleteBodyFrame"/>
-   </widget>
    <widget class="QMenu" name="menuCMDTableManagement">
     <property name="title">
      <string>命令表管理</string>
@@ -221,7 +214,6 @@
     <addaction name="actionOpenMonitor"/>
    </widget>
    <addaction name="menuprojectManagement"/>
-   <addaction name="menuDeviceManagement"/>
    <addaction name="menuCMDTableManagement"/>
    <addaction name="menuMonitor"/>
    <addaction name="menuSimulink"/>

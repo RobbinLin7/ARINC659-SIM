@@ -8,6 +8,7 @@
 #include "arrow.h"
 #include <memory>
 #include <QMap>
+#include <set>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -27,7 +28,7 @@ public:
     enum DeviceModel{BodyFrame};
     DeviceModelScene();
     bool addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem>);
-    void deleteBodyFrameItem();
+    void deleteBodyFrameItem(int x);
     void setAx(int x1, int y1, int x2, int y2);
     void setAy(int, int, int, int);
     void setBx(int, int, int, int);
@@ -59,6 +60,7 @@ private:
     BusGraphicsItem Ay;
     BusGraphicsItem Bx;
     BusGraphicsItem By;
+    std::set<int> positionSet; //记录所有机架的水平位置
     //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:

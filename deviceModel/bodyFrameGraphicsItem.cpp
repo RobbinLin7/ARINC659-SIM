@@ -6,13 +6,14 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QToolTip>
+#include <QGraphicsScene>
 
 BodyFrameGraphicsItem::~BodyFrameGraphicsItem()
 {
     delete treeWidgetItem;
 }
 
-BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, BodyFrameItem bodyFrameItem, QGraphicsItem *parent):
+BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, BodyFrame bodyFrameItem, QGraphicsItem *parent):
     QGraphicsItem(parent),
     img(":/resources/Image/bodyFrame.png"),
     toAx(Ax, this),
@@ -20,7 +21,6 @@ BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const Bu
     toBx(Bx, this),
     toBy(By, this)
 {
-
     this->bodyFrameItem = bodyFrameItem;
     setZValue(1);
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
@@ -45,11 +45,11 @@ void BodyFrameGraphicsItem::paint(QPainter *painter,
                           const QStyleOptionGraphicsItem *,
                           QWidget *)
 {
-
     painter->drawImage(QRectF(0, 0, img.width() / 4, img.height() / 4), img);
     painter->save();
     painter->restore();
     computeLineToBus();
+    //qDebug() << bodyFrameItem.getBodyFrameItemID() << pos();
 }
 
 void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
@@ -92,8 +92,18 @@ void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    return QGraphicsItem::mouseMoveEvent(event);
+//    if(scene()->collidingItems(this).isEmpty()){
+//        previousPos = pos();
+//        return QGraphicsItem::mouseMoveEvent(event);
+//    }
+//    else{
+//        //qDebug() << "pos" << pos() <<  "eventPos" << event->scenePos();
+//        setPos(previousPos);
+//        qDebug() << "colliding";
+//    }
+    //return QGraphicsItem::mouseMoveEvent(event);
 }
+
 
 void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -109,6 +119,7 @@ void BodyFrameGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 QVariant BodyFrameGraphicsItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
+    //防止移除到总线范围外
     if(change == QGraphicsItem::ItemPositionChange && this->scene()){
         QPointF newPos = value.toPointF();
         QRectF limitRec(500, 0, 4000 - this->boundingRect().height(), 2470 - this->boundingRect().width());

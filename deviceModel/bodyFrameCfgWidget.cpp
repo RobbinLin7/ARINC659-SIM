@@ -9,17 +9,19 @@ BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->id_lineEdit->setText(QString::number(frameId));
+    ui->tabWidget->setCurrentIndex(0);
     this->initWidget();
     installEventFilter();
     installValidator();
 }
 
-BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrameItem bodyFrameItem, QWidget *parent):
+BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrame bodyFrameItem, QWidget *parent):
     QWidget(parent),
     ui(new Ui::BodyFrameCfgWidget),
     bodyFrameItem(bodyFrameItem)
 {
     ui->setupUi(this);
+    ui->tabWidget->setCurrentIndex(0);
     this->initWidget();
     setForm();
     installEventFilter();
@@ -331,12 +333,13 @@ void BodyFrameCfgWidget::closeEvent(QCloseEvent *e)
         return;
     }
     QString message = (openMode == New ? "确定要放弃新建机架吗?" : "确定要放弃修改机架吗?");
-    bool exit = QMessageBox::question(this,
-                                  "退出",
-                                  message,
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No) == QMessageBox::Yes;
-    if(exit){
+    QMessageBox box(QMessageBox::Warning, "退出", message);
+    box.setStandardButtons(QMessageBox::Discard | QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Cancel);
+    box.setButtonText(QMessageBox::Discard, QString("放弃"));
+    box.setButtonText(QMessageBox::Cancel, QString("取消"));
+    int choosedBtn = box.exec();
+    if(choosedBtn == QMessageBox::Discard){
         e->accept();
     }
     else{
@@ -411,7 +414,7 @@ void BodyFrameCfgWidget::setForm()
     }
 }
 
-const BodyFrameItem &BodyFrameCfgWidget::getBodyFrameItem() const
+const BodyFrame &BodyFrameCfgWidget::getBodyFrameItem() const
 {
     return bodyFrameItem;
 }
@@ -479,9 +482,9 @@ bool BodyFrameCfgWidget::addModuleToTableWidget(const Module& module)
     moduleNumberItem->setTextAlignment(Qt::AlignCenter);
     initialWaitTimeItem->setTextAlignment(Qt::AlignCenter);
     moduleNameItem->setTextAlignment(Qt::AlignCenter);
-    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
-    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
-    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
+//    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
+//    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
+//    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
     addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
     return true;
 }

@@ -14,10 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
-    scene = new DeviceModelScene();
-    scene->setSceneRect(0, 0, 5000, 5000);
-    ui->graphicsView->setScene(scene);
-    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->projectTreeWidget->clear();
     QStringList headerList;
     headerList << tr("项目信息");
@@ -55,7 +51,7 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
 /**
  * @brief MainWindow::saveFrame
  */
-void MainWindow::saveBodyFrameItemSlot(const BodyFrameItem& bodyFrameItem){
+void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
     currentProject->addBodyFrameItem(bodyFrameItem);
     std::shared_ptr<BodyFrameGraphicsItem> graphicsItem = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
                                                                                                                            scene->getAy(),
@@ -80,7 +76,7 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrameItem& bodyFrameItem){
 }
 
 
-void MainWindow::updateBodyFrameSlot(const BodyFrameItem& bodyFrameItem)
+void MainWindow::updateBodyFrameSlot(const BodyFrame& bodyFrameItem)
 {
     qDebug() << "update success";
 }
@@ -106,12 +102,15 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         return;
     }
     else{
-        BodyFrameItem item = currentProject->getBodyFrameItem(frameId);
+        commandFileWidget = nullptr;
+        BodyFrame item = currentProject->getBodyFrameItem(frameId);
+        //currentWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
         bodyFrameCfgWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
-        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const BodyFrameItem& item){
+        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const BodyFrame& item){
             currentProject->addBodyFrameItem(item);
         });
         bodyFrameCfgWidget->setParent(ui->paraConfigWidget);
+        //ui->paraConfigLayout->removeWidget()
         ui->paraConfigLayout->addWidget(bodyFrameCfgWidget.get());
         ui->paraConfigWidget->show();
         bodyFrameCfgWidget->show();
@@ -121,6 +120,7 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
 void MainWindow::deleteBodyFrameItemSlot(uint id)
 {
     currentProject->deleteBodyFrameItem(id);
+    scene->deleteBodyFrameItem(bodyFrameGraphicsItems.value(id)->pos().x());
     bodyFrameGraphicsItems.remove(id);
     scene->update();
 }
@@ -131,6 +131,30 @@ void MainWindow::on_actionChangeStyleSheet_triggered()
     styleSheetDialog.setWindowModality(Qt::WindowModal);
     connect(&styleSheetDialog, &StyleSheetDialog::changeStyleSheetSignal, this, &MainWindow::changeStyleSheetSlot);
     styleSheetDialog.exec();
+}
+
+void MainWindow::on_actionCreateCMDTable_triggered()
+{
+    if(CommandFile::createCommandFile(*currentProject) == true){
+        addLogToDockWidget(QString("命令表生成成功"));
+        if(currentProject->getCommandFilePath() == ""){
+            currentProject->setCommandFilePath(currentProject->getName() + ".txt");
+            auto p = ui->projectTreeWidget->findItems("命令表文件", Qt::MatchContains | Qt::MatchRecursive);
+            for(auto &x : p){
+                QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
+                treeWidgetItem->setText(0, currentProject->getName() + ".txt");
+                x->setExpanded(true);
+            }
+        }
+    }
+    else{
+        addLogToDockWidget(QString("命令表生成失败"));
+    }
+}
+
+void MainWindow::on_actionCompileCMDTable_triggered()
+{
+
 }
 
 /**
@@ -193,15 +217,46 @@ void MainWindow::on_actionSaveProject_triggered()
  */
 void MainWindow::addNewProjectSlot(QString name, QString info)
 {
+    QTreeWidgetItem *topItem = createProjectTree(name);
 
-    if((currentProject = std::shared_ptr<Proj659>(new Proj659(name, info))) != nullptr){
+    if((currentProject = std::shared_ptr<Proj659>(new Proj659(name, info, topItem))) != nullptr){
         enableAllActionNeedAProject();
     }
+    else{
+        delete topItem;
+    }
+    ui->projectTreeWidget->setColumnCount(1);
+    createNewScene();
+}
 
+void MainWindow::addLogToDockWidget(const QString log)
+{
+    QString currentTime;
+    currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    ui->logTextBrowser->append(currentTime + log);
+}
+
+void MainWindow::disableAllActionNeedAProject()
+{
+    //this->ui->menuDeviceManagement->setEnabled(false);
+    this->ui->menuCMDTableManagement->setEnabled(false);
+    this->ui->menuMonitor->setEnabled(false);
+    this->ui->menuSimulink->setEnabled(false);
+}
+
+void MainWindow::enableAllActionNeedAProject()
+{
+    //this->ui->menuDeviceManagement->setEnabled(true);
+    this->ui->menuCMDTableManagement->setEnabled(true);
+    this->ui->menuMonitor->setEnabled(true);
+    this->ui->menuSimulink->setEnabled(true);
+}
+
+QTreeWidgetItem* MainWindow::createProjectTree(QString name)
+{
     ui->projectTreeWidget->setColumnCount(1);
 
     //拿到项目名称后更新树中的内容
-
     QTreeWidgetItem *topItem = new QTreeWidgetItem();
 
     topItem->setText(0, QString("项目\"%1\"").arg(name));
@@ -244,34 +299,17 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
     item3->setText(0, tr("仿真"));
 
     topItem->addChild(item3);
+
+    return topItem;
 }
 
-void MainWindow::addLogToDockWidget(const QString log)
+void MainWindow::createNewScene()
 {
-    QString currentTime;
-    currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    ui->logTextBrowser->append(currentTime + log);
-}
-
-void MainWindow::disableAllActionNeedAProject()
-{
-    this->ui->menuDeviceManagement->setEnabled(false);
-    this->ui->menuCMDTableManagement->setEnabled(false);
-    this->ui->menuMonitor->setEnabled(false);
-    this->ui->menuSimulink->setEnabled(false);
-}
-
-void MainWindow::enableAllActionNeedAProject()
-{
-    this->ui->menuDeviceManagement->setEnabled(true);
-    this->ui->menuCMDTableManagement->setEnabled(true);
-    this->ui->menuMonitor->setEnabled(true);
-    this->ui->menuSimulink->setEnabled(true);
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    qDebug() << "scene" << scene->width() << scene->height();
+    scene = std::shared_ptr<DeviceModelScene>(new DeviceModelScene());
+    scene->setSceneRect(0, 0, 5000, 5000);
+    ui->graphicsView->setScene(scene.get());
+    ui->graphicsView->centerOn(1000, 2350);
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -323,18 +361,20 @@ void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
             QAction* deleteAction = new QAction(QString("删除%1").arg(item->text(column)), ui->projectTreeWidget);
             QMenu *menu = new QMenu(ui->projectTreeWidget);
             connect(closeAction, &QAction::triggered, this, [=](){
-                ui->projectTreeWidget->removeItemWidget(item, column);
-                delete item;
+                //ui->projectTreeWidget->removeItemWidget(item, column);
+                //delete item;
                 currentProject = nullptr;
+                scene = nullptr;
                 disableAllActionNeedAProject();
-                currentBodyFrameList.clear();
+                //currentBodyFrameList.clear();
             });
             connect(deleteAction, &QAction::triggered, this, [=](){
-                ui->projectTreeWidget->removeItemWidget(item, column);
-                delete item;
-                currentProject->setSave(false);
+                //ui->projectTreeWidget->removeItemWidget(item, column);
+                //delete item;
+                //currentProject->setSave(false);
+                scene = nullptr;
                 currentProject = nullptr;
-                currentBodyFrameList.clear();
+                //currentBodyFrameList.clear();
                 disableAllActionNeedAProject();
             });
             menu->addAction(closeAction);
@@ -358,6 +398,24 @@ void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
             menu->addAction(deleteAction);
             menu->exec(QCursor::pos());
         }
+    }
+    else if(item->parent()->text(0) == "命令表文件"){
+//        BodyFrame item = currentProject->getBodyFrameItem(frameId);
+//        bodyFrameCfgWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
+//        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const BodyFrame& item){
+//            currentProject->addBodyFrameItem(item);
+//        });
+//        bodyFrameCfgWidget->setParent(ui->paraConfigWidget);
+//        ui->paraConfigLayout->addWidget(bodyFrameCfgWidget.get());
+//        ui->paraConfigWidget->show();
+//        bodyFrameCfgWidget->show();
+        bodyFrameCfgWidget = nullptr;
+        commandFileWidget = std::shared_ptr<CommandFileWidget>(new CommandFileWidget(currentProject->getCommandFilePath()));
+        commandFileWidget->setParent(ui->paraConfigWidget);
+        ui->paraConfigLayout->addWidget(commandFileWidget.get());
+        ui->paraConfigWidget->show();
+        commandFileWidget->show();
+        qDebug() << "命令表文件";
     }
 }
 

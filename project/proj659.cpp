@@ -10,12 +10,14 @@ Proj659::~Proj659()
     if(save == true){
         //如果需要保存
     }
+    delete projectTree;
 }
 
-Proj659::Proj659(QString name, QString description)
+Proj659::Proj659(QString name, QString description, QTreeWidgetItem* projectTree)
 {
     this->name = name;
     this->description = description;
+    this->projectTree = projectTree;
 }
 
 const QString &Proj659::getName() const
@@ -67,7 +69,7 @@ uint Proj659::getMinUnusedId() const
 
 
 
-bool Proj659::addBodyFrameItem(const BodyFrameItem& bodyFrameItem)
+bool Proj659::addBodyFrameItem(const BodyFrame& bodyFrameItem)
 {
     //uint minUnusedId = getMinUnusedId();
     //bodyFrameItem.setBodyFrameItemID(minUnusedId);
@@ -89,7 +91,7 @@ bool Proj659::deleteBodyFrameItem(uint id)
     }
 }
 
-BodyFrameItem Proj659::getBodyFrameItem(uint id) const
+BodyFrame Proj659::getBodyFrameItem(uint id) const
 {
     return bodyFrameItems.value(id);
 }
@@ -104,8 +106,21 @@ void Proj659::setStatus(Status newStatus)
     status = newStatus;
 }
 
-const QMap<uint, BodyFrameItem> &Proj659::getBodyFrameItems() const
+const QMap<uint, BodyFrame> &Proj659::getBodyFrameItems() const
 {
     return bodyFrameItems;
 }
 
+const QString& Proj659::getCommandFilePath()const{
+    return commandFilePath;
+}
+
+void Proj659::setCommandFilePath(const QString &newCommandFilePath)
+{
+    this->commandFilePath = newCommandFilePath;
+}
+
+QTreeWidgetItem *Proj659::getProjectTree() const
+{
+    return projectTree;
+}

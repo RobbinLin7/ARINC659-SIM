@@ -33,10 +33,10 @@ private:
     static void func(QDomDocument*, QDomElement*, const QString&, const QString&);
     static void readBodyFrames(QXmlStreamReader*, Proj659&);
     static void readBodyFrame(QXmlStreamReader*, Proj659&);
-    static void readModules(QXmlStreamReader*, BodyFrameItem&);
-    static void readModule(QXmlStreamReader*, BodyFrameItem&);
-    static void readDataFrames(QXmlStreamReader*, BodyFrameItem&);
-    static void readDataFrame(QXmlStreamReader*, BodyFrameItem&);
+    static void readModules(QXmlStreamReader*, BodyFrame&);
+    static void readModule(QXmlStreamReader*, BodyFrame&);
+    static void readDataFrames(QXmlStreamReader*, BodyFrame&);
+    static void readDataFrame(QXmlStreamReader*, BodyFrame&);
 
 };
 

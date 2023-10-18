@@ -11,7 +11,7 @@ public:
     enum Status{saved, unsaved};
     Proj659();
     ~Proj659();
-    Proj659(QString name, QString description);
+    Proj659(QString name, QString description, QTreeWidgetItem* projectTree = nullptr);
     const QString &getName() const;
     void setName(const QString &newName);
 
@@ -21,19 +21,26 @@ public:
     bool getSave() const;
     void setSave(bool newSave);
     uint getMinUnusedId() const;
-    bool addBodyFrameItem(const BodyFrameItem&);
+    bool addBodyFrameItem(const BodyFrame&);
     bool deleteBodyFrameItem(uint id);
-    BodyFrameItem getBodyFrameItem(uint id) const;
+    BodyFrame getBodyFrameItem(uint id) const;
     Status getStatus() const;
     void setStatus(Status newStatus);
 
-    const QMap<uint, BodyFrameItem> &getBodyFrameItems() const;
+    const QMap<uint, BodyFrame> &getBodyFrameItems() const;
+
+    const QString &getCommandFilePath() const;
+    void setCommandFilePath(const QString &newCommandFilePath);
+
+    QTreeWidgetItem *getProjectTree() const;
 
 private:
     QString name;
     QString description;
+    QString commandFilePath;
+    QTreeWidgetItem* projectTree;
     bool save = true;
-    QMap<uint, BodyFrameItem> bodyFrameItems;
+    QMap<uint, BodyFrame> bodyFrameItems;
     bool used[maxFrameId] = {false};
     Status status = unsaved;
 };
