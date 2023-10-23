@@ -262,4 +262,14 @@ int PreProcess::IsValidChar(char c)
     }
 }
 
+void PreProcess::SaveSrcFile()
+{
+
+}
+
+void PreProcess::SaveLstFile()
+{
+
+}
+
 

@@ -106,7 +106,7 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
         BodyFrame item = currentProject->getBodyFrameItem(frameId);
         //currentWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
         bodyFrameCfgWidget = std::make_shared<BodyFrameCfgWidget>(currentProject->getBodyFrameItem(frameId), this);
-        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const BodyFrame& item){
+        connect(bodyFrameCfgWidget.get(), &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [this](const BodyFrame& item){
             currentProject->addBodyFrameItem(item);
         });
         bodyFrameCfgWidget->setParent(ui->paraConfigWidget);
@@ -154,7 +154,12 @@ void MainWindow::on_actionCreateCMDTable_triggered()
 
 void MainWindow::on_actionCompileCMDTable_triggered()
 {
-
+    if(CommandFile::compileCommandFile(*currentProject) == true){
+        addLogToDockWidget(QString("命令表编译成功"));
+    }
+    else{
+        addLogToDockWidget(QString("命令表生成失败"));
+    }
 }
 
 /**

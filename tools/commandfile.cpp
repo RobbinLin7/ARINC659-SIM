@@ -4,23 +4,9 @@
 using std::to_string;
 using std::string;
 
-std::string trim(std::string s){
-    if (s.empty())
-    {
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    s.erase(s.find_last_not_of(" ") + 1);
-    return s;
-}
+std::string trim(std::string s);
 
-std::string trimStart(std::string s){
-    if(s.empty()){
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    return s;
-}
+std::string trimStart(std::string s);
 bool CommandFile::createCommandFile(const Proj659 &proj)
 {
     std::ofstream commandFile(proj.getName().toStdString() + ".txt");
@@ -31,18 +17,18 @@ bool CommandFile::createCommandFile(const Proj659 &proj)
     commandFile << "      END;" << std::endl;
     return true;
 }
-void VarInit(COMPILE_STATUS& c_status);
+void VarInit(PreProcess::COMPILE_STATUS& c_status);
 bool CommandFile::compileCommandFile(const Proj659 &proj)
 {
-    COMPILE_STATUS com_status;
+    PreProcess::COMPILE_STATUS com_status;
     std::list<LABEL_TABLE> label_list;
     uint nTmp;
     /* 变量初始化 */
     VarInit(com_status);
     /* 源文件预处理 */
-    PreProcess preProcess = new PreProcess(m_strDir, m_strFlieName);
-    preProcess.m_lstSourceCommand = m_lstSourceCommand;
-    if (preProcess.ProcessCommand(ref com_status) != 0)
+    PreProcess preProcess("", proj.getName().toStdString());
+    //preProcess.m_lstSourceCommand = m_lstSourceCommand;
+    if (preProcess.ProcessCommand(com_status) != 0)
     {
         return 1;
     }
@@ -1137,7 +1123,7 @@ std::string CommandFile::convertModuleNumToName(const BodyFrame &bodyFrame, cons
 }
 
 
-void VarInit(COMPILE_STATUS& c_status)
+void VarInit(PreProcess::COMPILE_STATUS& c_status)
 {
     c_status.line_num = 0;
     c_status.error = 0;
