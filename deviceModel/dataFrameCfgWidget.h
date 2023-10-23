@@ -25,8 +25,8 @@ class DataFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
-    explicit DataFrameCfgWidget(const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
     ~DataFrameCfgWidget();
 
 private:
@@ -36,6 +36,7 @@ private:
     std::map<std::string, DataFrame> dataframes;
     StringIdValidator frameIdentificationValidator;
     DataFrame dataFrame;
+    const BodyFrame bodyFrame;
     int dummy = 0;
     void installValidator();
     bool check(QWidget*);

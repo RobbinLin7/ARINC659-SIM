@@ -234,7 +234,7 @@ void BodyFrameCfgWidget::on_modifyDataFrameBtn_clicked()
 {
     int row = ui->dataFrameTableWidget->currentRow();
     std::string bodyFrameIdentification = ui->dataFrameTableWidget->item(row, 0)->text().toStdString();
-    DataFrameCfgWidget* dataFrameCfgWidget = new DataFrameCfgWidget(bodyFrameItem.getDataFrame(bodyFrameIdentification), bodyFrameItem.getDataFrames(), this);
+    DataFrameCfgWidget* dataFrameCfgWidget = new DataFrameCfgWidget(bodyFrameItem, bodyFrameItem.getDataFrame(bodyFrameIdentification), bodyFrameItem.getDataFrames(), this);
     connect(dataFrameCfgWidget, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::modifyDataFrameSlot);
     dataFrameCfgWidget->setWindowFlag(Qt::Dialog);
     dataFrameCfgWidget->show();
@@ -242,7 +242,7 @@ void BodyFrameCfgWidget::on_modifyDataFrameBtn_clicked()
 
 void BodyFrameCfgWidget::on_addDataFrameBtn_clicked()
 {
-    DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem.getDataFrames(), this);
+    DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem, bodyFrameItem.getDataFrames(), this);
     connect(frame, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::addDataFrameSlot);
     frame->setWindowFlag(Qt::Dialog);
     frame->show();

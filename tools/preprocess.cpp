@@ -2,28 +2,14 @@
 #include <chrono>
 #include "tools/globalfunc.h"
 using std::to_string;
-std::string trim(std::string s){
-    if (s.empty())
-    {
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    s.erase(s.find_last_not_of(" ") + 1);
-    return s;
-}
+std::string trim(std::string s);
 string toUpper(string s){
     for(size_t i = 0; i < s.length(); i++){
         if(s[i] >= 'a' && s[i] <= 'z') s[i] = 'A' + s[i] - 'a';
     }
     return s;
 }
-std::string trimStart(std::string s){
-    if(s.empty()){
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    return s;
-}
+std::string trimStart(std::string s);
 
 std::string ReplaceString(std::string original, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
@@ -260,6 +246,16 @@ int PreProcess::IsValidChar(char c)
     {
         return 0;
     }
+}
+
+void PreProcess::SaveSrcFile()
+{
+
+}
+
+void PreProcess::SaveLstFile()
+{
+
 }
 
 

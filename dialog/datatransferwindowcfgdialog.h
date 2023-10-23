@@ -2,6 +2,7 @@
 #define DATATRANSFERWINDOWCFGDIALOG_H
 
 #include "dialog/windowcfgdialog.h"
+#include "data/bodyframe.h"
 
 namespace Ui {
 class DataTransferWindowCfgDialog;
@@ -12,7 +13,7 @@ class DataTransferWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit DataTransferWindowCfgDialog(QWidget *parent = nullptr);
+    explicit DataTransferWindowCfgDialog(const BodyFrame& dataFrame, QWidget *parent = nullptr);
     ~DataTransferWindowCfgDialog();
 
 private:

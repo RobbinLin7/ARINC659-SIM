@@ -40,12 +40,12 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
     /* 变量初始化 */
     VarInit(com_status);
     /* 源文件预处理 */
-    PreProcess preProcess = new PreProcess(m_strDir, m_strFlieName);
-    preProcess.m_lstSourceCommand = m_lstSourceCommand;
-    if (preProcess.ProcessCommand(ref com_status) != 0)
-    {
-        return 1;
-    }
+//    PreProcess preProcess(m_strDir, m_strFlieName);
+//    preProcess.m_lstSourceCommand = m_lstSourceCommand;
+//    if (preProcess.ProcessCommand(ref com_status) != 0)
+//    {
+//        return 1;
+//    }
 }
 
 

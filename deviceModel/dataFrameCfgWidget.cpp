@@ -2,11 +2,12 @@
 #include "ui_dataFrameCfgWidget.h"
 #include <QMessageBox>
 
-DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
-    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes)
+    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
+    bodyFrame(bodyFrame)
 {
     ui->setupUi(this);
     ui->equalAllocRadioButton->setChecked(true);
@@ -23,12 +24,13 @@ DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& d
     ui->windowTableWidget->viewport()->installEventFilter(this);
 }
 
-DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
     frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
-    dataFrame(dataFrame)
+    dataFrame(dataFrame),
+    bodyFrame(bodyFrame)
 {
     ui->setupUi(this);
     ui->frameIdentification_lineEdit->setEnabled(false);
@@ -185,7 +187,7 @@ void DataFrameCfgWidget::on_cancelPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_dataTransferPushButton_clicked(bool)
 {
-    DataTransferWindowCfgDialog* dialog = new DataTransferWindowCfgDialog(this);
+    DataTransferWindowCfgDialog* dialog = new DataTransferWindowCfgDialog(bodyFrame, this);
     connect(dialog, &DataTransferWindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
