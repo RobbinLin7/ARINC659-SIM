@@ -11,7 +11,7 @@ class FrameSwitchWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit FrameSwitchWindowCfgDialog(QWidget *parent = nullptr);
+    explicit FrameSwitchWindowCfgDialog(uint id, QWidget *parent = nullptr);
     ~FrameSwitchWindowCfgDialog();
 
 private:

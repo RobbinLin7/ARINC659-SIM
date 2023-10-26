@@ -25,8 +25,8 @@ class DataFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
-    explicit DataFrameCfgWidget(const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
     ~DataFrameCfgWidget();
 
 private:
@@ -36,13 +36,15 @@ private:
     std::map<std::string, DataFrame> dataframes;
     StringIdValidator frameIdentificationValidator;
     DataFrame dataFrame;
+    const BodyFrame bodyFrame;
     int dummy = 0;
     void installValidator();
     bool check(QWidget*);
     void setForm();
     void addWindow(const FrameWindow&);
     bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
-    std::list<FrameWindow> frameWindows;
+    WindowCfgDialog* newWindowCfgDialog();
+    void changeOrderOfTwoRows(int row1, int row2);
 
 private slots:
     void checkLineEditText();
@@ -57,6 +59,10 @@ private slots:
     void on_freePushButton_clicked(bool);
     void on_frameSwitchPushButton_clicked(bool);
     void on_shortSyncPushButton_clicked(bool);
+    void on_editWindowPushButton_clicked(bool);
+    void on_deleteWindowPushButton_clicked(bool);
+    void on_moveUpWindowPushButton_clicked(bool);
+    void on_moveDownWindowPushButton_clicked(bool);
     void addNewWindow(const FrameWindow& frameWindow);
 
 

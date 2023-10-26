@@ -11,7 +11,7 @@ class SubFrameCallWindowDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit SubFrameCallWindowDialog(QWidget *parent = nullptr);
+    explicit SubFrameCallWindowDialog(uint id, QWidget *parent = nullptr);
     ~SubFrameCallWindowDialog();
 
 private:

@@ -2,11 +2,12 @@
 #include "ui_dataFrameCfgWidget.h"
 #include <QMessageBox>
 
-DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
-    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes)
+    frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
+    bodyFrame(bodyFrame)
 {
     ui->setupUi(this);
     ui->equalAllocRadioButton->setChecked(true);
@@ -20,15 +21,16 @@ DataFrameCfgWidget::DataFrameCfgWidget(const std::map<std::string, DataFrame>& d
     ui->deleteWindowPushButton->setEnabled(false);
     ui->moveDownWindowPushButton->setEnabled(false);
     ui->moveUpWindowPushButton->setEnabled(false);
-    ui->windowTableWidget->viewport()->installEventFilter(this);
+
 }
 
-DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
     frameIdentificationValidator(QRegExp("[a-zA-Z][a-zA-Z0-9]*"), dataframes),
-    dataFrame(dataFrame)
+    dataFrame(dataFrame),
+    bodyFrame(bodyFrame)
 {
     ui->setupUi(this);
     ui->frameIdentification_lineEdit->setEnabled(false);
@@ -36,6 +38,8 @@ DataFrameCfgWidget::DataFrameCfgWidget(const DataFrame &dataFrame, const std::ma
     setForm();
     connect(ui->framePeriod_lineEdit, &QLineEdit::textChanged, this, &DataFrameCfgWidget::checkLineEditText);
     installValidator();
+    ui->frameIdentification_lineEdit->setValidator(nullptr);
+    ui->totalWindow_lineEdit->setText(QString::number(dataFrame.getFrameWindows().size()));
 }
 
 DataFrameCfgWidget::~DataFrameCfgWidget()
@@ -48,6 +52,7 @@ void DataFrameCfgWidget::installValidator()
     framePeriodValidator = new QIntValidator(minFramePeriod, maxFramePeriod, this);
     ui->framePeriod_lineEdit->setValidator(framePeriodValidator);
     ui->frameIdentification_lineEdit->setValidator(&frameIdentificationValidator);
+    ui->windowTableWidget->viewport()->installEventFilter(this);
 }
 
 bool DataFrameCfgWidget::check(QWidget *widget)
@@ -55,6 +60,7 @@ bool DataFrameCfgWidget::check(QWidget *widget)
     QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(widget);
     if(lineEdit != nullptr){
         QString input = lineEdit->text();
+        if(lineEdit->validator() == nullptr) return true;
         if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
             return true;
         }
@@ -71,6 +77,9 @@ void DataFrameCfgWidget::setForm()
     ui->framePeriod_lineEdit->setText(QString::number(dataFrame.getFramePeriod()));
     ui->idleWaitTime_lineEdit->setText(QString::number(dataFrame.getIdleWaitTime()));
     dataFrame.getTimeAllocationType() == DataFrame::equalAlloc ? ui->equalAllocRadioButton->setChecked(true) : ui->downConcentrationAllocRadioButton->setChecked(true);
+    for(auto& window : dataFrame.getFrameWindows()){
+        addWindow(window);
+    }
 }
 
 void DataFrameCfgWidget::addWindow(const FrameWindow &window)
@@ -140,6 +149,82 @@ bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, 
     return true;
 }
 
+WindowCfgDialog *DataFrameCfgWidget::newWindowCfgDialog()
+{
+        int row = ui->windowTableWidget->currentRow();
+        const FrameWindow& window = dataFrame.getFrameWindows().at(row);
+        WindowCfgDialog* dialog = nullptr;
+        switch (window.getWindowType()) {
+    //    DATA_SEND = 0,  /* 数据传送窗口 */
+    //    VERSION_SEND = 1,  /* 版本校验窗口 */
+    //    LONG_SYNC = 2,     /* 长同步窗口 */
+    //    FRAME_SWITCH = 3, /* 帧切换窗口 */
+    //    CALL_SUBFRRAME = 4,  /* 调用子帧窗口 */
+    //    INT_SEND = 5,           /*中断发送窗口 */
+    //    FRAME_JUMP = 6,   /* 帧跳转窗口*/
+    //    FREE = 7,   /* 空闲等待窗口 */
+    //    SHORT_SYNC = 8,   /* 短同步窗口 */
+        case FrameWindow::DATA_SEND:{
+            dialog = new DataTransferWindowCfgDialog(row, window, bodyFrame.getModules(), this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::VERSION_SEND:{
+            dialog = new VersionDetectionWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::LONG_SYNC:{
+            dialog = new LongSyncWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::FRAME_SWITCH:{
+            dialog = new FrameSwitchWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::CALL_SUBFRRAME:{
+            dialog = new SubFrameCallWindowDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::INT_SEND:{
+            dialog = new InterruptionWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::FRAME_JUMP:{
+            dialog = new JumpWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::FREE:{
+            dialog = new FreeWindowCfgDialog(row, this);
+            dialog->setWindowFlag(Qt::Dialog);
+            break;
+        }
+        case FrameWindow::SHORT_SYNC:{
+            break;
+        }
+        default:
+            break;
+        }
+        return dialog;
+}
+
+void DataFrameCfgWidget::changeOrderOfTwoRows(int row1, int row2)
+{
+    for (int column = 1; column < ui->windowTableWidget->columnCount(); ++column) {
+        QTableWidgetItem* item1 = ui->windowTableWidget->takeItem(row1, column);
+        QTableWidgetItem* item2 = ui->windowTableWidget->takeItem(row2, column);
+
+        // 将单元格项设置回表格中的另一个行
+        ui->windowTableWidget->setItem(row1, column, item2);
+        ui->windowTableWidget->setItem(row2, column, item1);
+    }
+}
+
 void DataFrameCfgWidget::checkLineEditText()
 {
     QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(sender());
@@ -185,7 +270,7 @@ void DataFrameCfgWidget::on_cancelPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_dataTransferPushButton_clicked(bool)
 {
-    DataTransferWindowCfgDialog* dialog = new DataTransferWindowCfgDialog(this);
+    DataTransferWindowCfgDialog* dialog = new DataTransferWindowCfgDialog(ui->windowTableWidget->rowCount(), bodyFrame.getModules(), this);
     connect(dialog, &DataTransferWindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -193,7 +278,7 @@ void DataFrameCfgWidget::on_dataTransferPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_interruptionPushButton_clicked(bool)
 {
-   InterruptionWindowCfgDialog* dialog = new InterruptionWindowCfgDialog(this);
+   InterruptionWindowCfgDialog* dialog = new InterruptionWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
    connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
    dialog->setWindowFlag(Qt::Dialog);
    dialog->exec();
@@ -201,7 +286,7 @@ void DataFrameCfgWidget::on_interruptionPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_longSyncPushButton_clicked(bool)
 {
-    LongSyncWindowCfgDialog* dialog = new LongSyncWindowCfgDialog(this);
+    LongSyncWindowCfgDialog* dialog = new LongSyncWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -209,7 +294,7 @@ void DataFrameCfgWidget::on_longSyncPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_jumpPushButton_clicked(bool)
 {
-    JumpWindowCfgDialog* dialog = new JumpWindowCfgDialog(this);
+    JumpWindowCfgDialog* dialog = new JumpWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -217,7 +302,7 @@ void DataFrameCfgWidget::on_jumpPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_versionDetectionPushButton_clicked(bool)
 {
-    VersionDetectionWindowCfgDialog* dialog = new VersionDetectionWindowCfgDialog(this);
+    VersionDetectionWindowCfgDialog* dialog = new VersionDetectionWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -225,7 +310,7 @@ void DataFrameCfgWidget::on_versionDetectionPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_subFrameCallPushButton_clicked(bool)
 {
-    SubFrameCallWindowDialog* dialog = new SubFrameCallWindowDialog(this);
+    SubFrameCallWindowDialog* dialog = new SubFrameCallWindowDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -233,7 +318,7 @@ void DataFrameCfgWidget::on_subFrameCallPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_freePushButton_clicked(bool)
 {
-    FreeWindowCfgDialog* dialog = new FreeWindowCfgDialog(this);
+    FreeWindowCfgDialog* dialog = new FreeWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -241,7 +326,7 @@ void DataFrameCfgWidget::on_freePushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_frameSwitchPushButton_clicked(bool)
 {
-    FrameSwitchWindowCfgDialog* dialog = new FrameSwitchWindowCfgDialog(this);
+    FrameSwitchWindowCfgDialog* dialog = new FrameSwitchWindowCfgDialog(ui->windowTableWidget->rowCount(), this);
     connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
     dialog->setWindowFlag(Qt::Dialog);
     dialog->exec();
@@ -250,15 +335,53 @@ void DataFrameCfgWidget::on_frameSwitchPushButton_clicked(bool)
 void DataFrameCfgWidget::on_shortSyncPushButton_clicked(bool)
 {
     FrameWindow window;
-
     window.setWindowType(FrameWindow::SHORT_SYNC);
-    addWindow(window);
+    addNewWindow(window);
+}
+
+void DataFrameCfgWidget::on_editWindowPushButton_clicked(bool)
+{
+    WindowCfgDialog *dialog = newWindowCfgDialog();
+    dialog->exec();
+}
+
+void DataFrameCfgWidget::on_deleteWindowPushButton_clicked(bool)
+{
+    if(ui->windowTableWidget->currentRow() >= 0){
+        int row = ui->windowTableWidget->currentRow();
+        ui->windowTableWidget->removeRow(row);
+        dataFrame.deleteFrameWindowAtIndex(row);
+        while(row < ui->windowTableWidget->rowCount()){
+            uint id = ui->windowTableWidget->item(row, 0)->text().toUInt() - 1;
+            ui->windowTableWidget->item(row, 0)->setText(QString::number(id));
+            ++row;
+        }
+        ui->totalWindow_lineEdit->setText(QString::number(ui->totalWindow_lineEdit->text().toUInt() - 1));
+    }
+    else{
+        qDebug() << "选中项目为空";
+    }
+}
+
+void DataFrameCfgWidget::on_moveUpWindowPushButton_clicked(bool)
+{
+    int row = ui->windowTableWidget->currentRow();
+    changeOrderOfTwoRows(row, row - 1);
+    dataFrame.moveUpFrameWindowAtIndex(row);
+}
+
+void DataFrameCfgWidget::on_moveDownWindowPushButton_clicked(bool)
+{
+    int row = ui->windowTableWidget->currentRow();
+    changeOrderOfTwoRows(row, row + 1);
+    dataFrame.moveDownFrameWindowAtIndex(row);
 }
 
 void DataFrameCfgWidget::addNewWindow(const FrameWindow &frameWindow)
 {
-    frameWindows.push_back(frameWindow);
+    dataFrame.insertFrameWindow(frameWindow);
     addWindow(frameWindow);
+    ui->totalWindow_lineEdit->setText(QString::number(ui->totalWindow_lineEdit->text().toUInt() + 1));
 }
 
 bool DataFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)

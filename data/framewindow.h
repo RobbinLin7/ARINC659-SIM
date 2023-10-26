@@ -2,6 +2,7 @@
 #define FRAMEWINDOW_H
 #include<string>
 #include<list>
+#include<set>
 
 class FrameWindow
 {
@@ -66,8 +67,10 @@ public:
     const std::string &getNewFrameID() const;
     void setStrNewFrameID(const std::string &newStrNewFrameID);
 
-    const std::list<int> &getReceiveLRMList() const;
+    const std::list<int> &getReceiveLRMList()const;
+    void removeAllOfReceiveLRMList();
     void setReceiveLRMList(const std::list<int> &newReceiveLRMList);
+    void addReceiveLRM(const int LRM_id);
 
 private:
     bool flag; //版本校验窗口中为版本校验标识,在调用子帧以及JUMP 指令中标识是否发送固有空闲
@@ -85,7 +88,8 @@ private:
     std::string receiveAddr; //接收地址
     std::string syncCode; //发送长同步时的同步码
     std::string newFrameID; //新帧标识
-    std::list<int> receiveLRMList; //接收模块列表
+    mutable std::list<int> receiveLRMList; //接收模块列表
+    std::set<int> receiveLRMSet;
 };
 
 #endif // FRAMEWINDOW_H

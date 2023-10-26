@@ -11,7 +11,7 @@ class JumpWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit JumpWindowCfgDialog(QWidget *parent = nullptr);
+    explicit JumpWindowCfgDialog(uint id, QWidget *parent = nullptr);
     ~JumpWindowCfgDialog();
 
 private:

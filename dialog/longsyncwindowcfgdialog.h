@@ -11,7 +11,7 @@ class LongSyncWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit LongSyncWindowCfgDialog(QWidget *parent = nullptr);
+    explicit LongSyncWindowCfgDialog(uint id, QWidget *parent = nullptr);
     ~LongSyncWindowCfgDialog();
 
 private:

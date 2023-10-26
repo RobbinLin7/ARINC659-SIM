@@ -1,5 +1,5 @@
 #include "framewindow.h"
-
+#include <algorithm>
 FrameWindow::FrameWindow()
 {
 
@@ -161,12 +161,25 @@ void FrameWindow::setStrNewFrameID(const std::string &newStrNewFrameID)
     newFrameID = newStrNewFrameID;
 }
 
-const std::list<int> &FrameWindow::getReceiveLRMList() const
+const std::list<int> &FrameWindow::getReceiveLRMList()const
 {
+    std::copy(receiveLRMSet.begin(), receiveLRMSet.end(), std::back_inserter(receiveLRMList));
     return receiveLRMList;
+}
+
+
+void FrameWindow::removeAllOfReceiveLRMList()
+{
+    receiveLRMSet.clear();
 }
 
 void FrameWindow::setReceiveLRMList(const std::list<int> &newReceiveLRMList)
 {
-    receiveLRMList = newReceiveLRMList;
+
+}
+
+
+void FrameWindow::addReceiveLRM(const int LRM_id)
+{
+    receiveLRMSet.insert(LRM_id);
 }

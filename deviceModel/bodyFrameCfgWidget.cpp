@@ -234,7 +234,7 @@ void BodyFrameCfgWidget::on_modifyDataFrameBtn_clicked()
 {
     int row = ui->dataFrameTableWidget->currentRow();
     std::string bodyFrameIdentification = ui->dataFrameTableWidget->item(row, 0)->text().toStdString();
-    DataFrameCfgWidget* dataFrameCfgWidget = new DataFrameCfgWidget(bodyFrameItem.getDataFrame(bodyFrameIdentification), bodyFrameItem.getDataFrames(), this);
+    DataFrameCfgWidget* dataFrameCfgWidget = new DataFrameCfgWidget(bodyFrameItem, bodyFrameItem.getDataFrame(bodyFrameIdentification), bodyFrameItem.getDataFrames(), this);
     connect(dataFrameCfgWidget, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::modifyDataFrameSlot);
     dataFrameCfgWidget->setWindowFlag(Qt::Dialog);
     dataFrameCfgWidget->show();
@@ -242,7 +242,7 @@ void BodyFrameCfgWidget::on_modifyDataFrameBtn_clicked()
 
 void BodyFrameCfgWidget::on_addDataFrameBtn_clicked()
 {
-    DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem.getDataFrames(), this);
+    DataFrameCfgWidget *frame = new DataFrameCfgWidget(bodyFrameItem, bodyFrameItem.getDataFrames(), this);
     connect(frame, &DataFrameCfgWidget::saveDataFrameSignal, this, &BodyFrameCfgWidget::addDataFrameSlot);
     frame->setWindowFlag(Qt::Dialog);
     frame->show();
@@ -353,7 +353,8 @@ bool BodyFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)
     if(watched == ui->moduleTableWidget->viewport() && event->type() == QEvent::MouseButtonPress){
         QPoint globalPos = QCursor::pos();
         QPoint localPos = ui->moduleTableWidget->viewport()->mapFromGlobal(globalPos);
-        if(ui->moduleTableWidget->itemAt(localPos) != nullptr){
+        int row = ui->moduleTableWidget->rowAt(localPos.y());
+        if(row >= 0){
             ui->modifyModuleBtn->setEnabled(true);
             ui->deleteModuleBtn->setEnabled(true);
         }
@@ -485,7 +486,8 @@ bool BodyFrameCfgWidget::addModuleToTableWidget(const Module& module)
 //    ui->moduleTableWidget->setItem(rowIndex, 0, moduleNumberItem);
 //    ui->moduleTableWidget->setItem(rowIndex, 1, initialWaitTimeItem);
 //    ui->moduleTableWidget->setItem(rowIndex, 2, moduleNameItem);
-    addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
+    addTableItems(ui->moduleTableWidget, rowIndex, moduleNumberItem, moduleNameItem, initialWaitTimeItem, nullptr);
+    //addTableItems(ui->moduleTableWidget, rowIndex, moduleNameItem, initialWaitTimeItem, moduleNameItem, nullptr);
     return true;
 }
 
@@ -500,9 +502,9 @@ bool BodyFrameCfgWidget::addDataFrameToTableWidget(const DataFrame &dataFrame)
     QTableWidgetItem* dataFramePeriodItem = nullptr;
     (dataFramePeriodItem = new QTableWidgetItem(QString::number(dataFrame.getFramePeriod())))->setTextAlignment(Qt::AlignCenter);
     QTableWidgetItem* dataFrameIdleWayItem = nullptr;
-    (dataFrameIdleWayItem = new QTableWidgetItem("不知道是什么东西"))->setTextAlignment(Qt::AlignCenter);
+    (dataFrameIdleWayItem = new QTableWidgetItem(dataFrame.getTimeAllocationType() == DataFrame::equalAlloc ? "平均分配" : "向下集中"))->setTextAlignment(Qt::AlignCenter);
     QTableWidgetItem* dataFrameChildFramesItem = nullptr;
-    (dataFrameChildFramesItem = new QTableWidgetItem("不知道啥*2"))->setTextAlignment(Qt::AlignCenter);
+    (dataFrameChildFramesItem = new QTableWidgetItem(dataFrame.getDataFrameType() == DataFrame::Child ? "True" : "False"))->setTextAlignment(Qt::AlignCenter);
     addTableItems(ui->dataFrameTableWidget, rowIndex, dataFrameIdentificationItem, dataFrameTotalWindowItem, dataFramePeriodItem, dataFrameIdleWayItem,
                   dataFrameChildFramesItem, nullptr);
     return true;

@@ -40,12 +40,9 @@
     <widget class="QWidget" name="widget" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="4">
-       <widget class="QLineEdit" name="initialWaitTime_lineEdit"/>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLineEdit" name="initialWaitTime_lineEdit">
         <property name="text">
-         <string>初始等待时间</string>
+         <string>0xFFFF</string>
         </property>
        </widget>
       </item>
@@ -63,17 +60,20 @@
         </item>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="moduleNumber_lineEdit"/>
+      </item>
       <item row="0" column="5">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>名称</string>
+         <string>模块名</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="5">
-       <widget class="QLabel" name="label_5">
+      <item row="2" column="6">
+       <widget class="QPushButton" name="cancelPushButton">
         <property name="text">
-         <string>模块属性</string>
+         <string>取消</string>
         </property>
        </widget>
       </item>
@@ -84,20 +84,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
-       <widget class="QLineEdit" name="moduleName_lineEdit"/>
+      <item row="1" column="5">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>模块属性</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>模块号</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="6">
-       <widget class="QPushButton" name="cancelPushButton">
-        <property name="text">
-         <string>取消</string>
         </property>
        </widget>
       </item>
@@ -114,8 +111,15 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="moduleNumber_lineEdit"/>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>初始等待时间</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QLineEdit" name="moduleName_lineEdit"/>
       </item>
      </layout>
     </widget>

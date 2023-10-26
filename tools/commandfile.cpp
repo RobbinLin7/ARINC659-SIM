@@ -1,12 +1,31 @@
 #include "commandfile.h"
 #include <fstream>
 #include "tools/preprocess.h"
+#include "tools/codegenerate.h"
+#include "tools/coecodecompile.h"
+#include "tools/labelscan.h"
+#include "tools/mcscodecompile.h"
+#include "tools/gramcheck.h"
 using std::to_string;
 using std::string;
 
-std::string trim(std::string s);
+std::string trim(std::string s){
+    if (s.empty())
+    {
+        return s;
+    }
+    s.erase(0,s.find_first_not_of(" "));
+    s.erase(s.find_last_not_of(" ") + 1);
+    return s;
+}
 
-std::string trimStart(std::string s);
+std::string trimStart(std::string s){
+    if(s.empty()){
+        return s;
+    }
+    s.erase(0,s.find_first_not_of(" "));
+    return s;
+}
 bool CommandFile::createCommandFile(const Proj659 &proj)
 {
     std::ofstream commandFile(proj.getName().toStdString() + ".txt");
@@ -32,6 +51,64 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
     {
         return 1;
     }
+    std::string m_strDir = "", m_strFlieName = proj.getName().toStdString();
+    /* 标号扫描 */
+//    LabelScan labelScan = new LabelScan(m_strDir,m_strFlieName);
+//    label_list = labelScan.ScanLabel(ref com_status);
+
+//    /* 语法检查 */
+//    GramCheck gramCheck = new GramCheck(m_strDir, m_strFlieName);
+//    nTmp = gramCheck.CheckGram(ref com_status, label_list);
+
+//    SaveCompileResult(com_status);
+
+//    /* 有语法错误 */
+//   if(com_status.error != 0)
+//   {
+//       System.Windows.Forms.MessageBox.Show("编辑错误!");
+//       try
+//       {
+
+//           File.Delete(m_strDir + "/" + m_strFlieName + ".mif");
+//           File.Delete(m_strDir + "/" + m_strFlieName + ".m");
+//           File.Delete(m_strDir + "/" + m_strFlieName + ".coe");
+//       }
+//       catch (Exception e)
+//       {
+//           // Let the user know what went wrong.
+//          // e.Message.ToString();
+//       }
+//       return 1;
+//   }
+
+//   /* 无语法错误但有报警信息 */
+//   if(com_status.warning != 0)
+//   {
+//       if (DialogResult.Cancel == MessageBox.Show("编译存在警告!\n是否继续?", "编译警告", MessageBoxButtons.OKCancel))
+//       {
+//           MessageBox.Show("编译取消!");
+//           return 1;
+
+//       }
+
+//   }
+
+//   CodeGenerate codeGenerate = new CodeGenerate(m_strDir, m_strFlieName);
+//   codeGenerate.GenerateCode(ref com_status, label_list);
+
+//   CoeCodeCompile codeCompile = new CoeCodeCompile(m_strDir, m_strFlieName);
+//   codeCompile.CompileCoeCode();
+
+//   McsCodeCompile mcsCodeCompile = new McsCodeCompile(m_strDir, m_strFlieName);
+//   mcsCodeCompile.CompileMcsCode();
+
+//   label_list.Clear();
+
+//   //MessageBox.Show("编译完成!");
+
+
+   return true;
+
 }
 
 
@@ -45,6 +122,9 @@ bool CommandFile::createBodyFrameInfo(std::ostream &os, const BodyFrame &bodyFra
     //模块宏定义
     for(auto modulePair : bodyFrame.getModules()){
         auto module = modulePair.second;
+        if(module.getModuleName() != ""){
+            os << "#define  " << trim(module.getModuleName()) << " " << to_string(module.getModuleNumber()) << std::endl;
+        }
     }
 
     //输出机架号

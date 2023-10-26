@@ -47,8 +47,13 @@ SOURCES += \
     project/proj659.cpp \
     simulation/faultwidget.cpp \
     simulation/simulinkwidget.cpp \
+    tools/codegenerate.cpp \
+    tools/coecodecompile.cpp \
     tools/commandfile.cpp \
     tools/globalfunc.cpp \
+    tools/gramcheck.cpp \
+    tools/labelscan.cpp \
+    tools/mcscodecompile.cpp \
     tools/myxml.cpp \
     tools/preprocess.cpp \
     validator/stringidvalidator.cpp
@@ -84,8 +89,13 @@ HEADERS += \
     project/proj659.h \
     simulation/faultwidget.h \
     simulation/simulinkwidget.h \
+    tools/codegenerate.h \
+    tools/coecodecompile.h \
     tools/commandfile.h \
     tools/globalfunc.h \
+    tools/gramcheck.h \
+    tools/labelscan.h \
+    tools/mcscodecompile.h \
     tools/myxml.h \
     tools/preprocess.h \
     validator/stringidvalidator.h

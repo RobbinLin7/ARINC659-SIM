@@ -1,6 +1,7 @@
 ﻿#ifndef DATAFRAME_H
 #define DATAFRAME_H
 #include<string>
+#include<vector>
 #include"data/framewindow.h"
 typedef unsigned int uint;
 const uint minFramePeriod = 0, maxFramePeriod = 10000;
@@ -32,7 +33,15 @@ public:
     DataFrameType getDataFrameType() const;
     void setDataFrameType(DataFrameType newDataFrameType);
 
-    const std::list<FrameWindow> &getFrameWindows() const;
+    const std::vector<FrameWindow> &getFrameWindows() const;
+
+    void insertFrameWindow(const FrameWindow&);
+
+    void deleteFrameWindowAtIndex(const uint index);
+
+    void moveUpFrameWindowAtIndex(const uint index);
+
+    void moveDownFrameWindowAtIndex(const uint index);
 
     bool getRetWithGap() const;
 
@@ -44,7 +53,7 @@ private:
     std::string frameIdentification;        //帧标识
     TimeAllocationType timeAllocationType;  //时间分配（平均分配，向下集中）
     DataFrameType dataFrameType;            //区分是否为子帧
-    std::list<FrameWindow> frameWindows;    //窗口列表
+    std::vector<FrameWindow> frameWindows;    //窗口列表
     bool retWithGap;                        //子序列返回时是否发送固有空闲，即利用RET，还是RETI返回
 };
 

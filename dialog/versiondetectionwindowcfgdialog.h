@@ -11,7 +11,7 @@ class VersionDetectionWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit VersionDetectionWindowCfgDialog(QWidget *parent = nullptr);
+    explicit VersionDetectionWindowCfgDialog(uint id, QWidget *parent = nullptr);
     ~VersionDetectionWindowCfgDialog();
 
 private:

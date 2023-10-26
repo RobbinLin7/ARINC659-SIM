@@ -38,7 +38,7 @@ void ModuleCfgWidget::installValidator()
     moduleNumberValidator = new QIntValidator(minModuleNumber, maxModuleNumber, this);
     ui->moduleNumber_lineEdit->setValidator(moduleNumberValidator);
 
-    QRegExp hexRegExp("(0x)?[0-9A-Fa-f]+");
+    QRegExp hexRegExp("0[xX][0-9A-Fa-f]+|\\b[0-9]+\\b");
     initialWaitTimeValidator = new QRegExpValidator(hexRegExp, this);
     ui->initialWaitTime_lineEdit->setValidator(initialWaitTimeValidator);
 }
@@ -92,7 +92,13 @@ void ModuleCfgWidget::on_okPushButton_clicked(bool)
         QMessageBox::warning(this, "错误", "初始等待时间参数有误");
         return;
     }
-    module.setInitialWaitTime(ui->initialWaitTime_lineEdit->text().toUInt());
+    if(ui->initialWaitTime_lineEdit->text().startsWith("0x") || ui->initialWaitTime_lineEdit->text().startsWith("0X")){
+        bool ok;
+        module.setInitialWaitTime(ui->initialWaitTime_lineEdit->text().toUInt(&ok, 16));
+    }
+    else{
+        module.setInitialWaitTime(ui->initialWaitTime_lineEdit->text().toUInt());
+    }
     module.setModuleType(ui->moduleTypeComboBox->currentIndex() == 0 ? Module::physicalModule : Module::simulationModule);
     emit saveModuleSignal(module);
     this->close();

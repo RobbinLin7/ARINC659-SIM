@@ -11,7 +11,7 @@ class InterruptionWindowCfgDialog : public WindowCfgDialog
     Q_OBJECT
 
 public:
-    explicit InterruptionWindowCfgDialog(QWidget *parent = nullptr);
+    explicit InterruptionWindowCfgDialog(uint id, QWidget *parent = nullptr);
     ~InterruptionWindowCfgDialog();
 
 private:
