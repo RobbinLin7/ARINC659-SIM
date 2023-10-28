@@ -27,6 +27,11 @@ class DataFrameCfgWidget : public QWidget
 public:
     explicit DataFrameCfgWidget(const BodyFrame&, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
     explicit DataFrameCfgWidget(const BodyFrame&, const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    struct TableItem{
+        int index;
+        QTableWidgetItem* item;
+    };
+
     ~DataFrameCfgWidget();
 
 private:
@@ -42,6 +47,7 @@ private:
     bool check(QWidget*);
     void setForm();
     void addWindow(const FrameWindow&);
+    bool addTableItems(QTableWidget* tableWidget, int rowIndex, TableItem *item, ...);
     bool addTableItems(QTableWidget* tableWidget, int rowIndex, QTableWidgetItem *item, ...);
     WindowCfgDialog* newWindowCfgDialog();
     void changeOrderOfTwoRows(int row1, int row2);

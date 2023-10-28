@@ -86,6 +86,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
 {
     int rowIndex = ui->windowTableWidget->rowCount();
     QTableWidgetItem* windowIdItem = new QTableWidgetItem(QString::number(rowIndex));
+    //TableItem* windowIdItem = new TableItem(TableItem{0, new QTableWidgetItem(QString::number(rowIndex))});
     windowIdItem->setTextAlignment(Qt::AlignCenter);
     QTableWidgetItem* windowTypeItem = nullptr;
     switch (window.getWindowType()) {
@@ -129,8 +130,25 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
     default:
         break;
     }
+    TableItem* windowIdItemWithIndex = new TableItem{0, windowIdItem};
+    TableItem* windowTypeItemWithIndex = new TableItem{2, windowTypeItem};
     windowTypeItem->setTextAlignment(Qt::AlignCenter);
-    addTableItems(ui->windowTableWidget, rowIndex, windowIdItem, windowTypeItem, nullptr);
+    addTableItems(ui->windowTableWidget, rowIndex, windowIdItemWithIndex, windowTypeItemWithIndex, nullptr);
+}
+
+bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, TableItem *firstItem, ...)
+{
+    //int colIndex = 0;
+    TableItem* currentItem = firstItem;
+    va_list args;
+    va_start(args, firstItem);
+    tableWidget->insertRow(rowIndex);
+    while(currentItem){
+        tableWidget->setItem(rowIndex, currentItem->index, currentItem->item);
+        currentItem = va_arg(args, TableItem*);
+    }
+    va_end(args);
+    return true;
 }
 
 bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, QTableWidgetItem *firstItem, ...)
@@ -145,7 +163,6 @@ bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, 
         currentItem = va_arg(args, QTableWidgetItem*);
     }
     va_end(args);
-
     return true;
 }
 

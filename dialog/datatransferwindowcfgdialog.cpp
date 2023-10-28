@@ -34,8 +34,10 @@ DataTransferWindowCfgDialog::DataTransferWindowCfgDialog(uint id, const FrameWin
         ui->backupLRM1_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
         ui->backupLRM2_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
         ui->backupLRM3_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
+        nameToId[x.second.getModuleName()] = x.second.getModuleNumber();
     }
     ui->windowId_lineEdit->setText(QString::number(id));
+    ui->backupLRM1_comboBox->setCurrentText(QString::fromStdString(frameWindow.getSupportLRM1()));
     QStringList receiveLRMList;
     for(auto x : frameWindow.getReceiveLRMList()){
         receiveLRMList.append(QString::fromStdString(modules.at(x).getModuleName()));
@@ -55,6 +57,10 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
     window.setDataCount(ui->dataCount_lineEdit->text().toInt());
     window.setStrSendAddr(ui->sendAddr_lineEdit->text().toStdString());
     window.setStrReceiveAddr(ui->receiveAddr_lineEdit->text().toStdString());
+    window.setSupportLRM1(ui->backupLRM1_comboBox->currentText().toStdString());
+    if(ui->backupLRM1_comboBox->currentText() != ""){
+
+    }
     std::istringstream iss(ui->receiveLRM_lineEdit->text().toStdString());
     std::string LRM_name;
     while(std::getline(iss, LRM_name, ' ')){
@@ -62,7 +68,7 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
             window.addReceiveLRM(nameToId[LRM_name]);
         }
         else{
-            QMessageBox::critical(this, "错误", QString("LRM%1不存在"));
+            QMessageBox::critical(this, "错误", QString("LRM:%1不存在").arg(QString::fromStdString(LRM_name)));
             return;
         }
     }

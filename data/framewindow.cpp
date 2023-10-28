@@ -163,6 +163,7 @@ void FrameWindow::setStrNewFrameID(const std::string &newStrNewFrameID)
 
 const std::list<int> &FrameWindow::getReceiveLRMList()const
 {
+    receiveLRMList.clear();
     std::copy(receiveLRMSet.begin(), receiveLRMSet.end(), std::back_inserter(receiveLRMList));
     return receiveLRMList;
 }
