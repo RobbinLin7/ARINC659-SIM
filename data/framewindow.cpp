@@ -183,3 +183,11 @@ void FrameWindow::addReceiveLRM(const int LRM_id)
 {
     receiveLRMSet.insert(LRM_id);
 }
+
+bool FrameWindow::isExistInReceiveLRMList(const int LRM_id)
+{
+    if(std::find(receiveLRMList.begin(),receiveLRMList.end(),LRM_id)!=receiveLRMList.end())
+        return true;
+    else return false;
+
+}

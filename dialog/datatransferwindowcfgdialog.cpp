@@ -35,16 +35,27 @@ DataTransferWindowCfgDialog::DataTransferWindowCfgDialog(uint id, const FrameWin
         ui->backupLRM2_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
         ui->backupLRM3_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
     }
+
+    ui->mainLRM_comboBox->setCurrentText(QString::number(frameWindow.getMainLRM()));
     ui->windowId_lineEdit->setText(QString::number(id));
-    QStringList receiveLRMList;
+    ui->backupLRM1_comboBox->setCurrentText(QString::fromStdString(frameWindow.getSupportLRM1()));
+    ui->backupLRM2_comboBox->setCurrentText(QString::fromStdString(frameWindow.getSupportLRM2()));
+    ui->backupLRM3_comboBox->setCurrentText(QString::fromStdString(frameWindow.getSupportLRM3()));
+
+    //存在多次点击编辑重复的问题TODO
+    QStringList* receiveLRMList=new QStringList();
     for(auto x : frameWindow.getReceiveLRMList()){
-        receiveLRMList.append(QString::fromStdString(modules.at(x).getModuleName()));
+        receiveLRMList->append(QString::fromStdString(modules.at(x).getModuleName()));
     }
-    ui->receiveLRM_lineEdit->setText(receiveLRMList.join(" "));
+    ui->receiveLRM_lineEdit->setText(receiveLRMList->join(" "));
+    qDebug() << receiveLRMList->size();
+    receiveLRMList->clear();
+    qDebug() << receiveLRMList->size();
 }
 
 DataTransferWindowCfgDialog::~DataTransferWindowCfgDialog()
 {
+    qDebug()<< "调用了析构函数";
     delete ui;
 }
 
@@ -55,10 +66,16 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
     window.setDataCount(ui->dataCount_lineEdit->text().toInt());
     window.setStrSendAddr(ui->sendAddr_lineEdit->text().toStdString());
     window.setStrReceiveAddr(ui->receiveAddr_lineEdit->text().toStdString());
+    window.setSupportLRM1(ui->backupLRM1_comboBox->currentText().toStdString());
+    window.setSupportLRM2(ui->backupLRM2_comboBox->currentText().toStdString());
+    window.setSupportLRM3(ui->backupLRM3_comboBox->currentText().toStdString());
+
+    //存设置好的接受LRM值
     std::istringstream iss(ui->receiveLRM_lineEdit->text().toStdString());
     std::string LRM_name;
     while(std::getline(iss, LRM_name, ' ')){
-        if(nameToId.find(LRM_name) != nameToId.end()){
+        qDebug() << QString::fromStdString(LRM_name);
+        if(nameToId.find(LRM_name) != nameToId.end()&&!window.isExistInReceiveLRMList(nameToId[LRM_name])){//判断模块是否存在
             window.addReceiveLRM(nameToId[LRM_name]);
         }
         else{
@@ -66,6 +83,7 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
             return;
         }
     }
+
     addNewWindowfunc();
 }
 

@@ -71,6 +71,7 @@ public:
     void removeAllOfReceiveLRMList();
     void setReceiveLRMList(const std::list<int> &newReceiveLRMList);
     void addReceiveLRM(const int LRM_id);
+    bool isExistInReceiveLRMList(const int LRM_id);
 
 private:
     bool flag; //版本校验窗口中为版本校验标识,在调用子帧以及JUMP 指令中标识是否发送固有空闲

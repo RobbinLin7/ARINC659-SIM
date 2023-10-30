@@ -12,6 +12,7 @@ class FreeWindowCfgDialog : public WindowCfgDialog
 
 public:
     explicit FreeWindowCfgDialog(uint id, QWidget *parent = nullptr);
+    explicit FreeWindowCfgDialog(uint id,const FrameWindow &framewindow ,QWidget *parent = nullptr);
     ~FreeWindowCfgDialog();
 
 private:

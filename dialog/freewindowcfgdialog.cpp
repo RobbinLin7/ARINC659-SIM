@@ -10,6 +10,15 @@ FreeWindowCfgDialog::FreeWindowCfgDialog(uint id, QWidget *parent) :
     ui->windowId_lineEdit->setText(QString::number(id));
 }
 
+FreeWindowCfgDialog::FreeWindowCfgDialog(uint id,const FrameWindow &framewindow ,QWidget *parent) :
+    WindowCfgDialog(parent),
+    ui(new Ui::FreeWindowCfgDialog)
+{
+    ui->setupUi(this);
+    ui->windowId_lineEdit->setText(QString::number(id));
+    ui->lineEdit_2->setText(QString::number(framewindow.getSendTimeScale()));
+}
+
 FreeWindowCfgDialog::~FreeWindowCfgDialog()
 {
     delete ui;
@@ -17,5 +26,6 @@ FreeWindowCfgDialog::~FreeWindowCfgDialog()
 
 void FreeWindowCfgDialog::on_okPushButton_clicked()
 {
+    window.setSendTimeScale(ui->lineEdit_2->text().toInt());
     addNewWindowfunc();
 }

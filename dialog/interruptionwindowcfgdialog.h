@@ -12,6 +12,7 @@ class InterruptionWindowCfgDialog : public WindowCfgDialog
 
 public:
     explicit InterruptionWindowCfgDialog(uint id, QWidget *parent = nullptr);
+    explicit InterruptionWindowCfgDialog(uint id,const FrameWindow &framewindow ,QWidget *parent = nullptr);
     ~InterruptionWindowCfgDialog();
 
 private:
