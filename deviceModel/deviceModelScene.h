@@ -1,9 +1,14 @@
-#ifndef DEVICEMODELSCENE_H
+﻿#ifndef DEVICEMODELSCENE_H
 #define DEVICEMODELSCENE_H
-
 #include <QGraphicsScene>
-
-#include "bodyFrameItem.h"
+#include <memory>
+#include "bodyFrameGraphicsItem.h"
+#include "deviceModel/bodyFrameCfgWidget.h"
+#include "deviceModel/busgraphicsitem.h"
+#include "arrow.h"
+#include <memory>
+#include <QMap>
+#include <set>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -15,12 +20,24 @@ class QGraphicsTextItem;
 class QColor;
 QT_END_NAMESPACE
 
+
 class DeviceModelScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
     enum DeviceModel{BodyFrame};
     DeviceModelScene();
+    bool addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem>);
+    void deleteBodyFrameItem(int x);
+    void setAx(int x1, int y1, int x2, int y2);
+    void setAy(int, int, int, int);
+    void setBx(int, int, int, int);
+    void setBy(int, int, int, int);
+    const BusGraphicsItem* getAx() const;
+    const BusGraphicsItem* getAy() const;
+    const BusGraphicsItem* getBx() const;
+    const BusGraphicsItem *getBy() const;
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -31,13 +48,26 @@ protected:
 
 private slots:
 
-    void cfgBFSlot();
+    void cfgBodyFrameItemSlot(uint);
+    void deleteBodyFrameItemSlot(uint);
+
 
 private:
-    BodyFrameItem *selectedItem;
+    static const int maxBodyFrameId = 15;
+    bool flag[maxBodyFrameId];
+    BodyFrameGraphicsItem *selectedItem;
+    BusGraphicsItem Ax;
+    BusGraphicsItem Ay;
+    BusGraphicsItem Bx;
+    BusGraphicsItem By;
+    std::set<int> positionSet; //记录所有机架的水平位置
+    //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:
-    void cfgBFSignal(BodyFrameItem *selectedItem);
+//    void cfgBFSignal(BodyFrameItem *selectedItem);
+    void cfgBodyFrameItemSignal(uint);
+    void deleteBodyFrameSignal(uint);
+
 };
 
 #endif // DEVICEMODELSCENE_H
