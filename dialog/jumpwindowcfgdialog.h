@@ -12,6 +12,7 @@ class JumpWindowCfgDialog : public WindowCfgDialog
 
 public:
     explicit JumpWindowCfgDialog(uint id, QWidget *parent = nullptr);
+    explicit JumpWindowCfgDialog(uint id,const FrameWindow &framewindow,QWidget *parent = nullptr);
     ~JumpWindowCfgDialog();
 
 private:
