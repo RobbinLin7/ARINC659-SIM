@@ -44,7 +44,7 @@ private slots:
 
 //    void on_actionStartSim_triggered();
 
-//    void on_actionBurnToFPGA_triggered();
+    void on_actionBurnToFPGA_triggered();
 
     void on_actionNewProject_triggered();
 

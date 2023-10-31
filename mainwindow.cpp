@@ -181,6 +181,22 @@ void MainWindow::on_actionOpenMonitor_triggered()
     monitor->show();
 }
 
+void MainWindow::on_actionBurnToFPGA_triggered()
+{
+    QProcess *process = new QProcess(this);
+    process->start("F:\\Xilinx\\14.7\\ISE_DS\\ISE\\bin\\nt64\\impact.exe", QStringList() << "-batch" << "a.txt");
+    process->waitForFinished(-1);
+    QByteArray stdcout = process->readAllStandardOutput();
+    QByteArray stdcerr = process->readAllStandardError();
+    std::cout << stdcout.toStdString() << std::endl;
+    if(process->exitCode() != 0){
+        addLogToDockWidget(stdcerr);
+    }
+    else{
+        addLogToDockWidget("命令表编译成功");
+    }
+}
+
 
 /**
  * @brief MainWindow::on_actionNewProject_triggered
@@ -238,7 +254,7 @@ void MainWindow::addLogToDockWidget(const QString log)
 {
     QString currentTime;
     currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    ui->logTextBrowser->append(currentTime + log);
+    ui->logTextBrowser->append(currentTime +  ": " + log);
 }
 
 void MainWindow::disableAllActionNeedAProject()
