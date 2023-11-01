@@ -6,26 +6,11 @@
 #include "tools/labelscan.h"
 #include "tools/mcscodecompile.h"
 #include "tools/gramcheck.h"
+#include "tools/user.h"
+#include "tools/trim.h"
 using std::to_string;
 using std::string;
 
-std::string trim(std::string s){
-    if (s.empty())
-    {
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    s.erase(s.find_last_not_of(" ") + 1);
-    return s;
-}
-
-std::string trimStart(std::string s){
-    if(s.empty()){
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    return s;
-}
 bool CommandFile::createCommandFile(const Proj659 &proj)
 {
     std::ofstream commandFile(proj.getName().toStdString() + ".txt");
@@ -53,8 +38,8 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
     }
     std::string m_strDir = "", m_strFlieName = proj.getName().toStdString();
     /* 标号扫描 */
-//    LabelScan labelScan = new LabelScan(m_strDir,m_strFlieName);
-//    label_list = labelScan.ScanLabel(ref com_status);
+    LabelScan labelScan(m_strDir,m_strFlieName);
+    label_list = labelScan.ScanLabel(com_status);
 
 //    /* 语法检查 */
 //    GramCheck gramCheck = new GramCheck(m_strDir, m_strFlieName);

@@ -86,6 +86,81 @@ public:
         }
         return 0;
     }
+
+   static GET_NUM StringToInt(String str_num)
+   {
+        int i;
+        int length;
+        Int64 temp1;
+        Int64 num_temp;
+        GET_NUM result;
+
+        if (String.IsNullOrEmpty(str_num.Trim()))
+        {
+            result.flag = -1;
+            result.num = 0XFFFFFFFF;
+            return result;
+        }
+
+        num_temp = 0;
+        result.num = 0;
+        result.flag = 0;
+        length = str_num.Length;
+        str_num = str_num.ToUpper();
+
+        if (length >= 2 && (str_num[0] == '0') && (str_num[1] == 'X'))
+        {   /* 十六进制情况 */
+            i = 2;
+            while (i < length)
+            {
+                if ((str_num[i] >= '0') && (str_num[i] <= '9'))
+                {
+                    temp1 = str_num[i] - '0';
+                    num_temp += (temp1 << ((length - i - 1) * 4));
+                }
+                else if ((str_num[i] <= 'F') && (str_num[i] >= 'A'))
+                {
+                    temp1 = str_num[i] - 55;
+                    num_temp += (temp1 << ((length - i - 1) * 4));
+                }
+                else
+                {
+                    result.flag = -1;
+                    result.num = 0XFFFFFFFF;
+
+                    return result;
+                }
+                i++;
+            }
+            result.flag = 16;
+        }
+        else
+        {   /* 十进制情况 */
+            i = 0;
+            while (i < length)
+            {
+                if (!char.IsDigit(str_num[i]))
+                {
+                    result.flag = -1;
+                    result.num = 0XFFFFFFFF;
+                    return result;
+                }
+                i++;
+            }
+            num_temp = Convert.ToInt32(str_num);
+            result.flag = 10;
+        }
+
+        if (num_temp > 0XFFFFFFFF)
+        {
+            result.flag = 32;
+            result.num = 0XFFFFFFFF;
+            return result;
+        }
+
+        result.num = Convert.ToUInt32(num_temp);
+        return result;
+    }
 };
 
 #endif // GLOBALFUNC_H
