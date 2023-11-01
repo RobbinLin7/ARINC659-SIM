@@ -23,8 +23,11 @@ void BurnToFPGADialog::addItem(QString manufactureName)
     widgetItem->setSizeHint(deviceInfo->sizeHint());
     connect(deviceInfo, &FPGADeviceWidget::radioButton_clicked, this, [=](bool checked){
         if(checked) ++checkedDeviceCnt;
-        else --checkedDeviceCnt;
+        else --checkedDeviceCnt, ui->selectAll_checkBox->setChecked(false);
         if(checkedDeviceCnt > 0){
+            if(checkedDeviceCnt == (size_t)ui->listWidget->count()){
+                ui->selectAll_checkBox->setChecked(true);
+            }
             ui->okPushButton->setEnabled(true);
         }
         else{
