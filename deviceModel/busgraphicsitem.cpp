@@ -4,6 +4,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <iostream>
+#include <QDebug>
+#include "dialog/faultinjectdialog.h"
 
 BusGraphicsItem::BusGraphicsItem(const QString& name, const QPoint &from, const QPoint &to, QGraphicsItem* parent):
     QGraphicsItem(parent),
@@ -42,10 +44,25 @@ void BusGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 void BusGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
-    QAction *cfgBF = new QAction(QString("配置%1").arg(this->name));
-    QAction *faultInject = new QAction(QString("故障注入"));
+    cfgBF = new QAction(QString("配置%1").arg(this->name));
+    faultInjectAction = new QAction(QString("故障注入"));
     menu.addAction(cfgBF);
-    menu.addAction(faultInject);
+    menu.addAction(faultInjectAction);
+    connect(faultInjectAction, &QAction::triggered, this, [=](){
+        qDebug() << "hahah";
+        FaultInjectDialog *dialog = new FaultInjectDialog();
+        dialog->setWindowTitle(QString("%1故障注入").arg(this->name));
+        dialog->setWindowFlag(Qt::Dialog);
+        dialog->exec();
+    });
     QPoint point(event->screenPos().x(), event->screenPos().y());
     menu.exec(point);
+}
+
+void BusGraphicsItem::on_faultInjectAction_triggered()
+{
+    qDebug() << "hahah";
+    FaultInjectDialog *dialog = new FaultInjectDialog();
+    dialog->setWindowFlag(Qt::Dialog);
+    dialog->show();
 }

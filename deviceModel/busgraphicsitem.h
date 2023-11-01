@@ -3,6 +3,7 @@
 
 #include <QGraphicsItem>
 #include <QObject>
+#include <QAction>
 
 class BusGraphicsItem : public QObject, public QGraphicsItem
 {
@@ -14,6 +15,8 @@ private:
     QString name;
     QLineF line;
     qreal penWidth = 5;
+    QAction *faultInjectAction = nullptr;
+    QAction *cfgBF = nullptr;
     // QGraphicsItem interface
 public:
     QRectF boundingRect() const;
@@ -25,6 +28,8 @@ protected:
     // QGraphicsItem interface
 public:
     //bool collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const;
+private slots:
+    void on_faultInjectAction_triggered();
 };
 
 #endif // BUSGRAPHICSITEM_H
