@@ -184,7 +184,7 @@ void MainWindow::on_actionOpenMonitor_triggered()
 void MainWindow::on_actionBurnToFPGA_triggered()
 {
     QProcess *process = new QProcess(this);
-    process->start("F:\\Xilinx\\14.7\\ISE_DS\\ISE\\bin\\nt64\\impact.exe", QStringList() << "-batch" << "a.txt");
+    process->start("impact", QStringList() << "-batch" << "a.txt");
     process->waitForFinished(-1);
     QByteArray stdcout = process->readAllStandardOutput();
     QByteArray stdcerr = process->readAllStandardError();
