@@ -105,6 +105,8 @@ private:
 
     void createNewScene();
 
+    QString createBatchFile();
+
     QAction *test = nullptr;
 
     QMap<QString, Proj659*> projectMap;

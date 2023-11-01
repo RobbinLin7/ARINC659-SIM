@@ -29,7 +29,9 @@ SOURCES += \
     deviceModel/commandfilewidget.cpp \
     deviceModel/dataFrameCfgWidget.cpp \
     deviceModel/deviceModelScene.cpp \
+    deviceModel/fpgadevicewidget.cpp \
     deviceModel/modulecfgwidget.cpp \
+    dialog/burntofpgadialog.cpp \
     dialog/datatransferwindowcfgdialog.cpp \
     dialog/frameswitchwindowcfgdialog.cpp \
     dialog/freewindowcfgdialog.cpp \
@@ -71,7 +73,9 @@ HEADERS += \
     deviceModel/commandfilewidget.h \
     deviceModel/dataFrameCfgWidget.h \
     deviceModel/deviceModelScene.h \
+    deviceModel/fpgadevicewidget.h \
     deviceModel/modulecfgwidget.h \
+    dialog/burntofpgadialog.h \
     dialog/windowcfgdialog.h \
     dialog/datatransferwindowcfgdialog.h \
     dialog/frameswitchwindowcfgdialog.h \
@@ -104,7 +108,9 @@ FORMS += \
     deviceModel/bodyFrameCfgWidget.ui \
     deviceModel/commandfilewidget.ui \
     deviceModel/dataFrameCfgWidget.ui \
+    deviceModel/fpgadevicewidget.ui \
     deviceModel/modulecfgwidget.ui \
+    dialog/burntofpgadialog.ui \
     dialog/datatransferwindowcfgdialog.ui \
     dialog/frameswitchwindowcfgdialog.ui \
     dialog/freewindowcfgdialog.ui \
