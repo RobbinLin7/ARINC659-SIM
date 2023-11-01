@@ -22,7 +22,9 @@ public:
     QString getManuFacturerId()const;
 private:
     Ui::FPGADeviceWidget *ui;
-
+    void setEnabled(bool);
+    void enableAll();
+    void disableAll();
 private slots:
     void on_selectConfigFile_pushButton_clicked();
     void on_select_radioButton_clicked();

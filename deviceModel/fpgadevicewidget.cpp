@@ -9,6 +9,7 @@ FPGADeviceWidget::FPGADeviceWidget(QString manufacturerId, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->select_radioButton->setText(manufacturerId);
+    disableAll();
 }
 
 FPGADeviceWidget::~FPGADeviceWidget()
@@ -46,6 +47,24 @@ QString FPGADeviceWidget::getManuFacturerId() const
     return ui->select_radioButton->text();
 }
 
+void FPGADeviceWidget::setEnabled(bool enabled)
+{
+    ui->filePath_lineEdit->setEnabled(enabled);
+    ui->selectConfigFile_pushButton->setEnabled(enabled);
+    ui->verify_checkBox->setEnabled(enabled);
+    ui->parallel_checkBox->setEnabled(enabled);
+}
+
+void FPGADeviceWidget::enableAll()
+{
+    this->setEnabled(true);
+}
+
+void FPGADeviceWidget::disableAll()
+{
+    this->setEnabled(false);
+}
+
 
 void FPGADeviceWidget::on_selectConfigFile_pushButton_clicked()
 {
@@ -55,5 +74,11 @@ void FPGADeviceWidget::on_selectConfigFile_pushButton_clicked()
 
 void FPGADeviceWidget::on_select_radioButton_clicked()
 {
+    if(ui->select_radioButton->isChecked()){
+        enableAll();
+    }
+    else{
+        disableAll();
+    }
     emit radioButton_clicked(ui->select_radioButton->isChecked());
 }

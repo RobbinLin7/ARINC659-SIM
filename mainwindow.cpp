@@ -187,6 +187,7 @@ void MainWindow::on_actionBurnToFPGA_triggered()
 {
     createBatchFile();
     QProcess *process = new QProcess(this);
+    BurnToFPGADialog *dialog = new BurnToFPGADialog(this);
     connect(process, &QProcess::readyReadStandardOutput, this, [=]() {
         QString output = process->readAllStandardOutput();
         QString inputString = output;
@@ -207,6 +208,18 @@ void MainWindow::on_actionBurnToFPGA_triggered()
     connect(process, &QProcess::readyReadStandardError, this, [=]() {
         QString output = process->readAllStandardError();
         addLogToDockWidget(output);
+        QString inputString = output;
+        QRegularExpression regex("Added Device (\\w+) successfully");
+        QRegularExpressionMatchIterator matches = regex.globalMatch(inputString);
+
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            if (match.hasMatch()) {
+                QString matchedText = match.captured(1);
+                qDebug() << matchedText;
+                dialog->addItem(matchedText);
+            }
+        }
         //qDebug() << output;
         //std::cout << output.toStdString() << std::endl;
     });
@@ -216,9 +229,9 @@ void MainWindow::on_actionBurnToFPGA_triggered()
     process->write("identify\n");
     //process->closeWriteChannel();
     process->waitForReadyRead();
-    BurnToFPGADialog *dialog = new BurnToFPGADialog(this);
-    dialog->addItem("xc2v1000");
-    dialog->addItem("xc2v1000");
+
+//    dialog->addItem("xc2v1000");
+//    dialog->addItem("xc2v1000");
     dialog->setWindowFlag(Qt::Dialog);
     connect(dialog, &BurnToFPGADialog::configFinished, this, [=](QStringList commandList){
        for(QString command : commandList){
@@ -228,6 +241,7 @@ void MainWindow::on_actionBurnToFPGA_triggered()
        }
     });
     dialog->exec();
+    process->kill();
     //process->waitForFinished(-1);
 //    QByteArray stdcout = process->readAllStandardOutput();
 //    QByteArray stdcerr = process->readAllStandardError();
