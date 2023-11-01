@@ -111,6 +111,13 @@ void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     return QGraphicsItem::mouseReleaseEvent(event);
 }
 
+void BodyFrameGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    //TODO. 打开机架，显示机架内部结构
+    qDebug() << "打开机架";
+    return QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
 void BodyFrameGraphicsItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     QToolTip::showText(QCursor::pos(), QString("机架%1").arg(this->bodyFrameItem.getBodyFrameItemID()));

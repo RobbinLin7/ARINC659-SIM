@@ -43,7 +43,9 @@ void BusGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *cfgBF = new QAction(QString("配置%1").arg(this->name));
+    QAction *faultInject = new QAction(QString("故障注入"));
     menu.addAction(cfgBF);
+    menu.addAction(faultInject);
     QPoint point(event->screenPos().x(), event->screenPos().y());
     menu.exec(point);
 }
