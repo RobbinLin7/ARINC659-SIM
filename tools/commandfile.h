@@ -2,6 +2,8 @@
 #define COMMANDFILE_H
 
 #include "project/proj659.h"
+#include "tools/globalfunc.h"
+#include "tools/user.h"
 #include <fstream>
 using std::string;
 class CommandFile
@@ -20,6 +22,7 @@ private:
     static void writeFreeTime(std::ostream&, int nFreeTime, int nGap);
     static std::string convertModuleNumToName(const BodyFrame&, const std::string);
     static std::string convertModuleNumToName(const BodyFrame&, const int);
+    static void SaveCompileResult(COMPILE_STATUS status, const Proj659&);
 };
 
 #endif // COMMANDFILE_H

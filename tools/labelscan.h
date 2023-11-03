@@ -8,15 +8,16 @@ class LabelScan
 {
 public:
     LabelScan(string strDir, string strFileName);
-    std::list<LABEL_TABLE> ScanLabel(COMPILE_STATUS&  status);
+    std::vector<LABEL_TABLE> ScanLabel(COMPILE_STATUS&  status);
 
 private:
     string m_strDir; //文件路径
     string m_strFlieName;//文件名称
     void LoadSrcFlie();
-    std::list<String> m_lstSrc; //预处理结果src命令列表
-    std::list<String> m_lstLst; //处理结果lst命令列表
+    std::vector<String> m_lstSrc; //预处理结果src命令列表
+    std::vector<String> m_lstLst; //处理结果lst命令列表
     String GetString(String ans_sor, String& ans_left, int& length);
+    void SaveLstFile();
 };
 
 #endif // LABELSCAN_H

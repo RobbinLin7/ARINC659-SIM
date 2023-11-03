@@ -21,11 +21,11 @@ bool CommandFile::createCommandFile(const Proj659 &proj)
     commandFile << "      END;" << std::endl;
     return true;
 }
-void VarInit(PreProcess::COMPILE_STATUS& c_status);
+void VarInit(COMPILE_STATUS& c_status);
 bool CommandFile::compileCommandFile(const Proj659 &proj)
 {
-    PreProcess::COMPILE_STATUS com_status;
-    std::list<LABEL_TABLE> label_list;
+    COMPILE_STATUS com_status;
+    std::vector<LABEL_TABLE> label_list;
     uint nTmp;
     /* 变量初始化 */
     VarInit(com_status);
@@ -40,35 +40,38 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
     /* 标号扫描 */
     LabelScan labelScan(m_strDir,m_strFlieName);
     label_list = labelScan.ScanLabel(com_status);
+    //label_list.assign(label_list_tmp.begin(), label_list_tmp.end());
 
 //    /* 语法检查 */
-//    GramCheck gramCheck = new GramCheck(m_strDir, m_strFlieName);
-//    nTmp = gramCheck.CheckGram(ref com_status, label_list);
+    GramCheck gramCheck(m_strDir, m_strFlieName);
+    nTmp = gramCheck.CheckGram(com_status, label_list);
 
-//    SaveCompileResult(com_status);
+
+    SaveCompileResult(com_status, proj);
 
 //    /* 有语法错误 */
-//   if(com_status.error != 0)
-//   {
-//       System.Windows.Forms.MessageBox.Show("编辑错误!");
-//       try
-//       {
-
+   if(com_status.error != 0)
+   {
+       //System.Windows.Forms.MessageBox.Show("编辑错误!");
+       qDebug() << "编辑错误!";
+       try
+       {
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".mif");
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".m");
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".coe");
-//       }
-//       catch (Exception e)
-//       {
-//           // Let the user know what went wrong.
-//          // e.Message.ToString();
-//       }
-//       return 1;
-//   }
+       }
+       catch (std::exception e)
+       {
+           std::cerr << e.what();
+           // Let the user know what went wrong.
+          // e.Message.ToString();
+       }
+       return 1;
+   }
 
-//   /* 无语法错误但有报警信息 */
-//   if(com_status.warning != 0)
-//   {
+   /* 无语法错误但有报警信息 */
+   if(com_status.warning != 0)
+   {
 //       if (DialogResult.Cancel == MessageBox.Show("编译存在警告!\n是否继续?", "编译警告", MessageBoxButtons.OKCancel))
 //       {
 //           MessageBox.Show("编译取消!");
@@ -76,21 +79,23 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
 
 //       }
 
-//   }
+       qDebug() << "编译存在警告!";
+   }
 
-//   CodeGenerate codeGenerate = new CodeGenerate(m_strDir, m_strFlieName);
-//   codeGenerate.GenerateCode(ref com_status, label_list);
+   CodeGenerate codeGenerate(m_strDir, m_strFlieName);
+   codeGenerate.GenerateCode(com_status, label_list);
 
-//   CoeCodeCompile codeCompile = new CoeCodeCompile(m_strDir, m_strFlieName);
-//   codeCompile.CompileCoeCode();
+   CoeCodeCompile codeCompile(m_strDir, m_strFlieName);
+   codeCompile.CompileCoeCode();
 
-//   McsCodeCompile mcsCodeCompile = new McsCodeCompile(m_strDir, m_strFlieName);
-//   mcsCodeCompile.CompileMcsCode();
+   McsCodeCompile mcsCodeCompile(m_strDir, m_strFlieName);
+   mcsCodeCompile.CompileMcsCode();
 
-//   label_list.Clear();
+   label_list.clear();
 
-//   //MessageBox.Show("编译完成!");
+   //MessageBox.Show("编译完成!");
 
+   std::cout << "编译完成" << std::endl;
 
    return true;
 
@@ -1187,8 +1192,32 @@ std::string CommandFile::convertModuleNumToName(const BodyFrame &bodyFrame, cons
     return str_ModuleName;
 }
 
+void CommandFile::SaveCompileResult(COMPILE_STATUS status, const Proj659& proj)
+{
+    string path =  string("  ") + "/" + proj.getName().toStdString() + ".lst";
+    string str_tmp;
+    try
+    {
+        std::ofstream os(path);
+        if(os){
+            os << " \n" << std::endl;
+            str_tmp = "ALL ERROR:  " + to_string(status.error);
+            os << str_tmp << std::endl;
+            str_tmp = "ALL WARNING:  " + to_string(status.warning);
+            os << str_tmp << std::endl;
+            os.flush();
+            os.close();
+        }
+    }
+    catch (std::exception e)
+    {
+        std::cerr << e.what();
+        // Let the user know what went wrong.
+    }
+}
 
-void VarInit(PreProcess::COMPILE_STATUS& c_status)
+
+void VarInit(COMPILE_STATUS& c_status)
 {
     c_status.line_num = 0;
     c_status.error = 0;

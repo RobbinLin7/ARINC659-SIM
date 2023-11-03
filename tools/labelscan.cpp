@@ -13,9 +13,9 @@ LabelScan::LabelScan(string strDir, string strFileName)
 
 }
 
-std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
+std::vector<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
 {
-    std::list<LABEL_TABLE> ArrayLabel;
+    std::vector<LABEL_TABLE> ArrayLabel;
     LABEL_TABLE initLable;
     String ans_tmp, ans_label;
     String section_num;
@@ -47,7 +47,7 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
     section_num = "-1";
 
     //逐行扫表判断是否为标号
-//    for(line_cnt = 0; line_cnt <  m_lstSrc.Count; line_cnt++)
+//    for(line_cnt = 0; line_cnt <  m_lstSrc.size(); line_cnt++)
     for(String ans_tmp : m_lstSrc)
     {
         /* 取字串 */
@@ -95,7 +95,7 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
 
                 if (num.flag!=-1)
                 {
-                    nGap = Convert.ToInt32(num.num);
+                    nGap = static_cast<int>(num.num);
                 }
 
             }
@@ -114,11 +114,11 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
             }
             else
             {
-                GET_NUM num = GlobalFunc.StringToInt(str_tmp);
+                GET_NUM num = GlobalFunc::StringToInt(str_tmp);
 
                 if (num.flag != -1)
                 {
-                    nDelta = Convert.ToInt32(num.num);
+                    nDelta = static_cast<int>(num.num);
                 }
 
             }
@@ -127,9 +127,8 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
         }
 
 
-        int int_tmp =GlobalFunc.CmpKW(ans_label);
+        int int_tmp =GlobalFunc::CmpKW(ans_label);
 
-        #region 是标号
 
         if(int_tmp == -1)
         {
@@ -140,24 +139,24 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
                 status.error++;
                 String strTmp;
                 int nTmpLine = line_cnt+1;
-                int nRow = m_lstSrc[line_cnt].IndexOf(ans_label)+1;
+                int nRow = m_lstSrc[line_cnt].find(ans_label) + 1;
 
                 //原系统中  第一个标号不合法时候异常，现修改Find(ans_label)函数
-                strTmp = "[Warning] Line" + nTmpLine.ToString() + "line ( " + nRow.ToString() + " row) :Label name" + ans_label.ToString() + " is invalid. ";
+                strTmp = "[Warning] Line" + to_string(nTmpLine) + "line ( " + to_string(nRow) + " row) :Label name" + ans_label + " is invalid. ";
                 m_lstLst.push_back(strTmp);
              }
 
             /* 标号重名 */
-            for(int i = 0; i < ArrayLabel.Count; i++)
+            for(int i = 0; i < ArrayLabel.size(); i++)
             {
                 if(ans_label == ArrayLabel[i].name)
                 {
                     status.error++;
                     string  strTmp;
                     int nTmpLine = line_cnt+1;
-                    int nRow = m_lstSrc[line_cnt].IndexOf(ans_label)+1;
+                    int nRow = m_lstSrc[line_cnt].find(ans_label)+1;
 
-                    strTmp = "[ERROR] Line " + nTmpLine.ToString() + "line (" + nRow.ToString() + "row):Same label name at line" + ArrayLabel[i].line.ToString();
+                    strTmp = "[ERROR] Line " + to_string(nTmpLine) + "line (" + to_string(nRow) + "row):Same label name at line" + to_string(ArrayLabel[i].line);
 
                     m_lstLst.push_back(strTmp);
 
@@ -166,22 +165,22 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
             }
             initLable.name = ans_label;
             initLable.line = line_cnt;
-            initLable.addr = offset +Convert.ToInt32(CommandAddr.SGBTABLEADDR);
+            initLable.addr = offset + static_cast<int>(CommandAddr::SGBTABLEADDR);
             initLable.section = section_num;
             initLable.sub = 0;
 
 
             /* 读取标号后指令,计算偏移地址 */
-            ans_label = GetString(ans_tmp, ref ans_tmp,ref label_length);
+            ans_label = GetString(ans_tmp, ans_tmp, label_length);
             /* 标号后跟SUB关键字,标识该标号表示一个子序列 */
             if(ans_label == "SUB")
             {
                 initLable.sub = 1;
                 /* 读取SUB后指令,计算偏移地址 */
-                ans_label = GetString(ans_tmp, ref ans_tmp, ref label_length);
+                ans_label = GetString(ans_tmp, ans_tmp, label_length);
             }
 
-            int int_tmp1 = GlobalFunc.CmpKW(ans_label);
+            int int_tmp1 = GlobalFunc::CmpKW(ans_label);
             /* 标号后缺少命令或标号后紧跟标号*/
             if ((ans_label.empty()) || (int_tmp1 == -1))
             {
@@ -189,8 +188,8 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
 
                 string strTmp;
                 int nTmpLine = line_cnt + 1;
-                int nRow = m_lstSrc[line_cnt].IndexOf(ans_label) + ans_label.length();
-                strTmp = "[ERROR] Line " + nTmpLine.ToString() + " (" + nRow.ToString() + " row)::Miss comand after line" + ans_label.ToString();
+                int nRow = m_lstSrc[line_cnt].find(ans_label) + ans_label.length();
+                strTmp = "[ERROR] Line " + to_string(nTmpLine) + " (" + to_string(nRow) + " row)::Miss comand after line" + ans_label;
 
                 m_lstLst.push_back(strTmp);
                 continue;
@@ -202,7 +201,7 @@ std::list<LABEL_TABLE> LabelScan::ScanLabel(COMPILE_STATUS &status)
                 string strTmp;
                 int nTmpLine = line_cnt + 1;
 
-                strTmp = "[ERROR] Line " + nTmpLine.ToString() + " ::Command after label must be SSYNC";
+                strTmp = "[ERROR] Line " + to_string(nTmpLine) + " ::Command after label must be SSYNC";
 
                 m_lstLst.push_back(strTmp);
                 continue;
@@ -271,4 +270,26 @@ String LabelScan::GetString(String ans_sor, String &ans_left, int &length)
     ans_left = ans_left.substr(nIndex + 1, ans_left.length() - nIndex - 1);
     length = ans_tmp.length();
     return ans_tmp;
+}
+
+void LabelScan::SaveLstFile()
+{
+    string path = m_strDir + "/" + m_strFlieName + ".lst";
+
+    try
+    {
+        std::ofstream os(path);
+        if(os){
+            for(int i = 0; i < m_lstLst.size(); i++){
+                os << m_lstLst[i] << std::endl;
+            }
+            os.flush();
+            os.close();
+        }
+    }
+    catch (std::exception e)
+    {
+        // Let the user know what went wrong.
+        std::cerr << e.what() << std::endl;
+    }
 }

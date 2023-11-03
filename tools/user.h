@@ -2,6 +2,7 @@
 #define USER_H
 #include<string>
 #include<list>
+#include<vector>
 typedef unsigned int uint;
 using String = std::string;
 enum CommandAddr
@@ -132,6 +133,6 @@ struct SYN_CODE_REG
 struct SYN_COMMAND_REG
 {
     uint error;      /* ERU/ERV/FCU/FCV指令语法检查状态 */
-    std::list<SYN_CODE_REG> s_code; /* 同步代码数组 */
+    std::vector<SYN_CODE_REG> s_code; /* 同步代码数组 */
 };
 #endif // USER_H

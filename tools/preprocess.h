@@ -3,6 +3,8 @@
 
 #include<string>
 #include<list>
+#include "tools/globalfunc.h"
+#include "tools/user.h"
 using std::list;
 using std::string;
 typedef unsigned int uint;
@@ -16,14 +18,14 @@ public:
         String macro_name;  //宏定义名称
         String macro_context;   //宏定义内容
     };
-    struct COMPILE_STATUS
-    {
-        uint  line_num;      /* 行号 */
-        uint label_flag;    /* 标号标志 */
-        uint error;         /* 编译状态,报错 */
-        uint warning;       /* 编译状态,警告 */
-        int section;       /* 段编号 */
-    };
+//    struct COMPILE_STATUS
+//    {
+//        uint  line_num;      /* 行号 */
+//        uint label_flag;    /* 标号标志 */
+//        uint error;         /* 编译状态,报错 */
+//        uint warning;       /* 编译状态,警告 */
+//        int section;       /* 段编号 */
+//    };
 
     PreProcess(String strDir,String strFileName){
        this->m_strDir = strDir;

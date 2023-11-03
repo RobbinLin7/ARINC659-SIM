@@ -1,6 +1,7 @@
 #include "preprocess.h"
 #include <chrono>
 #include "tools/globalfunc.h"
+#include "tools/user.h"
 using std::to_string;
 std::string trim(std::string s);
 std::string trimStart(std::string s);
