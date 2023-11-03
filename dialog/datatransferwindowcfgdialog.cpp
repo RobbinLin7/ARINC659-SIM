@@ -8,6 +8,7 @@ DataTransferWindowCfgDialog::DataTransferWindowCfgDialog(uint id, const std::map
     modules(modules),
     ui(new Ui::DataTransferWindowCfgDialog)
 {
+    11
     ui->setupUi(this);
     window.setWindowType(FrameWindow::DATA_SEND);
     //ui->mainLRM_comboBox->set
