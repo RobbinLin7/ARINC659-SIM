@@ -7,6 +7,7 @@ JumpWindowCfgDialog::JumpWindowCfgDialog(uint id, QWidget *parent) :
 {
     ui->setupUi(this);
     window.setWindowType(FrameWindow::FRAME_JUMP);
+    ui->windowId_lineEdit->setText(QString::number(id));
 
 }
 
@@ -18,6 +19,7 @@ JumpWindowCfgDialog::JumpWindowCfgDialog(uint id,const FrameWindow &framewindow,
     window.setWindowType(FrameWindow::FRAME_JUMP);
     ui->windowId_lineEdit->setText(QString::number(id));
     ui->lineEdit_2->setText(QString::fromStdString(framewindow.getNewFrameID()));
+    ui->checkBox->setChecked(framewindow.getFlag());
 
 }
 
@@ -28,7 +30,7 @@ JumpWindowCfgDialog::~JumpWindowCfgDialog()
 
 void JumpWindowCfgDialog::on_okPushButton_clicked()
 {
-    window.setFlag(ui->checkBox->isChecked());
-    window.setStrNewFrameID(ui->lineEdit_2->text().toStdString());
+    window.setFlag(ui->checkBox->isChecked());//故有空闲
+    window.setStrNewFrameID(ui->lineEdit_2->text().toStdString());//帧标识
     addNewWindowfunc();
 }

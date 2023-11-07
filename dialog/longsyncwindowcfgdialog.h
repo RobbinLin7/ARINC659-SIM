@@ -3,6 +3,7 @@
 
 #include "dialog/windowcfgdialog.h"
 #include "data/bodyframe.h"
+#include <QLineEdit>
 namespace Ui {
 class LongSyncWindowCfgDialog;
 }
@@ -19,6 +20,10 @@ public:
 private:
     Ui::LongSyncWindowCfgDialog *ui;
     const std::map<uint, Module>& modules;
+    void installValidator();
+    bool check(QWidget* widget);
+
+    void dynamicSetLineEdit();
 
 protected slots:
     void on_okPushButton_clicked();
