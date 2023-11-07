@@ -24,19 +24,21 @@ bool CommandFile::createCommandFile(const Proj659 &proj)
 void VarInit(COMPILE_STATUS& c_status);
 bool CommandFile::compileCommandFile(const Proj659 &proj)
 {
+    std::vector<string> m_lstSourceCommand;
+    ReloadCommand(m_lstSourceCommand, proj);
     COMPILE_STATUS com_status;
     std::vector<LABEL_TABLE> label_list;
     uint nTmp;
     /* 变量初始化 */
     VarInit(com_status);
     /* 源文件预处理 */
-    PreProcess preProcess("", proj.getName().toStdString());
-    //preProcess.m_lstSourceCommand = m_lstSourceCommand;
+    PreProcess preProcess(".", proj.getName().toStdString());
+    preProcess.setLstSourceCommand(m_lstSourceCommand);
     if (preProcess.ProcessCommand(com_status) != 0)
     {
         return 1;
     }
-    std::string m_strDir = "", m_strFlieName = proj.getName().toStdString();
+    std::string m_strDir = ".", m_strFlieName = proj.getName().toStdString();
     /* 标号扫描 */
     LabelScan labelScan(m_strDir,m_strFlieName);
     label_list = labelScan.ScanLabel(com_status);
@@ -1215,6 +1217,64 @@ void CommandFile::SaveCompileResult(COMPILE_STATUS status, const Proj659& proj)
         // Let the user know what went wrong.
     }
 }
+
+void CommandFile::ReloadCommand(std::vector<std::string> &m_commandLst, const Proj659 &proj)
+{
+    m_commandLst.clear();
+
+
+    vector<String> lstStr;
+
+
+    int nLineNum =1;
+    String str_tmp;
+    String str_line;
+
+
+    //Project project = FormMain.m_lstProject[m_nProjectIndex];
+    str_tmp = std::string(".") + "/" + proj.getName().toStdString() + ".txt";
+
+    std::ifstream is(str_tmp);
+    if(is.good() == false){
+        std::cerr << "命令文件不存在，访问失败";
+        return;
+    }
+
+    while(is){
+        std::getline(is, str_line);
+        lstStr.push_back(str_line);
+        m_commandLst.push_back(str_line);
+    }
+    is.close();
+//    if (!File.Exists(str_tmp))
+//    {
+//        if (project.m_nProjectType == 1)
+//        {
+//            MessageBox.Show("命令文件不存在,访问失败!");
+//            return ;
+//        }
+//        FormMain.m_lstProject[m_nProjectIndex].CreateCommandFile();
+//    }
+
+//    StreamReader sr = new StreamReader(str_tmp);
+
+//    while ((str_line = sr.ReadLine()) != null)
+//    {
+
+//        str_tmp = str_line;
+//        lstStr.Add(str_tmp);
+
+//        m_commandLst.Add(str_line);
+//    }
+
+//    sr.Close();
+
+//    this.rtbCommand.Lines = lstStr.ToArray();
+
+//    m_bTxtChanged = false;
+    return;
+}
+
 
 
 void VarInit(COMPILE_STATUS& c_status)

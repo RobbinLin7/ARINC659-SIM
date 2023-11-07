@@ -35,7 +35,7 @@ void McsCodeCompile::CompileMcsCode()
     String strMcsFile = m_strDir + "/" + m_strFlieName + ".mcs";
 
     std::ifstream srMif(strMifFile);
-    std::ofstream swMsc(strMifFile);
+    std::ofstream swMsc(strMcsFile);
 //    StreamReader srMif = new StreamReader(strMifFile);
 //    StreamWriter swMsc = File.CreateText(strMcsFile);
 
@@ -107,7 +107,7 @@ void McsCodeCompile::CompileMcsCode()
         /* 起始标志和换行 */
         ans_line = ":" + ans_line + "\r\n";
         /* 写入 */
-        swMsc << ans_line << std::endl;
+        swMsc << ans_line;
         //swMsc << ans_line << std::endl;
     }
 
@@ -169,7 +169,7 @@ void McsCodeCompile::CompileMcsCode()
         ans_line = ":" + ans_line + "\r\n";
         /* 写入 */
 
-        swMsc << ans_line << std::endl;
+        swMsc << ans_line;
     }
 
 
@@ -227,7 +227,7 @@ void McsCodeCompile::CompileMcsCode()
         /* 起始标志和换行 */
         ans_line = ":" + ans_line + "\r\n";
         /* 写入 */
-        swMsc << ans_line << std::endl;
+        swMsc << ans_line;
     }
 
 
@@ -285,7 +285,7 @@ void McsCodeCompile::CompileMcsCode()
         /* 起始标志和换行 */
         ans_line = ":" + ans_line + "\r\n";
         /* 写入 */
-        swMsc << ans_line << std::endl;
+        swMsc << ans_line;
     }
     swMsc << ":00000001FF\r\n";
     //swMsc.Write(":00000001FF\r\n");

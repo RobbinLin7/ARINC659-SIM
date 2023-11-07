@@ -5,6 +5,7 @@
 #include "tools/globalfunc.h"
 #include "tools/user.h"
 #include <fstream>
+#include <vector>
 using std::string;
 class CommandFile
 {
@@ -23,6 +24,7 @@ private:
     static std::string convertModuleNumToName(const BodyFrame&, const std::string);
     static std::string convertModuleNumToName(const BodyFrame&, const int);
     static void SaveCompileResult(COMPILE_STATUS status, const Proj659&);
+    static void ReloadCommand(std::vector<string>&, const Proj659 &proj);
 };
 
 #endif // COMMANDFILE_H

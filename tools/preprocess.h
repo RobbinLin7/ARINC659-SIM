@@ -3,10 +3,12 @@
 
 #include<string>
 #include<list>
+#include<vector>
 #include "tools/globalfunc.h"
 #include "tools/user.h"
 using std::list;
 using std::string;
+using std::vector;
 typedef unsigned int uint;
 class PreProcess
 {
@@ -37,13 +39,15 @@ public:
    int IsValidChar(char c);
    void SaveSrcFile();
    void SaveLstFile();
+   void setLstSourceCommand(const vector<String> &newLstSourceCommand);
+
 private:
     String m_strDir; //文件路径
     String m_strFlieName;//文件名称
-    list<String> m_lstSrc; //预处理结果src命令列表
-    list<String> m_lstLst; //处理结果lst 命令列表
-    list<String> m_lstSourceCommand; //源文件列表
-    list<String> m_lstCommand;
+    vector<String> m_lstSrc; //预处理结果src命令列表
+    vector<String> m_lstLst; //处理结果lst 命令列表
+    vector<String> m_lstSourceCommand; //源文件列表
+    vector<String> m_lstCommand;
 };
 
 #endif // PREPROCESS_H

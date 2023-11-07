@@ -90,19 +90,19 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
     timescale_flag = 0;
     ver_flag = 0;
     line_num = 0;
-    auto itr = m_lstSrc.begin();
+    //auto itr = m_lstSrc.begin();
     bTmp = false;
     while (!bTmp)
     {
-        str_tmp = *itr;
+        str_tmp = m_lstSrc[line_num];
         str_tmp = trim(str_tmp);
         if (str_tmp.empty() == false)
             break;
         line_num++;
-        ++itr;
+        //++itr;
     }
     //region 首行SECTION 判断
-    ans_tmp = *itr;
+    ans_tmp = m_lstSrc[line_num];
     str_tmp = GetString(ans_tmp, ans_last_tmp, label_length);
 
     if(str_tmp != "SECTION")
@@ -111,7 +111,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
         status.error++;
 
         int nTmpLine = line_num + 1;
-        int nRow = itr->find(str_tmp) + 1;
+        int nRow = m_lstSrc[line_num].find(str_tmp) + 1;
 
         //原系统中  第一个标号不合法时候异常，现修改Find(ans_label)函数
         strInfo = "[ERROR] Line" + to_string(nTmpLine) + "line ( " + std::to_string(nRow) + " row) :Line 1 should shart with SECTION command.";
@@ -123,7 +123,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
     //#region 逐行语法检查
     do
     {
-        ans_tmp = *itr;
+        ans_tmp = m_lstSrc[line_num];
         str_tmp = GetString(ans_tmp, ans_last_tmp, label_length);
         status.label_flag = 0;
 
@@ -159,7 +159,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
                        if((str_tmp == "TX") || (str_tmp == "RX"))
                         {
                             int nTmpLine = line_num + 1;
-                            int nRow = itr->find(str_tmp) + 1;
+                            int nRow = m_lstSrc[line_num].find(str_tmp) + 1;
 
                             //原系统中  第一个标号不合法时候异常，现修改Find(ans_label)函数
                             strInfo = "[ERROR] Line" + to_string(nTmpLine) + "line ( " + std::to_string(nRow) + " row) :The next command of SUB can't be TX or RX.";
@@ -168,7 +168,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
                         else
                         {
                             int nTmpLine = line_num + 1;
-                            int nRow = itr->find(str_tmp) + 1;
+                            int nRow = m_lstSrc[line_num].find(str_tmp) + 1;
 
                             //原系统中  第一个标号不合法时候异常，现修改Find(ans_label)函数
                             strInfo = "[ERROR] Line" + to_string(nTmpLine) + "line ( " + to_string(nRow) + " row) :Miss command after SUB. ";
@@ -186,7 +186,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
                     status.error++;
 
                     int nTmpLine = line_num + 1;
-                    int nRow = itr->find(str_tmp) + 1;
+                    int nRow = m_lstSrc[line_num].find(str_tmp) + 1;
 
                     //原系统中  第一个标号不合法时候异常，现修改Find(ans_label)函数
                     strInfo = "[ERROR] Line" + to_string(nTmpLine) + "line ( " + to_string(nRow) + " row) :" + str_tmp + "is not a command.";
@@ -204,7 +204,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
             error = 1;
             status.error++;
             int nTmpLine = line_num + 1;
-            int nRow = itr->find(str_tmp) + 1;
+            int nRow = m_lstSrc[line_num].find(str_tmp) + 1;
 
             //原系统中第一个标号不合法时候异常，现修改Find(ans_label)函数
             strInfo = "[ERROR] Line" + to_string(nTmpLine) + "line ( " + to_string(nRow) + " row) SUB can't be the head of the line.";
@@ -1052,6 +1052,7 @@ uint GramCheck::CheckGram(COMPILE_STATUS status, List_LABEL_TABLE label)
             error |= SSYNCGram( status, ans_tmp);
             continue;
         }
+     std::cout << "hello world" << std::endl;
     }while ((line_num++)>=0);
 }
 
@@ -3344,7 +3345,7 @@ void GramCheck::LoadSrcFile()
     {
         // Create an instance of StreamReader to read from a file.
         // The using statement also closes the StreamReader.
-        std::ifstream is("strFile");
+        std::ifstream is(strFile);
         while(is){
             String line;
             std::getline(is, line);
