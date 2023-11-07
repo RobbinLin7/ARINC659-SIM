@@ -112,9 +112,12 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         }
 
         sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
-        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
-        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
-        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+        if(window.getSupportLRM1().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM1())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM2())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM3())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
 
 
         QTableWidgetItem* sendAddress = new QTableWidgetItem(QString::fromStdString(window.getSendAddr()));
@@ -147,10 +150,12 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
             receiveBlockList.append(QString::fromStdString(bodyFrame.getModules().at(x).getModuleName()));
         }
         sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
-        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
-        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
-        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
-
+        if(window.getSupportLRM1().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM1())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM2())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM3())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
 //        for(auto x : sendBlockList){
 //            qDebug()<<x;
 //        }
@@ -179,10 +184,12 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         QString flag = window.getFlag()==true?"版本校验":"非版本校验";
         QStringList sendBlockList;
         sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
-        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
-        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
-        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
-
+        if(window.getSupportLRM1().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM1())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM2())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM3())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
 
 
         QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
@@ -212,9 +219,12 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
 
         QStringList sendBlockList;
         sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
-        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
-        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
-        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+        if(window.getSupportLRM1().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM1())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM2())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0 && !sendBlockList.contains(QString::fromStdString(window.getSupportLRM3())))
+            sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
 
         QTableWidgetItem* other = new QTableWidgetItem(flag);
         QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
@@ -302,6 +312,10 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
     }
     case FrameWindow::SHORT_SYNC:{
         windowType = new QTableWidgetItem("短同步窗口");
+        TableItem* windowIdItem = new TableItem{0,windowId};
+        TableItem* windowTpyeItem = new TableItem{1,windowType};
+        windowType->setTextAlignment(Qt::AlignHCenter);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTpyeItem,nullptr);
         break;
     }
     default:
