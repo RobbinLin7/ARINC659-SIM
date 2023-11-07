@@ -85,13 +85,13 @@ void DataFrameCfgWidget::setForm()
 void DataFrameCfgWidget::addWindow(const FrameWindow &window)
 {
     int rowIndex = ui->windowTableWidget->rowCount();
-    QTableWidgetItem* windowIdItem = new QTableWidgetItem(QString::number(rowIndex));
+    QTableWidgetItem* windowId = new QTableWidgetItem(QString::number(rowIndex));
     //TableItem* windowIdItem = new TableItem(TableItem{0, new QTableWidgetItem(QString::number(rowIndex))});
-    windowIdItem->setTextAlignment(Qt::AlignCenter);
-    QTableWidgetItem* windowTypeItem = nullptr;
-    QTableWidgetItem* windowInterruptCodeItem = nullptr;
-    QTableWidgetItem* unEditableItem = new QTableWidgetItem();
-    unEditableItem->setFlags(0);
+    windowId->setTextAlignment(Qt::AlignCenter);
+    QTableWidgetItem* windowType = nullptr;
+    //QTableWidgetItem* windowInterruptCodeItem = nullptr;
+    //QTableWidgetItem* unEditableItem = new QTableWidgetItem();
+    //unEditableItem->setFlags(0);
     switch (window.getWindowType()) {
 //    DATA_SEND = 0,  /* 数据传送窗口 */
 //    VERSION_SEND = 1,  /* 版本校验窗口 */
@@ -102,48 +102,215 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
 //    FRAME_JUMP = 6,   /* 帧跳转窗口*/
 //    FREE = 7,   /* 空闲等待窗口 */
 //    SHORT_SYNC = 8,   /* 短同步窗口 */
+    //finish
     case FrameWindow::DATA_SEND:
-        windowTypeItem = new QTableWidgetItem("数据传送窗口");
-        break;
-    case FrameWindow::VERSION_SEND:
-        windowTypeItem = new QTableWidgetItem("版本校验窗口");
-        break;
-    case FrameWindow::LONG_SYNC:
-        windowTypeItem = new QTableWidgetItem("长同步窗口");
-        break;
-    case FrameWindow::FRAME_SWITCH:
-        windowTypeItem = new QTableWidgetItem("帧切换窗口");
-        break;
-    case FrameWindow::CALL_SUBFRRAME:
-        windowTypeItem = new QTableWidgetItem("调用子帧窗口");
-        break;
-    case FrameWindow::INT_SEND:
     {
-        windowTypeItem = new QTableWidgetItem("中断发送窗口");
-        QTableWidgetItem* windowInterruptCodeItem = new QTableWidgetItem(QString::number(window.getIntNum1()));
-        QTableWidgetItem* interruptReceiveItem = new QTableWidgetItem(QString::number(window.getIntNum2()));
-        windowInterruptCodeItem->setTextAlignment(Qt::AlignCenter);
-        interruptReceiveItem->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget, rowIndex, windowIdItem, windowTypeItem, windowInterruptCodeItem,unEditableItem,unEditableItem,interruptReceiveItem,nullptr);
+        windowType = new QTableWidgetItem("数据传送窗口");
+        QStringList receiveBlockList,sendBlockList;
+        for(auto x : window.getReceiveLRMList()){
+            receiveBlockList.append(QString::fromStdString(bodyFrame.getModules().at(x).getModuleName()));
+        }
+
+        sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
+        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+
+
+        QTableWidgetItem* sendAddress = new QTableWidgetItem(QString::fromStdString(window.getSendAddr()));
+        QTableWidgetItem* receiveAddress = new QTableWidgetItem(QString::fromStdString(window.getReceiveAddr()));
+        QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
+        QTableWidgetItem* receiveBlock = new QTableWidgetItem(receiveBlockList.join(" "));
+
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* sendBlockItem = new TableItem{3,sendBlock};
+        TableItem* sendAddressItem = new TableItem{4,sendAddress};
+        TableItem* receiveBlockItem = new TableItem{5,receiveBlock};
+        TableItem* receiveAddressItem = new TableItem{6,receiveAddress};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        sendAddress->setTextAlignment(Qt::AlignCenter);
+        receiveAddress->setTextAlignment(Qt::AlignCenter);
+        sendBlock->setTextAlignment(Qt::AlignCenter);
+        receiveBlock->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,sendAddressItem,receiveAddressItem,sendBlockItem,receiveBlockItem,nullptr);
+
+
         break;
     }
+    //finish
+    case FrameWindow::VERSION_SEND:
+    {
+        windowType = new QTableWidgetItem("版本校验窗口");
+        QStringList receiveBlockList,sendBlockList;
+        for(auto x : window.getReceiveLRMList()){
+            receiveBlockList.append(QString::fromStdString(bodyFrame.getModules().at(x).getModuleName()));
+        }
+        sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
+        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+
+//        for(auto x : sendBlockList){
+//            qDebug()<<x;
+//        }
+        QTableWidgetItem* versionReceiveAdress = new QTableWidgetItem(QString::fromStdString(window.getReceiveAddr()));
+        QTableWidgetItem* versionSendBlock = new QTableWidgetItem(sendBlockList.join(" "));
+        QTableWidgetItem* versionReceiveBlock = new QTableWidgetItem(receiveBlockList.join(" "));
+
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+
+        TableItem* versionSendBlockItem = new TableItem{3, versionSendBlock};
+        TableItem* versionReceiveBlockItem = new TableItem{5, versionReceiveBlock};
+        TableItem* versionReceiveAdressItem = new TableItem{6, versionReceiveAdress};
+
+        windowType->setTextAlignment(Qt::AlignCenter);
+        versionSendBlock->setTextAlignment(Qt::AlignCenter);
+        versionReceiveBlock->setTextAlignment(Qt::AlignCenter);
+        versionReceiveAdress->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,versionSendBlockItem,versionReceiveBlockItem,versionReceiveAdressItem,nullptr);
+        break;
+    }
+    //finish
+    case FrameWindow::LONG_SYNC:
+    {
+        windowType = new QTableWidgetItem("长同步窗口");
+        QString flag = window.getFlag()==true?"版本校验":"非版本校验";
+        QStringList sendBlockList;
+        sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
+        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+
+
+
+        QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
+        QTableWidgetItem* syncCode = new QTableWidgetItem(QString::fromStdString(window.getSyncCode()));
+        QTableWidgetItem* other = new QTableWidgetItem(flag);
+
+
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* sendBlockItem = new TableItem{3, sendBlock};
+        TableItem* syncCodeItem = new TableItem{7,syncCode};
+        TableItem* otherItem = new TableItem{8, other};
+
+        windowType->setTextAlignment(Qt::AlignCenter);
+        sendBlock->setTextAlignment(Qt::AlignCenter);
+        syncCode->setTextAlignment(Qt::AlignCenter);
+        other->setTextAlignment(Qt::AlignCenter);
+
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,otherItem,nullptr);
+        break;
+    }
+    //finish
+    case FrameWindow::FRAME_SWITCH:
+    {
+        windowType = new QTableWidgetItem("帧切换窗口");
+        QString flag = window.getFlag()==true?"版本校验":"非版本校验";
+
+        QStringList sendBlockList;
+        sendBlockList.append(QString::fromStdString(bodyFrame.getModules().at(window.getMainLRM()).getModuleName()));
+        if(window.getSupportLRM1().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM1()));
+        if(window.getSupportLRM2().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM2()));
+        if(window.getSupportLRM3().size() != 0) sendBlockList.append(QString::fromStdString(window.getSupportLRM3()));
+
+        QTableWidgetItem* other = new QTableWidgetItem(flag);
+        QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
+        QTableWidgetItem* syncCode = new QTableWidgetItem(QString::fromStdString(window.getSyncCode()));
+        QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("新帧标识：" + window.getNewFrameID()));
+
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* sendBlockItem = new TableItem{3, sendBlock};
+        TableItem* newFrameIdItem = new TableItem{5, newFrameId};
+        TableItem* syncCodeItem = new TableItem{7,syncCode};
+        TableItem* otherItem = new TableItem{8, other};
+
+        syncCode->setTextAlignment(Qt::AlignCenter);
+        other->setTextAlignment(Qt::AlignCenter);
+        sendBlock->setTextAlignment(Qt::AlignCenter);
+        newFrameId->setTextAlignment(Qt::AlignCenter);
+        windowType->setTextAlignment(Qt::AlignCenter);
+
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,newFrameIdItem,otherItem,nullptr);
+        break;
+    }
+    //finish
+    case FrameWindow::CALL_SUBFRRAME:
+    {
+        QString flag = window.getFlag()==true?"固有空闲":"非固有空闲";
+        windowType = new QTableWidgetItem("调用子帧窗口");
+        QTableWidgetItem* other = new QTableWidgetItem(flag);
+        QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("帧标识：" + window.getNewFrameID()));
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* newFrameIdItem = new TableItem{5, newFrameId};
+        TableItem* otherItem = new TableItem{8, other};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        newFrameId->setTextAlignment(Qt::AlignCenter);
+        other->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,nullptr);
+        break;
+    }
+    //中断接受模块需整体更改
+    case FrameWindow::INT_SEND:
+    {
+        windowType = new QTableWidgetItem("中断发送窗口");
+        QTableWidgetItem* windowInterruptCode = new QTableWidgetItem(QString::number(window.getIntNum1()));
+        QTableWidgetItem* interruptReceiver = new QTableWidgetItem(QString::number(window.getIntNum2()));
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* windowInterruptCodeItem = new TableItem{2,windowInterruptCode};
+        TableItem* interruptReceiverItem = new TableItem{5,interruptReceiver};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        windowInterruptCode->setTextAlignment(Qt::AlignCenter);
+        interruptReceiver->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,windowInterruptCodeItem,interruptReceiverItem,nullptr);
+        break;
+    }
+    //finish
     case FrameWindow::FRAME_JUMP:
-        windowTypeItem = new QTableWidgetItem("帧跳转窗口");
+    {
+        QString flag = window.getFlag()==true?"固有空闲":"非固有空闲";
+        windowType = new QTableWidgetItem("帧跳转窗口");
+        QTableWidgetItem* other = new QTableWidgetItem(flag);
+        QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("新帧标识：" + window.getNewFrameID()));
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* newFrameIdItem = new TableItem{5, newFrameId};
+        TableItem* otherItem = new TableItem{8, other};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        newFrameId->setTextAlignment(Qt::AlignCenter);
+        other->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,nullptr);
         break;
+    }
+    //finish
     case FrameWindow::FREE:
-        windowTypeItem = new QTableWidgetItem("空闲等待窗口");
+    {
+        windowType = new QTableWidgetItem("空闲等待窗口");
+        QTableWidgetItem* sendTimeScale = new QTableWidgetItem(QString::number(window.getSendTimeScale()));
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* sendTimeScaleItem = new TableItem{8, sendTimeScale};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        sendTimeScale->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,sendTimeScaleItem,nullptr);
         break;
+    }
     case FrameWindow::SHORT_SYNC:{
-        windowTypeItem = new QTableWidgetItem("短同步窗口");
+        windowType = new QTableWidgetItem("短同步窗口");
         break;
     }
     default:
         break;
     }
-    TableItem* windowIdItemWithIndex = new TableItem{0, windowIdItem};
-    TableItem* windowTypeItemWithIndex = new TableItem{2, windowTypeItem};
-    windowTypeItem->setTextAlignment(Qt::AlignCenter);
-    addTableItems(ui->windowTableWidget, rowIndex, windowIdItemWithIndex, windowTypeItemWithIndex, nullptr);
+    //TableItem* windowIdItemWithIndex = new TableItem{0, windowIdItem};
+    //TableItem* windowTypeItemWithIndex = new TableItem{1, windowTypeItem};
+    //windowTypeItem->setTextAlignment(Qt::AlignCenter);
+    //addTableItems(ui->windowTableWidget, rowIndex, windowIdItemWithIndex, windowTypeItemWithIndex, nullptr);
 }
 
 bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, TableItem *firstItem, ...)
@@ -222,7 +389,7 @@ WindowCfgDialog *DataFrameCfgWidget::newWindowCfgDialog()
             break;
         }
         case FrameWindow::FRAME_JUMP:{
-            dialog = new JumpWindowCfgDialog(row, this);
+            dialog = new JumpWindowCfgDialog(row,window,this);
             dialog->setWindowFlag(Qt::Dialog);
             break;
         }
