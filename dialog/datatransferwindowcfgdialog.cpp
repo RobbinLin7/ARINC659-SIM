@@ -36,7 +36,7 @@ DataTransferWindowCfgDialog::DataTransferWindowCfgDialog(uint id, const FrameWin
         ui->backupLRM3_comboBox->addItem(QString::fromStdString(x.second.getModuleName()));
         nameToId[x.second.getModuleName()] = x.second.getModuleNumber();
     }
-    ui->mainLRM_comboBox->setCurrentText(QString::number(frameWindow.getMainLRM()));
+    ui->mainLRM_comboBox->setCurrentText(QString::fromStdString(modules.at(frameWindow.getMainLRM()).getModuleName()));
     ui->windowId_lineEdit->setText(QString::number(id));
     ui->backupLRM1_comboBox->setCurrentText(QString::fromStdString(frameWindow.getSupportLRM1()));
     QStringList receiveLRMList;

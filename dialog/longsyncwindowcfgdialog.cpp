@@ -37,7 +37,7 @@ LongSyncWindowCfgDialog::LongSyncWindowCfgDialog(uint id,const FrameWindow &fram
 
 
     ui->windowId_lineEdit->setText(QString::number(id));
-    ui->mainLRM_comboBox->setCurrentText(QString::number(framewindow.getMainLRM()));
+    ui->mainLRM_comboBox->setCurrentText(QString::fromStdString(modules.at(framewindow.getMainLRM()).getModuleName()));
     ui->syncCode_lineEdit->setText(QString::fromStdString(framewindow.getSyncCode()));
     ui->backupLRM1_comboBox->setCurrentText(QString::fromStdString(framewindow.getSupportLRM1()));
     ui->backupLRM2_comboBox->setCurrentText(QString::fromStdString(framewindow.getSupportLRM2()));

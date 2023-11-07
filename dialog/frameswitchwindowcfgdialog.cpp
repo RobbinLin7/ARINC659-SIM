@@ -36,7 +36,7 @@ FrameSwitchWindowCfgDialog::FrameSwitchWindowCfgDialog(uint id,const FrameWindow
     }
     ui->windowId_lineEdit->setText(QString::number(id));
 
-    ui->comboBox->setCurrentText(QString::number(framewindow.getMainLRM()));
+    ui->comboBox->setCurrentText(QString::fromStdString(modules.at(framewindow.getMainLRM()).getModuleName()));
     ui->comboBox_2->setCurrentText(QString::fromStdString(framewindow.getSupportLRM1()));
     ui->comboBox_3->setCurrentText(QString::fromStdString(framewindow.getSupportLRM2()));
     ui->comboBox_4->setCurrentText(QString::fromStdString(framewindow.getSupportLRM3()));

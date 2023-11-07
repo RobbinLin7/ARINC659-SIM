@@ -37,7 +37,7 @@ VersionDetectionWindowCfgDialog::VersionDetectionWindowCfgDialog(uint id,const F
     }
     ui->windowId_lineEdit->setText(QString::number(id));
 
-    ui->mainLRM_comboBox->setCurrentText(QString::number(framewindow.getMainLRM()));
+    ui->mainLRM_comboBox->setCurrentText(QString::fromStdString(modules.at(framewindow.getMainLRM()).getModuleName()));
     ui->backupLRM1_comboBox->setCurrentText(QString::fromStdString(framewindow.getSupportLRM1()));
     ui->backupLRM2_comboBox->setCurrentText(QString::fromStdString(framewindow.getSupportLRM2()));
     ui->backupLRM3_comboBox->setCurrentText(QString::fromStdString(framewindow.getSupportLRM3()));
