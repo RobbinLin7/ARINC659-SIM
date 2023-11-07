@@ -1,6 +1,9 @@
 #include "preprocess.h"
 #include <chrono>
+#include <iostream>
+#include <fstream>
 #include "tools/globalfunc.h"
+#include "tools/user.h"
 using std::to_string;
 std::string trim(std::string s);
 std::string trimStart(std::string s);
@@ -146,27 +149,32 @@ int PreProcess::MacroSubstitute(COMPILE_STATUS &status)
     string str_tmp, str_line,str_keyword;
     int nTmp = 0;
 
-    list<Macro_Format> macroList;
-    auto itr = m_lstCommand.begin();
-    for (line_cnt = 0; line_cnt < m_lstCommand.size(); line_cnt++, ++itr)
+    std::vector<Macro_Format> macroList;
+
+
+//#region 逐行查找宏定义
+
+    for (line_cnt = 0; line_cnt < m_lstCommand.size(); line_cnt++)
     {
 
         Macro_Format macro;
-        str_line = *itr;
+        str_line = m_lstCommand[line_cnt];
         str_line = trim(str_line);
 
-        if (str_line.length() < 8) continue;/*less than 8 ; not enough for a macro #define */
+        if (str_line.size() < 8) continue;/*less than 8 ; not enough for a macro #define */
 
         str_tmp = str_line.substr(0, 8);
         if (str_tmp != "#define ") continue;//current line is not a #define  macro
 
-        str_line = str_line.substr(8, str_line.length() - 8);//remove the key word #define
+        str_line = str_line.substr(8, str_line.size() - 8);//remove the key word #define
         str_line = trim(str_line);
+
         nTmp = str_line.find_first_of(' ');
         str_tmp= str_line.substr(0, nTmp);/*first word is  macro name */
 
         str_keyword = trim(str_tmp);
-        str_tmp = toUpper(str_keyword);
+        transform(str_keyword.begin(),str_keyword.end(),str_tmp.begin(),::tolower);
+        //str_tmp = str_keyword.ToUpper();
         int int_tmp = GlobalFunc::CmpKW(str_tmp);
 
         if (int_tmp != -1)
@@ -178,11 +186,12 @@ int PreProcess::MacroSubstitute(COMPILE_STATUS &status)
             return 1;
 
         }
-        auto itr2 = macroList.cbegin();
-        for (int i = 0; i < macroList.size(); i++, itr2++)
+
+        for (int i = 0; i < macroList.size(); i++ )
         {
-            if (str_tmp == itr2->macro_name)
+            if (str_tmp == macroList[i].macro_name)
             {
+
                 str_tmp = "[ERROR] Line  " + to_string(line_cnt + 1) + "  macro redefinition :" + str_tmp;
                 m_lstLst.push_back(str_tmp);
                 status.error++;
@@ -193,8 +202,8 @@ int PreProcess::MacroSubstitute(COMPILE_STATUS &status)
 
         macro.macro_name = str_keyword;
 
-        str_line = str_line.substr(nTmp, str_line.length() - nTmp);/*the last string is actual value*/
-        str_line =trim(str_line);
+        str_line = str_line.substr(nTmp, str_line.size() - nTmp);/*the last string is actual value*/
+        str_line = trim(str_line);
 
         nTmp = str_line.find_first_of(' ');
         if (nTmp!=-1)
@@ -206,25 +215,43 @@ int PreProcess::MacroSubstitute(COMPILE_STATUS &status)
             return 1;
         }
         macro.macro_context = str_line;
-        *itr = "";
+        m_lstCommand[line_cnt] = "";
+
         macroList.push_back(macro);
 
     }
-    auto itr3 = m_lstSourceCommand.begin();
-    for (line_cnt = 0; line_cnt < m_lstSourceCommand.size(); line_cnt++, ++itr3)
+
+
+//#endregion
+
+
+//#region 宏替换
+
+    for (line_cnt = 0; line_cnt < m_lstSourceCommand.size(); line_cnt++)
     {
 
-        str_line = *itr3;
+        str_line = m_lstCommand[line_cnt];
 
         str_line = trim(str_line);
-        auto itr4 = macroList.begin();
-        for(int i =0 ; i<macroList.size(); i++, ++itr4)
+        int ptr;
+        for(int i =0 ; i<macroList.size(); i++)
         {
-            str_tmp = trim(itr4->macro_name);
+            str_tmp = trim(macroList[i].macro_name);
             str_tmp = " " + str_tmp + " ";
-            *itr = ReplaceString(*itr, str_tmp, " " + itr4->macro_context+ " ");
+            //m_lstCommand[line_cnt] = m_lstCommand[line_cnt].Replace(str_tmp, " " + macroList[i].macro_context+ " ");
+            if((ptr = m_lstCommand[line_cnt].find(str_tmp)) != string::npos){
+                m_lstCommand[line_cnt].replace(ptr, str_tmp.size(), " " + macroList[i].macro_context+ " ");
+            }
+
         }
+
+
     }
+
+
+//#endregion
+
+
     return 0;
 }
 
@@ -248,12 +275,46 @@ int PreProcess::IsValidChar(char c)
 
 void PreProcess::SaveSrcFile()
 {
+    string path = m_strDir + "/" + m_strFlieName + ".src";
+    try{
+        std::ofstream os(path);
+        for(int i = 0; i < m_lstSrc.size(); i++){
+            os << m_lstSrc[i] << std::endl;
+        }
+        os.close();
+    }catch(std::exception e){
+        std::cerr << e.what();
+    }
 
+//    try
+//    {
+
+//        using (StreamWriter sw = File.CreateText(path))
+//        {
+
+//            for (int i = 0; i < m_lstSrc.Count; i++)
+//            {
+//                sw.WriteLine(m_lstSrc[i]);
+//            }
+
+//            sw.Close();
+//        }
+
+//    }
+//    catch (Exception e)
+//    {
+//        // Let the user know what went wrong.
+//    }
 }
 
 void PreProcess::SaveLstFile()
 {
 
+}
+
+void PreProcess::setLstSourceCommand(const vector<String> &newLstSourceCommand)
+{
+    m_lstSourceCommand = newLstSourceCommand;
 }
 
 

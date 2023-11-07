@@ -56,6 +56,7 @@ SOURCES += \
     tools/mcscodecompile.cpp \
     tools/myxml.cpp \
     tools/preprocess.cpp \
+    tools/trim.cpp \
     validator/stringidvalidator.cpp
 
 HEADERS += \
@@ -98,6 +99,8 @@ HEADERS += \
     tools/mcscodecompile.h \
     tools/myxml.h \
     tools/preprocess.h \
+    tools/trim.h \
+    tools/user.h \
     validator/stringidvalidator.h
 
 FORMS += \
