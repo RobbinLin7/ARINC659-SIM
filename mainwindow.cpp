@@ -3,10 +3,12 @@
 
 #include "deviceModel/bodyFrameGraphicsItem.h"
 #include "newprojectdialog.h"
+#include "dialog/burntofpgadialog.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include <fstream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -181,6 +183,77 @@ void MainWindow::on_actionOpenMonitor_triggered()
     monitor->show();
 }
 
+void MainWindow::on_actionBurnToFPGA_triggered()
+{
+    createBatchFile();
+    QProcess *process = new QProcess(this);
+    BurnToFPGADialog *dialog = new BurnToFPGADialog(this);
+    connect(process, &QProcess::readyReadStandardOutput, this, [=]() {
+        QString output = process->readAllStandardOutput();
+        QString inputString = output;
+        QRegularExpression regex("Added Device (\\w+) successfully");
+        QRegularExpressionMatchIterator matches = regex.globalMatch(inputString);
+
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            if (match.hasMatch()) {
+                QString matchedText = match.captured(1);
+                qDebug() << matchedText;
+            }
+        }
+        //addLogToDockWidget(output);
+        //qDebug() << output;
+        //std::cout << output.toStdString() << std::endl;
+    });
+    connect(process, &QProcess::readyReadStandardError, this, [=]() {
+        QString output = process->readAllStandardError();
+        addLogToDockWidget(output);
+        QString inputString = output;
+        QRegularExpression regex("Added Device (\\w+) successfully");
+        QRegularExpressionMatchIterator matches = regex.globalMatch(inputString);
+
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            if (match.hasMatch()) {
+                QString matchedText = match.captured(1);
+                qDebug() << matchedText;
+                dialog->addItem(matchedText);
+            }
+        }
+        //qDebug() << output;
+        //std::cout << output.toStdString() << std::endl;
+    });
+    process->start("impact", QStringList() << "-batch");
+    process->write("setmode -bs\n");
+    process->write("setcable -port auto\n");
+    process->write("identify\n");
+    //process->closeWriteChannel();
+    process->waitForReadyRead();
+
+//    dialog->addItem("xc2v1000");
+//    dialog->addItem("xc2v1000");
+    dialog->setWindowFlag(Qt::Dialog);
+    connect(dialog, &BurnToFPGADialog::configFinished, this, [=](QStringList commandList){
+       for(QString command : commandList){
+           qDebug() << command;
+           process->write(command.toUtf8());
+           process->waitForReadyRead();
+       }
+    });
+    dialog->exec();
+    process->kill();
+    //process->waitForFinished(-1);
+//    QByteArray stdcout = process->readAllStandardOutput();
+//    QByteArray stdcerr = process->readAllStandardError();
+//    std::cout << stdcout.toStdString() << std::endl;
+//    if(process->exitCode() != 0){
+//        addLogToDockWidget(stdcerr);
+//    }
+//    else{
+//        addLogToDockWidget("命令表编译成功");
+//    }
+}
+
 
 /**
  * @brief MainWindow::on_actionNewProject_triggered
@@ -238,7 +311,7 @@ void MainWindow::addLogToDockWidget(const QString log)
 {
     QString currentTime;
     currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    ui->logTextBrowser->append(currentTime + log);
+    ui->logTextBrowser->append(currentTime +  ": " + log);
 }
 
 void MainWindow::disableAllActionNeedAProject()
@@ -315,6 +388,20 @@ void MainWindow::createNewScene()
     ui->graphicsView->setScene(scene.get());
     ui->graphicsView->centerOn(1000, 2350);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+}
+
+QString MainWindow::createBatchFile()
+{
+    std::ofstream os("batfile.txt");
+
+    os << "setMode -bs" << std::endl;
+    os << "setCable -port auto" << std::endl;
+    os << "Identify";
+
+    os.close();
+
+    return QString();
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
