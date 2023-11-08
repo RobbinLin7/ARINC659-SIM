@@ -61,12 +61,15 @@ signals:
 
     void deleteBodyFrameItemSignal(uint frameId);
 
+    void enterInBodyFrame(uint frameId);
+
 
     // QGraphicsItem interface
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event)override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
     // QGraphicsItem interface
 protected:

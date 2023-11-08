@@ -59,7 +59,10 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
                                                                                                                            scene->getAy(),
                                                                                                                            scene->getBx(),
                                                                                                                            scene->getBy(),
-                                                                                                                           bodyFrameItem));
+                                                                                                                       bodyFrameItem));
+    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
+       ui->graphicsView->setScene(new QGraphicsScene());
+    });
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
     if(scene->addBodyFrameItem(graphicsItem) == false){
         qDebug() << "scene addbodyframeitem failed";

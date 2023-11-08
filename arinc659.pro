@@ -30,9 +30,12 @@ SOURCES += \
     deviceModel/dataFrameCfgWidget.cpp \
     deviceModel/deviceModelScene.cpp \
     deviceModel/fpgadevicewidget.cpp \
+    deviceModel/innerbodyframescene.cpp \
+    deviceModel/lrmgrphicsitem.cpp \
     deviceModel/modulecfgwidget.cpp \
     dialog/burntofpgadialog.cpp \
     dialog/datatransferwindowcfgdialog.cpp \
+    dialog/faultinjectdialog.cpp \
     dialog/frameswitchwindowcfgdialog.cpp \
     dialog/freewindowcfgdialog.cpp \
     dialog/interruptionwindowcfgdialog.cpp \
@@ -75,8 +78,11 @@ HEADERS += \
     deviceModel/dataFrameCfgWidget.h \
     deviceModel/deviceModelScene.h \
     deviceModel/fpgadevicewidget.h \
+    deviceModel/innerbodyframescene.h \
+    deviceModel/lrmgrphicsitem.h \
     deviceModel/modulecfgwidget.h \
     dialog/burntofpgadialog.h \
+    dialog/faultinjectdialog.h \
     dialog/windowcfgdialog.h \
     dialog/datatransferwindowcfgdialog.h \
     dialog/frameswitchwindowcfgdialog.h \
@@ -115,6 +121,7 @@ FORMS += \
     deviceModel/modulecfgwidget.ui \
     dialog/burntofpgadialog.ui \
     dialog/datatransferwindowcfgdialog.ui \
+    dialog/faultinjectdialog.ui \
     dialog/frameswitchwindowcfgdialog.ui \
     dialog/freewindowcfgdialog.ui \
     dialog/interruptionwindowcfgdialog.ui \
