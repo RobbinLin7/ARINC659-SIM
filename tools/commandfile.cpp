@@ -16,6 +16,7 @@ bool CommandFile::createCommandFile(const Proj659 &proj)
     std::ofstream commandFile(proj.getName().toStdString() + ".txt");
     for(auto bodyFrame : proj.getBodyFrameItems()){
         createBodyFrameInfo(commandFile, bodyFrame);
+        createCommand(commandFile, bodyFrame);
         commandFile << "     ESECTION ;" << std::endl;
     }
     commandFile << "      END;" << std::endl;
