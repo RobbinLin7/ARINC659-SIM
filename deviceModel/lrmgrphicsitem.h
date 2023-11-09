@@ -5,11 +5,11 @@
 #include <QObject>
 #include <QRectF>
 
-class LRMGrphicsItem : public QObject, public QGraphicsItem
+class LRMGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    LRMGrphicsItem();
+    LRMGraphicsItem();
     QRectF getRect_bound() const;
     void setRect_bound(const QRectF &value);
 

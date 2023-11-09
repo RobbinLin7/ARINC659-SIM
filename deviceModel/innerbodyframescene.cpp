@@ -3,14 +3,14 @@
 InnerBodyFrameScene::InnerBodyFrameScene(const BodyFrame& bodyFrame, QObject *parent)
     : QGraphicsScene{parent}
 {
-    LRMGrphicsItem* myItem = new LRMGrphicsItem();
+    LRMGraphicsItem* myItem = new LRMGraphicsItem();
     myItem->setPos(100,100);
     this->addItem(myItem);
 }
 
 InnerBodyFrameScene::InnerBodyFrameScene()
 {
-    LRMGrphicsItem* myItem = new LRMGrphicsItem();
+    LRMGraphicsItem* myItem = new LRMGraphicsItem();
     myItem->setPos(1000,2300);
     this->addItem(myItem);
 }

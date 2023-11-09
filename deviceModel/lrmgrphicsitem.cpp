@@ -3,7 +3,7 @@
 #include <QRectF>
 
 
-LRMGrphicsItem::LRMGrphicsItem()
+LRMGraphicsItem::LRMGraphicsItem()
 {
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     rect_bound = boundingRect();
@@ -11,7 +11,7 @@ LRMGrphicsItem::LRMGrphicsItem()
     rect_659 = rect_bound.adjusted(8,70,-8,-8);
 }
 
-void LRMGrphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
     //     painter->setBrush(QBrush(Qt::blue));
@@ -60,38 +60,38 @@ void LRMGrphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 ;
 }
 
-QRectF LRMGrphicsItem::boundingRect() const
+QRectF LRMGraphicsItem::boundingRect() const
 {
     return QRectF(0, 0, 80, 120);
 }
 
 
-QRectF LRMGrphicsItem::getRect_bound() const
+QRectF LRMGraphicsItem::getRect_bound() const
 {
     return rect_bound;
 }
 
-void LRMGrphicsItem::setRect_bound(const QRectF &value)
+void LRMGraphicsItem::setRect_bound(const QRectF &value)
 {
     rect_bound = value;
 }
 
-QRectF LRMGrphicsItem::getRect_cpu() const
+QRectF LRMGraphicsItem::getRect_cpu() const
 {
     return rect_cpu;
 }
 
-void LRMGrphicsItem::setRect_cpu(const QRectF &value)
+void LRMGraphicsItem::setRect_cpu(const QRectF &value)
 {
     rect_cpu = value;
 }
 
-QRectF LRMGrphicsItem::getRect_659() const
+QRectF LRMGraphicsItem::getRect_659() const
 {
     return rect_659;
 }
 
-void LRMGrphicsItem::setRect_659(const QRectF &value)
+void LRMGraphicsItem::setRect_659(const QRectF &value)
 {
     rect_659 = value;
 }
