@@ -105,6 +105,8 @@ private:
 
     void createNewScene();
 
+    void createNewInnerBodyFrameScene();
+
     QString createBatchFile();
 
     QAction *test = nullptr;

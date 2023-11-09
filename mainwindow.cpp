@@ -4,6 +4,7 @@
 #include "deviceModel/bodyFrameGraphicsItem.h"
 #include "newprojectdialog.h"
 #include "dialog/burntofpgadialog.h"
+#include "deviceModel/innerbodyframescene.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -60,9 +61,10 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
                                                                                                                            scene->getBx(),
                                                                                                                            scene->getBy(),
                                                                                                                        bodyFrameItem));
-    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
-       ui->graphicsView->setScene(new QGraphicsScene());
-    });
+//    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
+//       ui->graphicsView->setScene(new InnerBodyFrameScene(bodyFrameItem,this));
+//    });
+    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
     if(scene->addBodyFrameItem(graphicsItem) == false){
         qDebug() << "scene addbodyframeitem failed";
@@ -390,6 +392,15 @@ void MainWindow::createNewScene()
     scene->setSceneRect(0, 0, 5000, 5000);
     ui->graphicsView->setScene(scene.get());
     ui->graphicsView->centerOn(1000, 2350);
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+}
+
+void MainWindow::createNewInnerBodyFrameScene()
+{
+    InnerBodyFrameScene* scene = new InnerBodyFrameScene();
+    scene->setSceneRect(0,0,5000,5000);
+    ui->graphicsView->setScene(scene);
+    ui->graphicsView->centerOn(1000,2350);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
