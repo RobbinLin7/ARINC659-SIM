@@ -1,6 +1,9 @@
 #include "lrmgrphicsitem.h"
 #include <QPainter>
 #include <QRectF>
+#include <QLineF>
+#include <QtMath>
+
 
 
 LRMGraphicsItem::LRMGraphicsItem()
@@ -33,30 +36,70 @@ void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
      QPointF startPoint2(rect_659.topRight().x()-17,rect_659.top());
      QPointF endPoint2(startPoint2.x(),rect_cpu.bottom());
 
+     painter->setPen(Qt::red);
+     painter->setPen(Qt::SquareCap);
 
-     const QPointF points1[7]= {
-         startPoint1,
-         QPointF(startPoint1.x()-3,startPoint1.y()+4),
-         QPointF(startPoint1.x()-1.5,startPoint1.y()+4),
-         QPointF(endPoint1.x()-1.5,endPoint1.y()),
-         QPointF(endPoint1.x()+1.5,endPoint1.y()),
-         QPointF(startPoint1.x()+1.5,startPoint1.y()+4),
-         QPointF(startPoint1.x()+3,startPoint1.y()+4),
-     };
+     QLineF mainLine(startPoint1,endPoint1);
+     painter->drawLine(mainLine);
+     QLineF leftArrow;
+     leftArrow.setP1(startPoint1);
+     leftArrow.setLength(mainLine.length()/5.0);
+     leftArrow.setAngle(mainLine.angle()-36.87);
+     QLineF leftBackArrow;
+     leftBackArrow.setP1(leftArrow.p2());
+     leftBackArrow.setLength(leftArrow.length()/3.0);
+     leftBackArrow.setAngle(mainLine.normalVector().angle());
+     QLineF leftVertical;
+     leftVertical.setP1(leftBackArrow.p2());
+     leftVertical.setLength(mainLine.length()-leftArrow.length()*cos(qDegreesToRadians(36.87)));
+     leftVertical.setAngle(mainLine.angle());
+     QLineF rightArrow;
+     rightArrow.setP1(startPoint1);
+     rightArrow.setLength(mainLine.length()/5.0);
+     rightArrow.setAngle(mainLine.angle()+36.87);
+     QLineF rightBackArrow;
+     rightBackArrow.setP1(rightArrow.p2());
+     rightBackArrow.setLength(rightArrow.length()/3.0);
+     rightBackArrow.setAngle(mainLine.normalVector().angle()+180.0);
+     QLineF rightVertical;
+     rightVertical.setP1(rightBackArrow.p2());
+     rightVertical.setLength(mainLine.length()-rightArrow.length()*cos(qDegreesToRadians(36.87)));
+     rightVertical.setAngle(mainLine.angle());
+     QLineF bottomLine(leftVertical.p2(),rightVertical.p2());
 
-     const QPointF points2[7]= {
-         startPoint2,
-         QPointF(startPoint2.x()-3,startPoint2.y()-4),
-         QPointF(startPoint2.x()-1.5,startPoint2.y()-4),
-         QPointF(endPoint2.x()-1.5,endPoint2.y()),
-         QPointF(endPoint2.x()+1.5,endPoint2.y()),
-         QPointF(startPoint2.x()+1.5,startPoint2.y()-4),
-         QPointF(startPoint2.x()+3,startPoint2.y()-4),
-     };
+
+     painter->drawLine(leftArrow);
+     painter->drawLine(leftBackArrow);
+     painter->drawLine(leftVertical);
+     painter->drawLine(rightArrow);
+     painter->drawLine(rightBackArrow);
+     painter->drawLine(rightVertical);
+
+
+
+//     const QPointF points1[7]= {
+//         startPoint1,
+//         QPointF(startPoint1.x()-3,startPoint1.y()+4),
+//         QPointF(startPoint1.x()-1.5,startPoint1.y()+4),
+//         QPointF(endPoint1.x()-1.5,endPoint1.y()),
+//         QPointF(endPoint1.x()+1.5,endPoint1.y()),
+//         QPointF(startPoint1.x()+1.5,startPoint1.y()+4),
+//         QPointF(startPoint1.x()+3,startPoint1.y()+4),
+//     };
+
+//     const QPointF points2[7]= {
+//         startPoint2,
+//         QPointF(startPoint2.x()-3,startPoint2.y()-4),
+//         QPointF(startPoint2.x()-1.5,startPoint2.y()-4),
+//         QPointF(endPoint2.x()-1.5,endPoint2.y()),
+//         QPointF(endPoint2.x()+1.5,endPoint2.y()),
+//         QPointF(startPoint2.x()+1.5,startPoint2.y()-4),
+//         QPointF(startPoint2.x()+3,startPoint2.y()-4),
+//     };
      
      painter->setBrush(QBrush(Qt::red));
-     painter->drawPolygon(points1,7);
-     painter->drawPolygon(points2,7)
+//     painter->drawPolygon(points1,7);
+//     painter->drawPolygon(points2,7)
 ;
 }
 
