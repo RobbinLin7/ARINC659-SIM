@@ -57,7 +57,7 @@ private slots:
 private:
     static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
-    BodyFrameGraphicsItem *selectedItem;
+    std::shared_ptr<BodyFrameGraphicsItem> selectedItem =nullptr ;
     BusGraphicsItem Ax;
     BusGraphicsItem Ay;
     BusGraphicsItem Bx;

@@ -15,6 +15,10 @@ class InnerBodyFrameScene : public QGraphicsScene
 public:
     explicit InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent = nullptr);
     //explicit InnerBodyFrameScene();
+    bool addIrmGraphicsItem(LRMGraphicsItem* item);
+
+
+    std::set<int> getPositionSet() const;
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:
@@ -22,6 +26,11 @@ signals:
 private:
     QMap<uint, std::shared_ptr<LRMGraphicsItem>> moduleGraphicItems;
     BodyFrame& bodyFrame;
+    BusGraphicsItem Ax;
+    BusGraphicsItem Ay;
+    BusGraphicsItem Bx;
+    BusGraphicsItem By;
+    std::set<int> positionSet; //记录所有机架的水平位置
 private slots:
     void cfgModuleSlot(uint moduleId);
     void deleteModuleSlot(uint moduleId);

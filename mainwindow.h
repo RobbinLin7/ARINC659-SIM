@@ -114,6 +114,8 @@ private:
 
     void createNewInnerBodyFrameScene(uint bodyFrameId);
 
+    //void createNewInnerBodyFrameScene(BodyFrame& bodyFrameItem);
+
     QString createBatchFile();
 
     QAction *test = nullptr;

@@ -40,7 +40,7 @@ void MainWindow::forTest()
     ui->statusbar->showMessage(tr("Position: (%1,%2)"));
 }
 
-
+//机架属性配置界面
 void MainWindow::on_actionNewBodyFrameItem_triggered()
 {
     //bodyFrameNum++;
@@ -60,19 +60,24 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
                                                                                                                            scene->getAy(),
                                                                                                                            scene->getBx(),
                                                                                                                            scene->getBy(),
-                                                                                                                       bodyFrameItem));
+                                                                                                        bodyFrameItem));
 //    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
 //       ui->graphicsView->setScene(new InnerBodyFrameScene(bodyFrameItem,this));
 //    });
-    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
+
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
     if(scene->addBodyFrameItem(graphicsItem) == false){
         qDebug() << "scene addbodyframeitem failed";
         return;
     }
     currentBodyFrameList.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrameCfgWidget);
+
+    //对应删除机架、配置机架和进入机架
+    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
+
+
     auto p = ui->projectTreeWidget->findItems("机架配置", Qt::MatchContains | Qt::MatchRecursive);
     for(auto &x : p){
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
@@ -131,6 +136,7 @@ void MainWindow::deleteBodyFrameItemSlot(uint id)
     bodyFrameGraphicsItems.remove(id);
     scene->update();
 }
+
 
 void MainWindow::on_actionChangeStyleSheet_triggered()
 {
@@ -435,6 +441,15 @@ void MainWindow::createNewInnerBodyFrameScene(uint bodyFrameId)
     ui->graphicsView->setScene(innerBodyFrameScene.get());
     ui->graphicsView->centerOn(1000,2350);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+//    qDebug()<< bodyFrameItem.getModules().size();
+//    for(int i=0;i<bodyFrameItem.getModules().size();i++){
+//      qDebug()<< i ;
+//      LRMGraphicsItem* myItem = new LRMGraphicsItem();
+//      scene->addIrmGraphicsItem(myItem);
+//    }
+
+//    LRMGraphicsItem* myItem = new LRMGraphicsItem();
+//    scene->addIrmGraphicsItem(myItem);
 }
 
 QString MainWindow::createBatchFile()

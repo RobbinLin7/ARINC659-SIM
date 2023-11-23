@@ -14,7 +14,7 @@ public:
 private:
     QString name;
     QLineF line;
-    qreal penWidth = 5;
+    qreal penWidth = 5 ;
     QAction *faultInjectAction = nullptr;
     QAction *cfgBF = nullptr;
     // QGraphicsItem interface
