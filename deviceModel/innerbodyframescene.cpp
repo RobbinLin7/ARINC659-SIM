@@ -1,5 +1,7 @@
 #include "innerbodyframescene.h"
 #include "deviceModel/modulecfgwidget.h"
+#include "deviceModel/bodyFrameCfgWidget.h"
+#include "ui_bodyFrameCfgWidget.h"
 #include <QRgb>
 #include <QMenu>
 #include <QDebug>
@@ -100,9 +102,22 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
     else{
         QMenu menu;
         QAction *exitBF = new QAction("退出机架");
+        QAction *cfgDF = new QAction("配置帧");
         menu.addAction(exitBF);
+        menu.addAction(cfgDF);
         connect(exitBF, &QAction::triggered, this, [=](){
             emit exitBodyFrameSignal();
+        });
+        connect(cfgDF, &QAction::triggered, this, [=](){
+           BodyFrameCfgWidget *widget = new BodyFrameCfgWidget(bodyFrame);
+           widget->ui->tab_3->setWindowFlags(Qt::Dialog);
+           QPushButton *okPushButton = new QPushButton("确定", widget->ui->tab_3);
+           //widget->ui->horizontalLayout_4->addWidget(okPushButton);
+           if(widget->ui->widget_4->layout() != nullptr){
+               widget->ui->widget_4->layout()->addWidget(okPushButton);
+           }
+           else qDebug() << "meiyou layout";
+           widget->ui->tab_3->show();
         });
         menu.exec(QCursor::pos());
         return QGraphicsScene::contextMenuEvent(event);
