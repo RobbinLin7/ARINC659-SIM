@@ -16,6 +16,8 @@ public:
 public:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    const BusGraphicsItem *getBus() const;
+
 private:
     qreal penWidth = 5;
     const BusGraphicsItem* bus = nullptr;

@@ -28,6 +28,7 @@ SOURCES += \
     deviceModel/busgraphicsitem.cpp \
     deviceModel/commandfilewidget.cpp \
     deviceModel/dataFrameCfgWidget.cpp \
+    deviceModel/dataflow.cpp \
     deviceModel/deviceModelScene.cpp \
     deviceModel/fpgadevicewidget.cpp \
     deviceModel/innerbodyframescene.cpp \
@@ -76,6 +77,7 @@ HEADERS += \
     deviceModel/busgraphicsitem.h \
     deviceModel/commandfilewidget.h \
     deviceModel/dataFrameCfgWidget.h \
+    deviceModel/dataflow.h \
     deviceModel/deviceModelScene.h \
     deviceModel/fpgadevicewidget.h \
     deviceModel/innerbodyframescene.h \

@@ -16,7 +16,7 @@ class ModuleCfgWidget : public QWidget
 
 public:
     enum Type{add, modify};
-    explicit ModuleCfgWidget(const Module& module, QWidget *parent = nullptr);
+    explicit ModuleCfgWidget(Module& module, QWidget *parent = nullptr);
     explicit ModuleCfgWidget(uint moduleNumber, QWidget* parent = nullptr);
     ~ModuleCfgWidget();
 

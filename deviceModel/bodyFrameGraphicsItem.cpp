@@ -101,7 +101,7 @@ void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //        setPos(previousPos);
 //        qDebug() << "colliding";
 //    }
-    //return QGraphicsItem::mouseMoveEvent(event);
+    return QGraphicsItem::mouseMoveEvent(event);
 }
 
 
@@ -137,6 +137,84 @@ QVariant BodyFrameGraphicsItem::itemChange(GraphicsItemChange change, const QVar
             return newPos;
         }
     }
+
+//    if ((change == ItemPositionChange || change == ItemPositionHasChanged) && scene()) // 控件发生移动
+//    {
+//        QPointF newPos = value.toPointF();
+//        QRectF rect(0, 0, scene()->width(), scene()->height());
+
+//        QList<QGraphicsItem *> list = collidingItems();//碰撞列表
+//        if(list.size() > 0)
+//        {
+//            QGraphicsItem * otherItem = list.first();
+//            QRectF otherItemRect = otherItem->boundingRect();
+//            QRectF otherRect = QRectF(otherItem->x(),otherItem->y(),otherItemRect.width(),otherItemRect.height());
+
+//            if(otherRect.contains(newPos))//左上角
+//            {
+//                QPointF tempPoint = otherRect.bottomRight() - newPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() + otherRect.height() + 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() + otherRect.width() + 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            QRectF thisRectF = boundingRect();
+//            QPointF nowPos = QPointF(newPos.x() + thisRectF.width(),newPos.y());
+//            if(otherRect.contains(nowPos))//右上角
+//            {
+//                QPointF tempPoint = otherRect.bottomLeft() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() + otherRect.height() + 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() - thisRectF.width() - 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            nowPos = QPointF(newPos.x(),newPos.y() + thisRectF.height());
+//            if(otherRect.contains(nowPos))//左下角
+//            {
+//                QPointF tempPoint = otherRect.topRight() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() - thisRectF.height() - 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() + otherRect.width() + 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            nowPos = QPointF(newPos.x() + thisRectF.width(),newPos.y() + thisRectF.height());
+//            if(otherRect.contains(nowPos))//右下角
+//            {
+//                QPointF tempPoint = otherRect.topLeft() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() - thisRectF.height() - 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() - otherRect.width() - 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+//        }
+//    }
     return QGraphicsItem::itemChange(change, value);
 }
 
@@ -149,3 +227,25 @@ void BodyFrameGraphicsItem::setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem
 {
     treeWidgetItem = newTreeWidgetItem;
 }
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToAx() const
+{
+    return toAx;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToBy() const
+{
+    return toBy;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToBx() const
+{
+    return toBx;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToAy() const
+{
+    return toAy;
+}
+
+

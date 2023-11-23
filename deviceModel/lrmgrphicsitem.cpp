@@ -1,10 +1,13 @@
 #include "lrmgrphicsitem.h"
 #include <QPainter>
 #include <QRectF>
+#include <QMenu>
 
 
-LRMGraphicsItem::LRMGraphicsItem()
+LRMGraphicsItem::LRMGraphicsItem(const Module& module):
+    module(module)
 {
+    this->setZValue(1);
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     rect_bound = boundingRect();
     rect_cpu = rect_bound.adjusted(15,10,-15,-90);
@@ -56,8 +59,24 @@ void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
      
      painter->setBrush(QBrush(Qt::red));
      painter->drawPolygon(points1,7);
-     painter->drawPolygon(points2,7)
-;
+     painter->drawPolygon(points2,7);
+}
+
+void LRMGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+    QAction *cfgModule = new QAction("配置模块");
+    QAction *deleteModule = new QAction("删除模块");
+    connect(cfgModule, &QAction::triggered, this, [=](){
+       emit cfgModuleSignal(module.getModuleNumber());
+    });
+    connect(deleteModule, &QAction::triggered, this, [=](){
+       emit deleteModuleSignal(module.getModuleNumber());
+    });
+    menu.addAction(cfgModule);
+    menu.addAction(deleteModule);
+    menu.exec(QCursor::pos());
+    QGraphicsItem::contextMenuEvent(event);
 }
 
 QRectF LRMGraphicsItem::boundingRect() const

@@ -5,6 +5,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
 #include <QDebug>
+#include "dataflow.h"
 //#include "arrow.h"
 DeviceModelScene::DeviceModelScene():
     Ax("Ax", QPoint(500, 2470), QPoint(4500, 2470)),
@@ -63,8 +64,8 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
         ++right;
     }
     //item->setPos(QPoint(550, 2000));
-    qreal width = item->boundingRect().width() ;
-    qreal height = item->boundingRect().height();
+//    qreal width = item->boundingRect().width() ;
+//    qreal height = item->boundingRect().height();
 //    this->addLine(250 + width / 5,item->y() + height, 250 + width / 5, 700);
 //    this->addLine(250 + width * 2 / 5,item->y() + height, 250 + width * 2 / 5, 725);
 //    this->addLine(250 + width * 3 / 5,item->y() + height, 250 + width * 3 / 5, 750);
@@ -77,6 +78,16 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
 void DeviceModelScene::deleteBodyFrameItem(int x)
 {
     positionSet.erase(x);
+}
+
+void DeviceModelScene::addFrame(std::shared_ptr<BodyFrameGraphicsItem> from, std::shared_ptr<BodyFrameGraphicsItem> to)
+{
+    DataFlow* flow = new DataFlow(from.get(), to.get());
+    dataflows[std::make_pair(from.get(), to.get())] = std::shared_ptr<DataFlow>(flow);
+    //dataflows.insert(std::make_pair(from.get(), to.get()), std::shared_ptr<DataFlow>(flow));
+    flow->setParent(this);
+    this->addItem(flow);
+    flow->update();
 }
 
 const BusGraphicsItem *DeviceModelScene::getAx() const

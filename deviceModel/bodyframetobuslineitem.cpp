@@ -28,3 +28,8 @@ void BodyFrameToBusLineItem::paint(QPainter *painter, const QStyleOptionGraphics
     painter->save();
     painter->restore();
 }
+
+const BusGraphicsItem *BodyFrameToBusLineItem::getBus() const
+{
+    return bus;
+}

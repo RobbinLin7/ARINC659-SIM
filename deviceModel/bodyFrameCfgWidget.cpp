@@ -164,10 +164,11 @@ void BodyFrameCfgWidget::addDataFrameSlot(const DataFrame &dataFrame)
 
 void BodyFrameCfgWidget::modifyModuleSlot(const Module& module)
 {
+    bodyFrameItem.modifyModule(module);
     for(int i = 0; i < ui->moduleTableWidget->rowCount(); i++){
         if(ui->moduleTableWidget->item(i, 0)->text() == QString::number(module.getModuleNumber())){
-            ui->moduleTableWidget->item(i, 1)->setText(QString::number(module.getInitialWaitTime()));
-            ui->moduleTableWidget->item(i, 2)->setText(QString::fromStdString(module.getModuleName()));
+            ui->moduleTableWidget->item(i, 1)->setText(QString::fromStdString(module.getModuleName()));
+            ui->moduleTableWidget->item(i, 2)->setText(QString::number(module.getInitialWaitTime()));
         }
     }
 }

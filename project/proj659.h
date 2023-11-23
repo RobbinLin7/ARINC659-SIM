@@ -23,7 +23,8 @@ public:
     uint getMinUnusedId() const;
     bool addBodyFrameItem(const BodyFrame&);
     bool deleteBodyFrameItem(uint id);
-    BodyFrame getBodyFrameItem(uint id) const;
+    BodyFrame& getBodyFrameItem(uint id);
+    const BodyFrame &getBodyFrameItem(uint id)const;
     Status getStatus() const;
     void setStatus(Status newStatus);
 

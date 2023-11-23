@@ -12,6 +12,7 @@
 #include "dialog/stylesheetdialog.h"
 #include "tools/commandfile.h"
 #include "deviceModel/commandfilewidget.h"
+#include "deviceModel/innerbodyframescene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -70,6 +71,10 @@ private slots:
 
     void on_actionCompileCMDTable_triggered();
 
+    void on_actionStartSim_triggered();
+
+    void on_actionAbortSim_triggered();
+
     void onProjectItemPressed(QTreeWidgetItem *item, int column);
 
     void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -84,6 +89,8 @@ private:
     QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> currentBodyFrameList;
 
     QMap<uint, std::shared_ptr<BodyFrameGraphicsItem>> bodyFrameGraphicsItems;
+
+    QMap<uint, std::shared_ptr<InnerBodyFrameScene>> bodyFrameScenes;
 
     QVBoxLayout *layout;
 
@@ -105,7 +112,7 @@ private:
 
     void createNewScene();
 
-    void createNewInnerBodyFrameScene();
+    void createNewInnerBodyFrameScene(uint bodyFrameId);
 
     QString createBatchFile();
 

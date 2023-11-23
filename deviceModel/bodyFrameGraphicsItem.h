@@ -27,6 +27,14 @@ public:
     QTreeWidgetItem *getTreeWidgetItem() const;
     void setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem);
 
+    const BodyFrameToBusLineItem &getToAx() const;
+
+    const BodyFrameToBusLineItem &getToAy() const;
+
+    const BodyFrameToBusLineItem &getToBx() const;
+
+    const BodyFrameToBusLineItem &getToBy() const;
+
 protected:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
