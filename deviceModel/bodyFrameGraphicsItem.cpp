@@ -26,6 +26,9 @@ BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const Bu
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     update();
+//    QGraphicsItemGroup* group = new QGraphicsItemGroup();
+//    group->addToGroup(this);
+//    collidingGroup = std::shared_ptr<QGraphicsItemGroup>(group);
 }
 
 
@@ -69,6 +72,16 @@ void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *eve
     menu.exec(point);
 }
 
+bool BodyFrameGraphicsItem::getHasSet() const
+{
+    return hasSet;
+}
+
+std::shared_ptr<QGraphicsItemGroup> BodyFrameGraphicsItem::getCollidingGroup() const
+{
+    return collidingGroup;
+}
+
 void BodyFrameGraphicsItem::computeLineToBus()
 {
     qreal width = this->boundingRect().width() ;
@@ -92,22 +105,60 @@ void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-//    if(scene()->collidingItems(this).isEmpty()){
-//        previousPos = pos();
-//        return QGraphicsItem::mouseMoveEvent(event);
-//    }
-//    else{
-//        //qDebug() << "pos" << pos() <<  "eventPos" << event->scenePos();
-//        setPos(previousPos);
-//        qDebug() << "colliding";
-//    }
-    //return QGraphicsItem::mouseMoveEvent(event);
+
+    //    if(selectedItem != nullptr){//如果已经赋值
+    ////        QRectF collidingDetectArea = selectedItem->boundingRect().adjusted(-5,0,5,0);
+//            collidingGroup->addToGroup(this);
+//            if(scene()->collidingItems(this).isEmpty() == false && hasSet == false){
+//                qDebug()<<"发生了碰撞";
+////                QPointF currentPos = mouseEvent->scenePos();
+////                qDebug() << currentPos;
+////                QPointF lastPos = mouseEvent->scenePos();
+////                qDebug() << lastPos;
+////                QPointF delta = currentPos - lastPos;
+////                QGraphicsItemGroup* group = new QGraphicsItemGroup();
+//                for(QGraphicsItem* item : scene()->collidingItems(this)){
+//                    if(dynamic_cast<BodyFrameGraphicsItem*>(item)){
+//                          BodyFrameGraphicsItem* needMovementItem = dynamic_cast<BodyFrameGraphicsItem*>(item);
+//                          collidingGroup->addToGroup(needMovementItem);
+//                    }
+//                }
+
+////                collidingGroup = std::shared_ptr<QGraphicsItemGroup>(group);
+//                hasSet = true;
+//                scene()->addItem(collidingGroup.get());
+//                collidingGroup->setPos(event->scenePos());
+
+////                group->setPos(event->scenePos());
+////                lastPos = currentPos;
+////                qDebug()<< currentPos <<lastPos;
+//        }else{
+//              collidingGroup->setPos(event->scenePos());
+//        }
+    //  }
+
+
+
+    if(scene()->collidingItems(this).isEmpty()){
+        previousPos = pos();
+        return QGraphicsItem::mouseMoveEvent(event);
+    }
+    else{
+        //qDebug() << "pos" << pos() <<  "eventPos" << event->scenePos();
+        setPos(previousPos);
+        qDebug() << "colliding";
+    }
+    return QGraphicsItem::mouseMoveEvent(event);
+
+
 }
 
 
 void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    computeLineToBus();
+//    computeLineToBus();
+//    collidingGroup = nullptr;
+//    hasSet = false;
     return QGraphicsItem::mouseReleaseEvent(event);
 }
 
@@ -115,7 +166,7 @@ void BodyFrameGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *even
 {
     //TODO. 打开机架，显示机架内部结构
     qDebug() << "打开机架";
-    emit enterInBodyFrame(bodyFrameItem.getBodyFrameItemID());
+    emit enterInBodyFrame(this->bodyFrameItem);
     return QGraphicsItem::mouseDoubleClickEvent(event);
 }
 

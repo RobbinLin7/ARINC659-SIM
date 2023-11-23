@@ -105,7 +105,7 @@ private:
 
     void createNewScene();
 
-    void createNewInnerBodyFrameScene();
+    void createNewInnerBodyFrameScene(BodyFrame& bodyFrameItem);
 
     QString createBatchFile();
 

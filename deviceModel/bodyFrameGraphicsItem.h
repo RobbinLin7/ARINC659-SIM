@@ -26,6 +26,12 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
     QTreeWidgetItem *getTreeWidgetItem() const;
     void setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem);
+//    std::shared_ptr<QGraphicsItemGroup> collidingGroup;
+//    bool hasSet = false;
+
+    std::shared_ptr<QGraphicsItemGroup> getCollidingGroup() const;
+
+    bool getHasSet() const;
 
 protected:
 
@@ -47,6 +53,9 @@ private:
 
     QPointF previousPos;
 
+    std::shared_ptr<QGraphicsItemGroup> collidingGroup;
+    bool hasSet = false;
+
     BodyFrameToBusLineItem toAx;
     BodyFrameToBusLineItem toAy;
     BodyFrameToBusLineItem toBx;
@@ -61,7 +70,7 @@ signals:
 
     void deleteBodyFrameItemSignal(uint frameId);
 
-    void enterInBodyFrame(uint frameId);
+    void enterInBodyFrame(BodyFrame&);
 
 
     // QGraphicsItem interface

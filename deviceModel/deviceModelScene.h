@@ -55,13 +55,12 @@ private slots:
 private:
     static const int maxBodyFrameId = 15;
     bool flag[maxBodyFrameId];
-    BodyFrameGraphicsItem *selectedItem;
+    std::shared_ptr<BodyFrameGraphicsItem> selectedItem =nullptr ;
     BusGraphicsItem Ax;
     BusGraphicsItem Ay;
     BusGraphicsItem Bx;
     BusGraphicsItem By;
     std::set<int> positionSet; //记录所有机架的水平位置
-    //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 
 signals:
 //    void cfgBFSignal(BodyFrameItem *selectedItem);

@@ -5,6 +5,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
 #include <QDebug>
+#include <QList>
 //#include "arrow.h"
 DeviceModelScene::DeviceModelScene():
     Ax("Ax", QPoint(500, 2470), QPoint(4500, 2470)),
@@ -24,7 +25,7 @@ DeviceModelScene::DeviceModelScene():
     By.setParent(this);
     By.setPos(2500, 2530);
     this->addItem(&By);
-    this->setBackgroundBrush(QBrush(Qt::gray));
+//    this->setBackgroundBrush(QBrush(Qt::gray));
 
     positionSet.insert(500);
     positionSet.insert(4000);
@@ -34,6 +35,9 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
 {
     if(item == nullptr) return false;
     item->setParent(this);
+//    std::shared_ptr<QGraphicsItemGroup> group = item->getCollidingGroup();
+
+
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
 //    if(positionSet.empty()){
@@ -70,7 +74,12 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
 //    this->addLine(250 + width * 3 / 5,item->y() + height, 250 + width * 3 / 5, 750);
 //    this->addLine(250 + width * 4 / 5,item->y() + height, 250 + width * 4 / 5, 775);
     //this->addLine(item->x() + item->boundingRect().width() / 5, item->y() + item->boundingRect().height(), item->x() + item->boundingRect().width() / 5, 2470);
-    this->addItem(item.get());
+//    this->addItem(item.get());
+//    if(item->getHasSet()==false)
+       this->addItem(item.get());
+//    else
+//       this->addItem(group.get());
+
     return true;
 }
 
@@ -102,18 +111,58 @@ const BusGraphicsItem *DeviceModelScene::getBy() const
 
 void DeviceModelScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (mouseEvent->button() != Qt::LeftButton)
-        return;
-    QGraphicsScene::mousePressEvent(mouseEvent);
+//    QList<QGraphicsItem*> allClickedItems = items(mouseEvent->scenePos());
+//    for(QGraphicsItem* item : allClickedItems){
+//        if(dynamic_cast<BodyFrameGraphicsItem*>(item)){
+//            BodyFrameGraphicsItem* selected = dynamic_cast<BodyFrameGraphicsItem*>(item);
+//            selectedItem = std::shared_ptr<BodyFrameGraphicsItem>(selected);
+//            qDebug()<<"设置了选中目标";
+//            break;
+//        }
+//    }
+
+    return QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
 void DeviceModelScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    QGraphicsScene::mouseMoveEvent(mouseEvent);
+//    if(selectedItem != nullptr){//如果已经赋值
+////        QRectF collidingDetectArea = selectedItem->boundingRect().adjusted(-5,0,5,0);
+//        if(selectedItem->collidingItems().isEmpty() == false){
+//            qDebug()<<"发生了碰撞";
+//            QPointF currentPos = mouseEvent->scenePos();
+//            qDebug() << currentPos;
+//            QPointF lastPos = mouseEvent->scenePos();
+//            qDebug() << lastPos;
+//            QPointF delta = currentPos - lastPos;
+//            for(QGraphicsItem* item : selectedItem->collidingItems()){
+//                if(dynamic_cast<BodyFrameGraphicsItem*>(item)){
+//                      BodyFrameGraphicsItem* needMovementItem = dynamic_cast<BodyFrameGraphicsItem*>(item);
+//                      needMovementItem->setPos(needMovementItem->pos()+delta);
+//                }
+//            }
+//            lastPos = currentPos;
+//            qDebug()<< currentPos <<lastPos;
+//    }
+//  }
+
+//        if(scene()->collidingItems(this).isEmpty()){
+//            previousPos = pos();
+//            return QGraphicsItem::mouseMoveEvent(event);
+//        }
+//        else{
+//            //qDebug() << "pos" << pos() <<  "eventPos" << event->scenePos();
+//            setPos(previousPos);
+//            qDebug() << "colliding";
+//        }
+//     selectedItem->setPos(mouseEvent->pos());
+     QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
 void DeviceModelScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+//    selectedItem = nullptr;
+//    qDebug()<<"取消了目标的选中";
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
 }
 
