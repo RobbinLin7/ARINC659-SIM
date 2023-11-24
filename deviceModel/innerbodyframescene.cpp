@@ -97,10 +97,10 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
         QMenu menu;
         QAction *exitBF = new QAction("退出机架");
         QAction *addModule = new QAction("新增模块");
-        QAction *dataFrameCfg = new QAction("帧配置");
+        QAction* cfgDF = new QAction("配置帧");
         menu.addAction(exitBF);
         menu.addAction(addModule);
-        menu.addAction(dataFrameCfg);
+        menu.addAction(cfgDF);
         connect(exitBF, &QAction::triggered, this, [=](){
             emit exitBodyFrameSignal();
         });
@@ -114,7 +114,17 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
                 emit innerAddMoudleSignal()
             });
         });
-
+        connect(cfgDF, &QAction::triggered, this, [=](){
+           BodyFrameCfgWidget *widget = new BodyFrameCfgWidget(bodyFrame);
+           widget->ui->tab_3->setWindowFlags(Qt::Dialog);
+           QPushButton *okPushButton = new QPushButton("确定", widget->ui->tab_3);
+           //widget->ui->horizontalLayout_4->addWidget(okPushButton);
+           if(widget->ui->widget_4->layout() != nullptr){
+               widget->ui->widget_4->layout()->addWidget(okPushButton);
+           }
+           else qDebug() << "meiyou layout";
+           widget->ui->tab_3->show();
+        });
         menu.exec(QCursor::pos());
         return QGraphicsScene::contextMenuEvent(event);
     }
