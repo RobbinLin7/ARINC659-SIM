@@ -108,12 +108,21 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
         connect(addModule,&QAction::triggered,this, [=](){
           ModuleCfgWidget* hm = new ModuleCfgWidget(this->bodyFrame.getMinUnusedModuleId());
           connect(hm, &ModuleCfgWidget::saveModuleSignal, this, [=](const Module& module){
+              std::shared_ptr<LRMGraphicsItem> newLrm = std::shared_ptr<LRMGraphicsItem>(new LRMGraphicsItem(this->getAx(),
+                                                                                                             this->getAy(),
+                                                                                                             this->getBx(),
+                                                                                                             this->getBy(),
+                                                                                                             module));
+              this->moduleGraphicItems.insert(module.getModuleNumber(),newLrm);
               this->bodyFrame.addModule(module);
-              this->invalidate();
+              this->addIrmGraphicsItem(newLrm.get());
+              this->update();
+
           });
           hm->setWindowFlag(Qt::Dialog);
           hm->show();
         });
+
         connect(cfgDF, &QAction::triggered, this, [=](){
            BodyFrameCfgWidget *widget = new BodyFrameCfgWidget(bodyFrame);
            widget->ui->tab_3->setWindowFlags(Qt::Dialog);
