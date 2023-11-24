@@ -32,6 +32,7 @@ public:
         return item;
     }
     void forTest();
+    void createNewInnerBodyFrameScene(uint bodyFrameId);
 
 
 private slots:
@@ -111,8 +112,6 @@ private:
     QTreeWidgetItem* createProjectTree(QString);
 
     void createNewScene();
-
-    void createNewInnerBodyFrameScene(uint bodyFrameId);
 
     //void createNewInnerBodyFrameScene(BodyFrame& bodyFrameItem);
 

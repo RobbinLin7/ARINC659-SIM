@@ -33,7 +33,6 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:
     void exitBodyFrameSignal();
-    void addModuleSignal(BodyFrame&);
     void innerAddMoudleSignal(QList<Module>);
 private:
     QMap<uint, std::shared_ptr<LRMGraphicsItem>> moduleGraphicItems;

@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QGraphicsSceneContextMenuEvent>
+#include "mainwindow.h"
 InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
     : QGraphicsScene{parent},
       bodyFrame(bodyFrame),
@@ -105,14 +106,13 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
             emit exitBodyFrameSignal();
         });
         connect(addModule,&QAction::triggered,this, [=](){
-            BodyFrameCfgWidget* newWidget = new BodyFrameCfgWidget(this->bodyFrame);
-            newWidget->ui->tab_2->setWindowFlag(Qt::Dialog);
-            QPushButton* okPushButton = new QPushButton("确定", newWidget->ui->tab_2);
-            newWidget->ui->widget_3->layout()->addWidget(okPushButton);
-            newWidget->ui->tab_2->show();
-            connect(okPushButton,&QPushButton::clicked,this,[=](){
-                emit innerAddMoudleSignal()
-            });
+          ModuleCfgWidget* hm = new ModuleCfgWidget(this->bodyFrame.getMinUnusedModuleId());
+          connect(hm, &ModuleCfgWidget::saveModuleSignal, this, [=](const Module& module){
+              this->bodyFrame.addModule(module);
+              this->invalidate();
+          });
+          hm->setWindowFlag(Qt::Dialog);
+          hm->show();
         });
         connect(cfgDF, &QAction::triggered, this, [=](){
            BodyFrameCfgWidget *widget = new BodyFrameCfgWidget(bodyFrame);
