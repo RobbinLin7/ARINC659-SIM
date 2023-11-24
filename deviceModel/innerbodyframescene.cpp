@@ -1,5 +1,7 @@
 #include "innerbodyframescene.h"
 #include "deviceModel/modulecfgwidget.h"
+#include "deviceModel/bodyFrameCfgWidget.h"
+#include "ui_bodyFrameCfgWidget.h"
 #include <QRgb>
 #include <QMenu>
 #include <QDebug>
@@ -28,11 +30,11 @@ InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
     positionSet.insert(500);
     positionSet.insert(4000);
     for(auto module : bodyFrame.getModules()){
-        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(module.second));
+        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(this->getAx(),this->getAy(),this->getBx(),this->getBy(),module.second));
         moduleGraphicItems.insert(module.second.getModuleNumber(), myItem);
-        myItem->setPos(100,100);
+        myItem->setPos(550,2200);
         myItem->setParent(this);
-        this->addItem(myItem.get());
+        this->addIrmGraphicsItem(myItem.get());
         connect(myItem.get(), &LRMGraphicsItem::cfgModuleSignal, this, &InnerBodyFrameScene::cfgModuleSlot);
         connect(myItem.get(), &LRMGraphicsItem::deleteModuleSignal, this, &InnerBodyFrameScene::deleteModuleSlot);
     }
@@ -42,18 +44,12 @@ InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
     //LRMGraphicsItem* myItem = new LRMGraphicsItem();
 }
 
-//InnerBodyFrameScene::InnerBodyFrameScene()
-//{
-//    //LRMGraphicsItem* myItem = new LRMGraphicsItem();
-//    //myItem->setParent(this);
-//    //myItem->setPos(1000,2300);
-//    //this->addItem(myItem);
-//}
 
 bool InnerBodyFrameScene::addIrmGraphicsItem(LRMGraphicsItem* item)
 {
     if(item == nullptr) return false;
     item->setParent(this);
+
 
     auto left = positionSet.cbegin();
     auto right = positionSet.cbegin();
@@ -100,13 +96,48 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
     else{
         QMenu menu;
         QAction *exitBF = new QAction("退出机架");
+        QAction *addModule = new QAction("新增模块");
+        QAction *dataFrameCfg = new QAction("帧配置");
         menu.addAction(exitBF);
+        menu.addAction(addModule);
+        menu.addAction(dataFrameCfg);
         connect(exitBF, &QAction::triggered, this, [=](){
             emit exitBodyFrameSignal();
         });
+        connect(addModule,&QAction::triggered,this, [=](){
+            BodyFrameCfgWidget* newWidget = new BodyFrameCfgWidget(this->bodyFrame);
+            newWidget->ui->tab_2->setWindowFlag(Qt::Dialog);
+            QPushButton* okPushButton = new QPushButton("确定", newWidget->ui->tab_2);
+            newWidget->ui->widget_3->layout()->addWidget(okPushButton);
+            newWidget->ui->tab_2->show();
+            connect(okPushButton,&QPushButton::clicked,this,[=](){
+                emit innerAddMoudleSignal()
+            });
+        });
+
         menu.exec(QCursor::pos());
         return QGraphicsScene::contextMenuEvent(event);
     }
+}
+
+const BusGraphicsItem* InnerBodyFrameScene::getBy() const
+{
+    return &By;
+}
+
+const BusGraphicsItem* InnerBodyFrameScene::getBx() const
+{
+    return &Bx;
+}
+
+const BusGraphicsItem* InnerBodyFrameScene::getAy() const
+{
+    return &Ay;
+}
+
+const BusGraphicsItem* InnerBodyFrameScene::getAx() const
+{
+    return &Ax;
 }
 
 void InnerBodyFrameScene::cfgModuleSlot(uint moduleId)
@@ -126,10 +157,24 @@ void InnerBodyFrameScene::deleteModuleSlot(uint moduleId)
     bodyFrame.deleteModule(moduleId);
 }
 
+//void InnerBodyFrameScene::addModuleSlot(BodyFrame& bodyFrame)
+//{
+//    BodyFrameCfgWidget *dialog = new BodyFrameCfgWidget(bodyFrame);
+//    dialog->ui->tab_2->setWindowFlag(Qt::Dialog);
+//    dialog->ui->tab_2->show();
+
+////    connect(dialog, &BodyFrameCfgWidget::saveBodyFrameItemSignal, this, [=](const Module& module){
+////        bodyFrame.modifyModule(module);
+////    });
+////    dialog->setWindowFlag(Qt::Dialog);
+////    dialog->show();
+//}
+
 std::set<int> InnerBodyFrameScene::getPositionSet() const
 {
     return positionSet;
 }
+
 
 //InnerBodyFrameScene::InnerBodyFrameScene()
 //{

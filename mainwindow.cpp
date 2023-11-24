@@ -61,6 +61,7 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
                                                                                                                            scene->getBx(),
                                                                                                                            scene->getBy(),
                                                                                                         bodyFrameItem));
+
 //    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
 //       ui->graphicsView->setScene(new InnerBodyFrameScene(bodyFrameItem,this));
 //    });

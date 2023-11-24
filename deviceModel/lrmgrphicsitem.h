@@ -5,12 +5,13 @@
 #include <QObject>
 #include <QRectF>
 #include "data/module.h"
+#include "deviceModel/bodyframetobuslineitem.h"
 
 class LRMGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    LRMGraphicsItem(const Module& module);
+    LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By,const Module& module);
     QRectF getRect_bound() const;
     void setRect_bound(const QRectF &value);
 
@@ -35,10 +36,18 @@ private:
     QPainterPath arrowPath_first;//用于绘制箭头
     QPainterPath arrowPath_second;//用于绘制箭头
 
+    BodyFrameToBusLineItem toAx;
+    BodyFrameToBusLineItem toAy;
+    BodyFrameToBusLineItem toBx;
+    BodyFrameToBusLineItem toBy;
+
     // QGraphicsItem interface
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     QPainterPath createArrow(QPointF startPoint, QPointF endPoint);
+    void computeLineToBus();
+
+
 signals:
     void cfgModuleSignal(uint moduleId);
     void deleteModuleSignal(uint moduleId);

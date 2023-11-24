@@ -10,8 +10,12 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 
-LRMGraphicsItem::LRMGraphicsItem(const Module& module):
-    module(module)
+LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By,const Module& module):
+    module(module),
+    toAx(Ax, this),
+    toAy(Ay, this),
+    toBx(Bx, this),
+    toBy(By, this)
 {
     this->setZValue(1);
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
@@ -24,8 +28,8 @@ LRMGraphicsItem::LRMGraphicsItem(const Module& module):
     QPointF endPoint2(startPoint2.x(),rect_cpu.bottom());
     arrowPath_first = createArrow(startPoint1,endPoint1);
     arrowPath_second = createArrow(startPoint2,endPoint2);
-    setZValue(3);
-    this->setVisible(true);
+//    setZValue(3);
+//    this->setVisible(true);
 
 }
 
@@ -72,6 +76,8 @@ void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
      painter->drawPath(arrowPath_first);
      painter->drawPath(arrowPath_second);
+
+     computeLineToBus();
 
 //     QLineF mainLine(startPoint1,endPoint1);
 //     //painter->drawLine(mainLine);
@@ -209,6 +215,21 @@ QPainterPath LRMGraphicsItem::createArrow(QPointF startPoint, QPointF endPoint)
     arrowPath.lineTo(rightBackArrow.p1());
     arrowPath.lineTo(rightArrow.p1());
     return arrowPath;
+}
+
+void LRMGraphicsItem::computeLineToBus()
+{
+    qreal width = this->boundingRect().width() ;
+    qreal height = this->boundingRect().height();
+    toAx.setPos(width / 5, (2470 - this->y() + height) / 2);
+    toAy.setPos(width * 2 / 5, (2490 - this->y() + height) / 2);
+    toBx.setPos(width * 3 / 5, (2510 - this->y() + height) / 2);
+    toBy.setPos(width * 4 / 5, (2530 - this->y() + height) / 2);
+//    qDebug() << this->x() << toAx.x() << toAy.x() << toBx.x() << toBy.x();
+    toAx.update();
+    toAy.update();
+    toBx.update();
+    toBy.update();
 }
 
 

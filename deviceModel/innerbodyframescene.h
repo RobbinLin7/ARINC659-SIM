@@ -8,6 +8,7 @@
 #include "deviceModel/lrmgrphicsitem.h"
 #include "deviceModel/busgraphicsitem.h"
 #include <memory>
+#include "data/module.h"
 
 class InnerBodyFrameScene : public QGraphicsScene
 {
@@ -19,10 +20,21 @@ public:
 
 
     std::set<int> getPositionSet() const;
+
+    const BusGraphicsItem* getAx() const;
+
+    const BusGraphicsItem* getAy() const;
+
+    const BusGraphicsItem* getBx() const;
+
+    const BusGraphicsItem* getBy() const;
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:
     void exitBodyFrameSignal();
+    void addModuleSignal(BodyFrame&);
+    void innerAddMoudleSignal(QList<Module>);
 private:
     QMap<uint, std::shared_ptr<LRMGraphicsItem>> moduleGraphicItems;
     BodyFrame& bodyFrame;
@@ -34,7 +46,7 @@ private:
 private slots:
     void cfgModuleSlot(uint moduleId);
     void deleteModuleSlot(uint moduleId);
-    //void addModuleSlot(uint moduleId);
+//void addModuleSlot(BodyFrame& bodyFrame);
 };
 
 #endif // INNERBODYFRAMESCENE_H
