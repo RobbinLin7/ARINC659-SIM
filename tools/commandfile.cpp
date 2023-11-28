@@ -6,84 +6,75 @@
 #include "tools/labelscan.h"
 #include "tools/mcscodecompile.h"
 #include "tools/gramcheck.h"
+#include "tools/user.h"
+#include "tools/trim.h"
 using std::to_string;
 using std::string;
 
-std::string trim(std::string s){
-    if (s.empty())
-    {
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    s.erase(s.find_last_not_of(" ") + 1);
-    return s;
-}
-
-std::string trimStart(std::string s){
-    if(s.empty()){
-        return s;
-    }
-    s.erase(0,s.find_first_not_of(" "));
-    return s;
-}
 bool CommandFile::createCommandFile(const Proj659 &proj)
 {
     std::ofstream commandFile(proj.getName().toStdString() + ".txt");
     for(auto bodyFrame : proj.getBodyFrameItems()){
         createBodyFrameInfo(commandFile, bodyFrame);
+        createCommand(commandFile, bodyFrame);
         commandFile << "     ESECTION ;" << std::endl;
     }
     commandFile << "      END;" << std::endl;
     return true;
 }
-void VarInit(PreProcess::COMPILE_STATUS& c_status);
+void VarInit(COMPILE_STATUS& c_status);
 bool CommandFile::compileCommandFile(const Proj659 &proj)
 {
-    PreProcess::COMPILE_STATUS com_status;
-    std::list<LABEL_TABLE> label_list;
+    std::vector<string> m_lstSourceCommand;
+    ReloadCommand(m_lstSourceCommand, proj);
+    COMPILE_STATUS com_status;
+    std::vector<LABEL_TABLE> label_list;
     uint nTmp;
     /* 变量初始化 */
     VarInit(com_status);
     /* 源文件预处理 */
-    PreProcess preProcess("", proj.getName().toStdString());
-    //preProcess.m_lstSourceCommand = m_lstSourceCommand;
+    PreProcess preProcess(".", proj.getName().toStdString());
+    preProcess.setLstSourceCommand(m_lstSourceCommand);
     if (preProcess.ProcessCommand(com_status) != 0)
     {
         return 1;
     }
-    std::string m_strDir = "", m_strFlieName = proj.getName().toStdString();
+    std::string m_strDir = ".", m_strFlieName = proj.getName().toStdString();
     /* 标号扫描 */
-//    LabelScan labelScan = new LabelScan(m_strDir,m_strFlieName);
-//    label_list = labelScan.ScanLabel(ref com_status);
+    LabelScan labelScan(m_strDir,m_strFlieName);
+    label_list = labelScan.ScanLabel(com_status);
+    //label_list.assign(label_list_tmp.begin(), label_list_tmp.end());
 
 //    /* 语法检查 */
-//    GramCheck gramCheck = new GramCheck(m_strDir, m_strFlieName);
-//    nTmp = gramCheck.CheckGram(ref com_status, label_list);
+    GramCheck gramCheck(m_strDir, m_strFlieName);
+    nTmp = gramCheck.CheckGram(com_status, label_list);
 
-//    SaveCompileResult(com_status);
+
+    SaveCompileResult(com_status, proj);
 
 //    /* 有语法错误 */
-//   if(com_status.error != 0)
-//   {
-//       System.Windows.Forms.MessageBox.Show("编辑错误!");
-//       try
-//       {
-
+   if(com_status.error != 0)
+   {
+       //System.Windows.Forms.MessageBox.Show("编辑错误!");
+       qDebug() << "编辑错误!";
+       try
+       {
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".mif");
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".m");
 //           File.Delete(m_strDir + "/" + m_strFlieName + ".coe");
-//       }
-//       catch (Exception e)
-//       {
-//           // Let the user know what went wrong.
-//          // e.Message.ToString();
-//       }
-//       return 1;
-//   }
+       }
+       catch (std::exception e)
+       {
+           std::cerr << e.what();
+           // Let the user know what went wrong.
+          // e.Message.ToString();
+       }
+       return 1;
+   }
 
-//   /* 无语法错误但有报警信息 */
-//   if(com_status.warning != 0)
-//   {
+   /* 无语法错误但有报警信息 */
+   if(com_status.warning != 0)
+   {
 //       if (DialogResult.Cancel == MessageBox.Show("编译存在警告!\n是否继续?", "编译警告", MessageBoxButtons.OKCancel))
 //       {
 //           MessageBox.Show("编译取消!");
@@ -91,21 +82,23 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
 
 //       }
 
-//   }
+       qDebug() << "编译存在警告!";
+   }
 
-//   CodeGenerate codeGenerate = new CodeGenerate(m_strDir, m_strFlieName);
-//   codeGenerate.GenerateCode(ref com_status, label_list);
+   CodeGenerate codeGenerate(m_strDir, m_strFlieName);
+   codeGenerate.GenerateCode(com_status, label_list);
 
-//   CoeCodeCompile codeCompile = new CoeCodeCompile(m_strDir, m_strFlieName);
-//   codeCompile.CompileCoeCode();
+   CoeCodeCompile codeCompile(m_strDir, m_strFlieName);
+   codeCompile.CompileCoeCode();
 
-//   McsCodeCompile mcsCodeCompile = new McsCodeCompile(m_strDir, m_strFlieName);
-//   mcsCodeCompile.CompileMcsCode();
+   McsCodeCompile mcsCodeCompile(m_strDir, m_strFlieName);
+   mcsCodeCompile.CompileMcsCode();
 
-//   label_list.Clear();
+   label_list.clear();
 
-//   //MessageBox.Show("编译完成!");
+   //MessageBox.Show("编译完成!");
 
+   std::cout << "编译完成" << std::endl;
 
    return true;
 
@@ -1202,8 +1195,90 @@ std::string CommandFile::convertModuleNumToName(const BodyFrame &bodyFrame, cons
     return str_ModuleName;
 }
 
+void CommandFile::SaveCompileResult(COMPILE_STATUS status, const Proj659& proj)
+{
+    string path =  string("  ") + "/" + proj.getName().toStdString() + ".lst";
+    string str_tmp;
+    try
+    {
+        std::ofstream os(path);
+        if(os){
+            os << " \n" << std::endl;
+            str_tmp = "ALL ERROR:  " + to_string(status.error);
+            os << str_tmp << std::endl;
+            str_tmp = "ALL WARNING:  " + to_string(status.warning);
+            os << str_tmp << std::endl;
+            os.flush();
+            os.close();
+        }
+    }
+    catch (std::exception e)
+    {
+        std::cerr << e.what();
+        // Let the user know what went wrong.
+    }
+}
 
-void VarInit(PreProcess::COMPILE_STATUS& c_status)
+void CommandFile::ReloadCommand(std::vector<std::string> &m_commandLst, const Proj659 &proj)
+{
+    m_commandLst.clear();
+
+
+    vector<String> lstStr;
+
+
+    int nLineNum =1;
+    String str_tmp;
+    String str_line;
+
+
+    //Project project = FormMain.m_lstProject[m_nProjectIndex];
+    str_tmp = std::string(".") + "/" + proj.getName().toStdString() + ".txt";
+
+    std::ifstream is(str_tmp);
+    if(is.good() == false){
+        std::cerr << "命令文件不存在，访问失败";
+        return;
+    }
+
+    while(is){
+        std::getline(is, str_line);
+        lstStr.push_back(str_line);
+        m_commandLst.push_back(str_line);
+    }
+    is.close();
+//    if (!File.Exists(str_tmp))
+//    {
+//        if (project.m_nProjectType == 1)
+//        {
+//            MessageBox.Show("命令文件不存在,访问失败!");
+//            return ;
+//        }
+//        FormMain.m_lstProject[m_nProjectIndex].CreateCommandFile();
+//    }
+
+//    StreamReader sr = new StreamReader(str_tmp);
+
+//    while ((str_line = sr.ReadLine()) != null)
+//    {
+
+//        str_tmp = str_line;
+//        lstStr.Add(str_tmp);
+
+//        m_commandLst.Add(str_line);
+//    }
+
+//    sr.Close();
+
+//    this.rtbCommand.Lines = lstStr.ToArray();
+
+//    m_bTxtChanged = false;
+    return;
+}
+
+
+
+void VarInit(COMPILE_STATUS& c_status)
 {
     c_status.line_num = 0;
     c_status.error = 0;

@@ -26,6 +26,7 @@ class BodyFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
+    friend class InnerBodyFrameScene;
     enum OpenMode{New, Modified};
     explicit BodyFrameCfgWidget(uint frameId, QWidget *parent = nullptr);
     explicit BodyFrameCfgWidget(const BodyFrame bodyFrameItem, QWidget *parent = nullptr);
@@ -37,6 +38,8 @@ public:
     void connectOkButtonToUpdateSignal();
     const BodyFrame &getBodyFrameItem() const;
     static void removeTableWidgetItems(QTableWidget* tableWidget);
+
+    void setBodyFrameItem(const BodyFrame &newBodyFrameItem);
 
 private slots:
 

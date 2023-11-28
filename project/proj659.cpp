@@ -91,9 +91,14 @@ bool Proj659::deleteBodyFrameItem(uint id)
     }
 }
 
-BodyFrame Proj659::getBodyFrameItem(uint id) const
+BodyFrame& Proj659::getBodyFrameItem(uint id)
 {
-    return bodyFrameItems.value(id);
+    return bodyFrameItems[id];
+}
+
+const BodyFrame &Proj659::getBodyFrameItem(uint id) const
+{
+    return bodyFrameItems[id];
 }
 
 Proj659::Status Proj659::getStatus() const

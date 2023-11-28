@@ -28,8 +28,13 @@ SOURCES += \
     deviceModel/busgraphicsitem.cpp \
     deviceModel/commandfilewidget.cpp \
     deviceModel/dataFrameCfgWidget.cpp \
+    deviceModel/dataflow.cpp \
     deviceModel/deviceModelScene.cpp \
+    deviceModel/fpgadevicewidget.cpp \
+    deviceModel/innerbodyframescene.cpp \
+    deviceModel/lrmgrphicsitem.cpp \
     deviceModel/modulecfgwidget.cpp \
+    dialog/burntofpgadialog.cpp \
     dialog/datatransferwindowcfgdialog.cpp \
     dialog/faultinjectdialog.cpp \
     dialog/frameswitchwindowcfgdialog.cpp \
@@ -57,6 +62,7 @@ SOURCES += \
     tools/mcscodecompile.cpp \
     tools/myxml.cpp \
     tools/preprocess.cpp \
+    tools/trim.cpp \
     validator/stringidvalidator.cpp
 
 HEADERS += \
@@ -71,8 +77,13 @@ HEADERS += \
     deviceModel/busgraphicsitem.h \
     deviceModel/commandfilewidget.h \
     deviceModel/dataFrameCfgWidget.h \
+    deviceModel/dataflow.h \
     deviceModel/deviceModelScene.h \
+    deviceModel/fpgadevicewidget.h \
+    deviceModel/innerbodyframescene.h \
+    deviceModel/lrmgrphicsitem.h \
     deviceModel/modulecfgwidget.h \
+    dialog/burntofpgadialog.h \
     dialog/faultinjectdialog.h \
     dialog/windowcfgdialog.h \
     dialog/datatransferwindowcfgdialog.h \
@@ -100,13 +111,17 @@ HEADERS += \
     tools/mcscodecompile.h \
     tools/myxml.h \
     tools/preprocess.h \
+    tools/trim.h \
+    tools/user.h \
     validator/stringidvalidator.h
 
 FORMS += \
     deviceModel/bodyFrameCfgWidget.ui \
     deviceModel/commandfilewidget.ui \
     deviceModel/dataFrameCfgWidget.ui \
+    deviceModel/fpgadevicewidget.ui \
     deviceModel/modulecfgwidget.ui \
+    dialog/burntofpgadialog.ui \
     dialog/datatransferwindowcfgdialog.ui \
     dialog/faultinjectdialog.ui \
     dialog/frameswitchwindowcfgdialog.ui \

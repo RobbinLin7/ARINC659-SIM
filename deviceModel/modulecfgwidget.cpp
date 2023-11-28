@@ -2,13 +2,14 @@
 #include "ui_modulecfgwidget.h"
 #include <QMessageBox>
 
-ModuleCfgWidget::ModuleCfgWidget(const Module &module, QWidget *parent):
+ModuleCfgWidget::ModuleCfgWidget(Module &module, QWidget *parent):
     QWidget(parent),
-    ui(new Ui::ModuleCfgWidget)
+    ui(new Ui::ModuleCfgWidget),
+    module(module)
 {
     ui->setupUi(this);
     installValidator();
-    this->module = module;
+    //this->module = module;
     setForm();
     connect(ui->moduleNumber_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);
     connect(ui->initialWaitTime_lineEdit, &QLineEdit::textChanged, this, &ModuleCfgWidget::checkLineEditTextSlot);

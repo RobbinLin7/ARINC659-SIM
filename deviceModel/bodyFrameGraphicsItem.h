@@ -26,6 +26,22 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
     QTreeWidgetItem *getTreeWidgetItem() const;
     void setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem);
+//    std::shared_ptr<QGraphicsItemGroup> collidingGroup;
+//    bool hasSet = false;
+
+    std::shared_ptr<QGraphicsItemGroup> getCollidingGroup() const;
+
+    bool getHasSet() const;
+
+    const BodyFrameToBusLineItem &getToAx() const;
+
+    const BodyFrameToBusLineItem &getToAy() const;
+
+    const BodyFrameToBusLineItem &getToBx() const;
+
+    const BodyFrameToBusLineItem &getToBy() const;
+
+    void setPositionMap(std::map<int, int> *newPositionMap);
 
 protected:
 
@@ -47,6 +63,9 @@ private:
 
     QPointF previousPos;
 
+    std::shared_ptr<QGraphicsItemGroup> collidingGroup;
+    bool hasSet = false;
+
     BodyFrameToBusLineItem toAx;
     BodyFrameToBusLineItem toAy;
     BodyFrameToBusLineItem toBx;
@@ -54,12 +73,14 @@ private:
 
     void computeLineToBus();
 
-
+    std::map<int, int>* positionMap = nullptr; //记录所有机架的水平位置
 signals:
 
     void cfgBodyFrameItemSignal(uint frameId);
 
     void deleteBodyFrameItemSignal(uint frameId);
+
+    void enterInBodyFrame(uint frameId);
 
 
     // QGraphicsItem interface

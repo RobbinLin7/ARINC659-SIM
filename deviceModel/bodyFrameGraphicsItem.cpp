@@ -1,12 +1,13 @@
 ﻿#include "bodyFrameGraphicsItem.h"
 
 #include <QImageReader>
-
+#include <algorithm>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QToolTip>
 #include <QGraphicsScene>
+#include <map>
 
 BodyFrameGraphicsItem::~BodyFrameGraphicsItem()
 {
@@ -26,6 +27,10 @@ BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const Bu
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     update();
+    qDebug() << "this->x()" << this->x();
+//    QGraphicsItemGroup* group = new QGraphicsItemGroup();
+//    group->addToGroup(this);
+//    collidingGroup = std::shared_ptr<QGraphicsItemGroup>(group);
 }
 
 
@@ -69,6 +74,16 @@ void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *eve
     menu.exec(point);
 }
 
+bool BodyFrameGraphicsItem::getHasSet() const
+{
+    return hasSet;
+}
+
+std::shared_ptr<QGraphicsItemGroup> BodyFrameGraphicsItem::getCollidingGroup() const
+{
+    return collidingGroup;
+}
+
 void BodyFrameGraphicsItem::computeLineToBus()
 {
     qreal width = this->boundingRect().width() ;
@@ -84,9 +99,21 @@ void BodyFrameGraphicsItem::computeLineToBus()
     toBy.update();
 }
 
+void BodyFrameGraphicsItem::setPositionMap(std::map<int, int> *newPositionMap)
+{
+    positionMap = newPositionMap;
+}
+
 
 void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << "mousePressEvent";
+    qDebug() << "this->x()" << this->x();
+    int xpos = this->x();
+    if(positionMap->find(xpos) != positionMap->end() && positionMap->at(xpos) > 0){
+        positionMap->at(xpos) = positionMap->at(xpos) - 1;
+        if(positionMap->at(xpos) == 0) positionMap->erase(xpos);
+    }
     return QGraphicsItem::mousePressEvent(event);
 }
 
@@ -101,13 +128,67 @@ void BodyFrameGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 //        setPos(previousPos);
 //        qDebug() << "colliding";
 //    }
-    //return QGraphicsItem::mouseMoveEvent(event);
+    return QGraphicsItem::mouseMoveEvent(event);
+//=======
+
+//    //    if(selectedItem != nullptr){//如果已经赋值
+//    ////        QRectF collidingDetectArea = selectedItem->boundingRect().adjusted(-5,0,5,0);
+////            collidingGroup->addToGroup(this);
+////            if(scene()->collidingItems(this).isEmpty() == false && hasSet == false){
+////                qDebug()<<"发生了碰撞";
+//////                QPointF currentPos = mouseEvent->scenePos();
+//////                qDebug() << currentPos;
+//////                QPointF lastPos = mouseEvent->scenePos();
+//////                qDebug() << lastPos;
+//////                QPointF delta = currentPos - lastPos;
+//////                QGraphicsItemGroup* group = new QGraphicsItemGroup();
+////                for(QGraphicsItem* item : scene()->collidingItems(this)){
+////                    if(dynamic_cast<BodyFrameGraphicsItem*>(item)){
+////                          BodyFrameGraphicsItem* needMovementItem = dynamic_cast<BodyFrameGraphicsItem*>(item);
+////                          collidingGroup->addToGroup(needMovementItem);
+////                    }
+////                }
+
+//////                collidingGroup = std::shared_ptr<QGraphicsItemGroup>(group);
+////                hasSet = true;
+////                scene()->addItem(collidingGroup.get());
+////                collidingGroup->setPos(event->scenePos());
+
+//////                group->setPos(event->scenePos());
+//////                lastPos = currentPos;
+//////                qDebug()<< currentPos <<lastPos;
+////        }else{
+////              collidingGroup->setPos(event->scenePos());
+////        }
+//    //  }
+
+
+
+//    if(scene()->collidingItems(this).isEmpty()){
+//        previousPos = pos();
+//        return QGraphicsItem::mouseMoveEvent(event);
+//    }
+//    else{
+//        //qDebug() << "pos" << pos() <<  "eventPos" << event->scenePos();
+//        setPos(previousPos);
+//        qDebug() << "colliding";
+//    }
+//    return QGraphicsItem::mouseMoveEvent(event);
+
+
+//>>>>>>> 22bfd3a200ec5ce734fa2d3404779f43f0d696da
 }
 
 
 void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    computeLineToBus();
+//    computeLineToBus();
+//    collidingGroup = nullptr;
+//    hasSet = false;
+    qDebug() << "mouseReleaseEvent";
+    qDebug() << "this->x()" << this->x();
+    int xpos = this->x();
+    (*positionMap)[xpos] = (*positionMap)[xpos] + 1;
     return QGraphicsItem::mouseReleaseEvent(event);
 }
 
@@ -115,6 +196,7 @@ void BodyFrameGraphicsItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *even
 {
     //TODO. 打开机架，显示机架内部结构
     qDebug() << "打开机架";
+    emit enterInBodyFrame(this->bodyFrameItem.getBodyFrameItemID());
     return QGraphicsItem::mouseDoubleClickEvent(event);
 }
 
@@ -136,6 +218,84 @@ QVariant BodyFrameGraphicsItem::itemChange(GraphicsItemChange change, const QVar
             return newPos;
         }
     }
+
+//    if ((change == ItemPositionChange || change == ItemPositionHasChanged) && scene()) // 控件发生移动
+//    {
+//        QPointF newPos = value.toPointF();
+//        QRectF rect(0, 0, scene()->width(), scene()->height());
+
+//        QList<QGraphicsItem *> list = collidingItems();//碰撞列表
+//        if(list.size() > 0)
+//        {
+//            QGraphicsItem * otherItem = list.first();
+//            QRectF otherItemRect = otherItem->boundingRect();
+//            QRectF otherRect = QRectF(otherItem->x(),otherItem->y(),otherItemRect.width(),otherItemRect.height());
+
+//            if(otherRect.contains(newPos))//左上角
+//            {
+//                QPointF tempPoint = otherRect.bottomRight() - newPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() + otherRect.height() + 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() + otherRect.width() + 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            QRectF thisRectF = boundingRect();
+//            QPointF nowPos = QPointF(newPos.x() + thisRectF.width(),newPos.y());
+//            if(otherRect.contains(nowPos))//右上角
+//            {
+//                QPointF tempPoint = otherRect.bottomLeft() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() + otherRect.height() + 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() - thisRectF.width() - 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            nowPos = QPointF(newPos.x(),newPos.y() + thisRectF.height());
+//            if(otherRect.contains(nowPos))//左下角
+//            {
+//                QPointF tempPoint = otherRect.topRight() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() - thisRectF.height() - 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() + otherRect.width() + 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+
+//            nowPos = QPointF(newPos.x() + thisRectF.width(),newPos.y() + thisRectF.height());
+//            if(otherRect.contains(nowPos))//右下角
+//            {
+//                QPointF tempPoint = otherRect.topLeft() - nowPos;
+//                if(abs(tempPoint.x()) > abs(tempPoint.y()))
+//                {
+//                    newPos.setY(otherItem->y() - thisRectF.height() - 2);
+//                }
+//                else
+//                {
+//                    newPos.setX(otherItem->x() - otherRect.width() - 2);
+//                }
+//                this->setPos(newPos);
+//                return newPos;
+//            }
+//        }
+//    }
     return QGraphicsItem::itemChange(change, value);
 }
 
@@ -148,3 +308,25 @@ void BodyFrameGraphicsItem::setTreeWidgetItem(QTreeWidgetItem *newTreeWidgetItem
 {
     treeWidgetItem = newTreeWidgetItem;
 }
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToAx() const
+{
+    return toAx;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToBy() const
+{
+    return toBy;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToBx() const
+{
+    return toBx;
+}
+
+const BodyFrameToBusLineItem &BodyFrameGraphicsItem::getToAy() const
+{
+    return toAy;
+}
+
+

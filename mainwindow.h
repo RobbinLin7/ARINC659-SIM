@@ -12,6 +12,7 @@
 #include "dialog/stylesheetdialog.h"
 #include "tools/commandfile.h"
 #include "deviceModel/commandfilewidget.h"
+#include "deviceModel/innerbodyframescene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,6 +32,7 @@ public:
         return item;
     }
     void forTest();
+    void createNewInnerBodyFrameScene(uint bodyFrameId);
 
 
 private slots:
@@ -44,7 +46,7 @@ private slots:
 
 //    void on_actionStartSim_triggered();
 
-//    void on_actionBurnToFPGA_triggered();
+    void on_actionBurnToFPGA_triggered();
 
     void on_actionNewProject_triggered();
 
@@ -70,6 +72,10 @@ private slots:
 
     void on_actionCompileCMDTable_triggered();
 
+    void on_actionStartSim_triggered();
+
+    void on_actionAbortSim_triggered();
+
     void onProjectItemPressed(QTreeWidgetItem *item, int column);
 
     void onProjectItemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -84,6 +90,8 @@ private:
     QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> currentBodyFrameList;
 
     QMap<uint, std::shared_ptr<BodyFrameGraphicsItem>> bodyFrameGraphicsItems;
+
+    QMap<uint, std::shared_ptr<InnerBodyFrameScene>> bodyFrameScenes;
 
     QVBoxLayout *layout;
 
@@ -104,6 +112,10 @@ private:
     QTreeWidgetItem* createProjectTree(QString);
 
     void createNewScene();
+
+    //void createNewInnerBodyFrameScene(BodyFrame& bodyFrameItem);
+
+    QString createBatchFile();
 
     QAction *test = nullptr;
 

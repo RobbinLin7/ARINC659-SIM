@@ -25,6 +25,9 @@ private:
     // WindowCfgDialog interface
 protected slots:
     void on_okPushButton_clicked();
+    void installValidator();
+    bool check(QWidget* widget);
+    void dynamicSetLineEdit();
 };
 
 #endif // FRAMESWITCHWINDOWCFGDIALOG_H

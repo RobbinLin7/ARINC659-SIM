@@ -13,6 +13,8 @@ BodyFrameCfgWidget::BodyFrameCfgWidget(uint frameId, QWidget *parent) :
     this->initWidget();
     installEventFilter();
     installValidator();
+    dynamicSetLineEdit(ui->majorVersionNumber_lineEdit);
+    dynamicSetLineEdit(ui->subVersionNumber_lineEdit);
 }
 
 BodyFrameCfgWidget::BodyFrameCfgWidget(const BodyFrame bodyFrameItem, QWidget *parent):
@@ -162,10 +164,11 @@ void BodyFrameCfgWidget::addDataFrameSlot(const DataFrame &dataFrame)
 
 void BodyFrameCfgWidget::modifyModuleSlot(const Module& module)
 {
+    bodyFrameItem.modifyModule(module);
     for(int i = 0; i < ui->moduleTableWidget->rowCount(); i++){
         if(ui->moduleTableWidget->item(i, 0)->text() == QString::number(module.getModuleNumber())){
-            ui->moduleTableWidget->item(i, 1)->setText(QString::number(module.getInitialWaitTime()));
-            ui->moduleTableWidget->item(i, 2)->setText(QString::fromStdString(module.getModuleName()));
+            ui->moduleTableWidget->item(i, 1)->setText(QString::fromStdString(module.getModuleName()));
+            ui->moduleTableWidget->item(i, 2)->setText(QString::number(module.getInitialWaitTime()));
         }
     }
 }
@@ -272,11 +275,12 @@ void BodyFrameCfgWidget::on_okButton_clicked(bool)
     }
     else{
         ok = true;
+        bool flag;
         bodyFrameItem.setBodyFrameItemID(ui->id_lineEdit->text().toUInt());
         bodyFrameItem.setArbitrationStepDuration(ui->arbitrationStepDuration_lineEdit->text().toUInt());
         bodyFrameItem.setTimeCalibrationFactor(ui->timeCalibrationFactor_lineEdit->text().toUInt());
-        bodyFrameItem.setMajorVersionNumber(ui->majorVersionNumber_lineEdit->text().toUInt());
-        bodyFrameItem.setSubVersionNumber(ui->subVersionNumber_lineEdit->text().toUInt());
+        bodyFrameItem.setMajorVersionNumber(ui->majorVersionNumber_lineEdit->text().toUInt(&flag, 16));
+        bodyFrameItem.setSubVersionNumber(ui->subVersionNumber_lineEdit->text().toUInt(&flag, 16));
         bodyFrameItem.setMessageInterval(ui->messageInterval_lineEdit->text().toUInt());
         emit saveBodyFrameItemSignal(bodyFrameItem);
         this->close();
@@ -401,8 +405,8 @@ void BodyFrameCfgWidget::setForm()
     ui->arbitrationStepDuration_lineEdit->setText(QString::number(bodyFrameItem.getArbitrationStepDuration()));
     ui->timeCalibrationFactor_lineEdit->setText(QString::number(bodyFrameItem.getTimeCalibrationFactor()));
     ui->messageInterval_lineEdit->setText(QString::number(bodyFrameItem.getMessageInterval()));
-    ui->majorVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getMajorVersionNumber()));
-    ui->subVersionNumber_lineEdit->setText(QString::number(bodyFrameItem.getSubVersionNumber()));
+    ui->majorVersionNumber_lineEdit->setText("0X" + QString::number(bodyFrameItem.getMajorVersionNumber(), 16));
+    ui->subVersionNumber_lineEdit->setText("0X" + QString::number(bodyFrameItem.getSubVersionNumber(), 16));
     auto dataFrames = bodyFrameItem.getDataFrames();
 //    removeTableWidgetItems(ui->dataFrameTableWidget);
 //    removeTableWidgetItems(ui->moduleTableWidget);
@@ -413,6 +417,11 @@ void BodyFrameCfgWidget::setForm()
     for(auto& module : bodyFrameItem.getModules()){
         addModuleToTableWidget(module.second);
     }
+}
+
+void BodyFrameCfgWidget::setBodyFrameItem(const BodyFrame &newBodyFrameItem)
+{
+    bodyFrameItem = newBodyFrameItem;
 }
 
 const BodyFrame &BodyFrameCfgWidget::getBodyFrameItem() const
@@ -542,7 +551,7 @@ void BodyFrameCfgWidget::installValidator()
     messageIntervalValidator->setRange(minMessageInterval, maxMessageInterval);
     ui->messageInterval_lineEdit->setValidator(messageIntervalValidator);
 
-    QRegExp hexRegExp("[0-9A-Fa-f]+");
+    QRegExp hexRegExp("(0[xX])?[0-9A-Fa-f]+");
     majorAndSubVersionNumerValidator = new QRegExpValidator(hexRegExp, this);
     ui->majorVersionNumber_lineEdit->setValidator(majorAndSubVersionNumerValidator);
     ui->subVersionNumber_lineEdit->setValidator(majorAndSubVersionNumerValidator);
@@ -556,18 +565,19 @@ void BodyFrameCfgWidget::updateBodyFrameItem()
     bodyFrameItem.setSubVersionNumber(ui->subVersionNumber_lineEdit->text().toUInt());
     bodyFrameItem.setMessageInterval(ui->messageInterval_lineEdit->text().toUInt());
 }
-
 void BodyFrameCfgWidget::dynamicSetLineEdit(QLineEdit *lineEdit)
 {
+    lineEdit->validator();
+    QWidget a;
     QString input = lineEdit->text();
     if(input == ""){
-        lineEdit->setStyleSheet("QLineEdit { border: 1px solid gray;}");
+        lineEdit->setStyleSheet("border: 1px solid gray");
     }
     else if(lineEdit->validator()->validate(input, dummy) == QValidator::Acceptable){
-        lineEdit->setStyleSheet("QLineEdit { border: 1px solid green; }");
+        lineEdit->setStyleSheet("border: 1px solid green");
     }
     else{
-        lineEdit->setStyleSheet("QLineEdit { border: 1px solid red; }");
+        lineEdit->setStyleSheet("border: 1px solid red");
     }
 }
 

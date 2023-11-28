@@ -91,6 +91,9 @@ private:
     std::string newFrameID; //新帧标识
     mutable std::list<int> receiveLRMList; //接收模块列表
     std::set<int> receiveLRMSet;
+
+
+
 };
 
 #endif // FRAMEWINDOW_H

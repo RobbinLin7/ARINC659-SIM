@@ -3,10 +3,13 @@
 
 #include "deviceModel/bodyFrameGraphicsItem.h"
 #include "newprojectdialog.h"
+#include "dialog/burntofpgadialog.h"
+#include "deviceModel/innerbodyframescene.h"
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include <fstream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -37,7 +40,7 @@ void MainWindow::forTest()
     ui->statusbar->showMessage(tr("Position: (%1,%2)"));
 }
 
-
+//机架属性配置界面
 void MainWindow::on_actionNewBodyFrameItem_triggered()
 {
     //bodyFrameNum++;
@@ -57,15 +60,25 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
                                                                                                                            scene->getAy(),
                                                                                                                            scene->getBx(),
                                                                                                                            scene->getBy(),
-                                                                                                                           bodyFrameItem));
+                                                                                                        bodyFrameItem));
+
+//    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
+//       ui->graphicsView->setScene(new InnerBodyFrameScene(bodyFrameItem,this));
+//    });
+
     bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
     if(scene->addBodyFrameItem(graphicsItem) == false){
         qDebug() << "scene addbodyframeitem failed";
         return;
     }
     currentBodyFrameList.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrameCfgWidget);
+
+    //对应删除机架、配置机架和进入机架
+    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
     connect(graphicsItem.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
+
+
     auto p = ui->projectTreeWidget->findItems("机架配置", Qt::MatchContains | Qt::MatchRecursive);
     for(auto &x : p){
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
@@ -125,6 +138,7 @@ void MainWindow::deleteBodyFrameItemSlot(uint id)
     scene->update();
 }
 
+
 void MainWindow::on_actionChangeStyleSheet_triggered()
 {
     StyleSheetDialog styleSheetDialog(this);
@@ -162,6 +176,35 @@ void MainWindow::on_actionCompileCMDTable_triggered()
     }
 }
 
+void MainWindow::on_actionStartSim_triggered()
+{
+    qDebug() << "sim action";
+    BodyFrame item1, item2;
+    item1.setBodyFrameItemID(100);
+    item2.setBodyFrameItemID(101);
+    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem1 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
+                                                                                                                           scene->getAy(),
+                                                                                                                           scene->getBx(),
+                                                                                                                           scene->getBy(),
+                                                                                                                       item1));
+    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem2 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
+                                                                                                                           scene->getAy(),
+                                                                                                                           scene->getBx(),
+                                                                                                                           scene->getBy(),
+                                                                                                                       item2));
+
+    scene->addBodyFrameItem(graphicsItem1);
+    scene->addBodyFrameItem(graphicsItem2);
+    bodyFrameGraphicsItems.insert(item1.getBodyFrameItemID(), graphicsItem1);
+    bodyFrameGraphicsItems.insert(item2.getBodyFrameItemID(), graphicsItem2);
+    scene->addFrame(graphicsItem1, graphicsItem2);
+}
+
+void MainWindow::on_actionAbortSim_triggered()
+{
+
+}
+
 /**
  * @brief 初始化主窗口
  */
@@ -179,6 +222,77 @@ void MainWindow::on_actionOpenMonitor_triggered()
     MonitorWidget *monitor = new MonitorWidget();
 
     monitor->show();
+}
+
+void MainWindow::on_actionBurnToFPGA_triggered()
+{
+    createBatchFile();
+    QProcess *process = new QProcess(this);
+    BurnToFPGADialog *dialog = new BurnToFPGADialog(this);
+    connect(process, &QProcess::readyReadStandardOutput, this, [=]() {
+        QString output = process->readAllStandardOutput();
+        QString inputString = output;
+        QRegularExpression regex("Added Device (\\w+) successfully");
+        QRegularExpressionMatchIterator matches = regex.globalMatch(inputString);
+
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            if (match.hasMatch()) {
+                QString matchedText = match.captured(1);
+                qDebug() << matchedText;
+            }
+        }
+        //addLogToDockWidget(output);
+        //qDebug() << output;
+        //std::cout << output.toStdString() << std::endl;
+    });
+    connect(process, &QProcess::readyReadStandardError, this, [=]() {
+        QString output = process->readAllStandardError();
+        addLogToDockWidget(output);
+        QString inputString = output;
+        QRegularExpression regex("Added Device (\\w+) successfully");
+        QRegularExpressionMatchIterator matches = regex.globalMatch(inputString);
+
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            if (match.hasMatch()) {
+                QString matchedText = match.captured(1);
+                qDebug() << matchedText;
+                dialog->addItem(matchedText);
+            }
+        }
+        //qDebug() << output;
+        //std::cout << output.toStdString() << std::endl;
+    });
+    process->start("impact", QStringList() << "-batch");
+    process->write("setmode -bs\n");
+    process->write("setcable -port auto\n");
+    process->write("identify\n");
+    //process->closeWriteChannel();
+    process->waitForReadyRead();
+
+//    dialog->addItem("xc2v1000");
+//    dialog->addItem("xc2v1000");
+    dialog->setWindowFlag(Qt::Dialog);
+    connect(dialog, &BurnToFPGADialog::configFinished, this, [=](QStringList commandList){
+       for(QString command : commandList){
+           qDebug() << command;
+           process->write(command.toUtf8());
+           process->waitForReadyRead();
+       }
+    });
+    dialog->exec();
+    process->kill();
+    //process->waitForFinished(-1);
+//    QByteArray stdcout = process->readAllStandardOutput();
+//    QByteArray stdcerr = process->readAllStandardError();
+//    std::cout << stdcout.toStdString() << std::endl;
+//    if(process->exitCode() != 0){
+//        addLogToDockWidget(stdcerr);
+//    }
+//    else{
+//        addLogToDockWidget("命令表编译成功");
+//    }
 }
 
 
@@ -238,7 +352,7 @@ void MainWindow::addLogToDockWidget(const QString log)
 {
     QString currentTime;
     currentTime= QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    ui->logTextBrowser->append(currentTime + log);
+    ui->logTextBrowser->append(currentTime +  ": " + log);
 }
 
 void MainWindow::disableAllActionNeedAProject()
@@ -315,6 +429,46 @@ void MainWindow::createNewScene()
     ui->graphicsView->setScene(scene.get());
     ui->graphicsView->centerOn(1000, 2350);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+}
+
+void MainWindow::createNewInnerBodyFrameScene(uint bodyFrameId)
+{
+    std::shared_ptr<InnerBodyFrameScene> innerBodyFrameScene(new InnerBodyFrameScene(currentProject->getBodyFrameItem(bodyFrameId)));
+    connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::modifyBodyFrameSignal, this, [this](const BodyFrame& bodyFrame){
+        currentProject->addBodyFrameItem(bodyFrame);
+    });
+    bodyFrameScenes[bodyFrameId] = innerBodyFrameScene;
+    connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::exitBodyFrameSignal, this, [=](){
+        ui->graphicsView->setScene(scene.get());
+        ui->graphicsView->centerOn(1000, 2350);
+    });
+    scene->setSceneRect(0,0,5000,5000);
+    ui->graphicsView->setScene(innerBodyFrameScene.get());
+    ui->graphicsView->centerOn(1000,2350);
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+//    qDebug()<< bodyFrameItem.getModules().size();
+//    for(int i=0;i<bodyFrameItem.getModules().size();i++){
+//      qDebug()<< i ;
+//      LRMGraphicsItem* myItem = new LRMGraphicsItem();
+//      scene->addIrmGraphicsItem(myItem);
+//    }
+
+//    LRMGraphicsItem* myItem = new LRMGraphicsItem();
+//    scene->addIrmGraphicsItem(myItem);
+}
+
+QString MainWindow::createBatchFile()
+{
+    std::ofstream os("batfile.txt");
+
+    os << "setMode -bs" << std::endl;
+    os << "setCable -port auto" << std::endl;
+    os << "Identify";
+
+    os.close();
+
+    return QString();
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
