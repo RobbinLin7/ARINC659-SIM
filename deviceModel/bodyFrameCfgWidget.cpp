@@ -419,6 +419,11 @@ void BodyFrameCfgWidget::setForm()
     }
 }
 
+void BodyFrameCfgWidget::setBodyFrameItem(const BodyFrame &newBodyFrameItem)
+{
+    bodyFrameItem = newBodyFrameItem;
+}
+
 const BodyFrame &BodyFrameCfgWidget::getBodyFrameItem() const
 {
     return bodyFrameItem;

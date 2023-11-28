@@ -10,6 +10,7 @@
 #include <memory>
 #include <QMap>
 #include <set>
+#include <map>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -62,7 +63,7 @@ private:
     BusGraphicsItem Ay;
     BusGraphicsItem Bx;
     BusGraphicsItem By;
-    std::set<int> positionSet; //记录所有机架的水平位置
+    std::map<int, int> positionSet; //记录所有机架的水平位置
     std::map<std::pair<BodyFrameGraphicsItem*, BodyFrameGraphicsItem*>, std::shared_ptr<DataFlow>> dataflows;
     //QMap<uint, std::shared_ptr<BodyFrameItem>> bodyFrameItemMap;
 

@@ -434,9 +434,13 @@ void MainWindow::createNewScene()
 void MainWindow::createNewInnerBodyFrameScene(uint bodyFrameId)
 {
     std::shared_ptr<InnerBodyFrameScene> innerBodyFrameScene(new InnerBodyFrameScene(currentProject->getBodyFrameItem(bodyFrameId)));
+    connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::modifyBodyFrameSignal, this, [this](const BodyFrame& bodyFrame){
+        currentProject->addBodyFrameItem(bodyFrame);
+    });
     bodyFrameScenes[bodyFrameId] = innerBodyFrameScene;
     connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::exitBodyFrameSignal, this, [=](){
         ui->graphicsView->setScene(scene.get());
+        ui->graphicsView->centerOn(1000, 2350);
     });
     scene->setSceneRect(0,0,5000,5000);
     ui->graphicsView->setScene(innerBodyFrameScene.get());

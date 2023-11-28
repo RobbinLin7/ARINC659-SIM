@@ -41,6 +41,8 @@ public:
 
     const BodyFrameToBusLineItem &getToBy() const;
 
+    void setPositionMap(std::map<int, int> *newPositionMap);
+
 protected:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
@@ -71,7 +73,7 @@ private:
 
     void computeLineToBus();
 
-
+    std::map<int, int>* positionMap = nullptr; //记录所有机架的水平位置
 signals:
 
     void cfgBodyFrameItemSignal(uint frameId);

@@ -28,8 +28,8 @@ DeviceModelScene::DeviceModelScene():
     this->addItem(&By);
 //    this->setBackgroundBrush(QBrush(Qt::gray));
 
-    positionSet.insert(500);
-    positionSet.insert(4000);
+    positionSet[500] = 1;
+    positionSet.insert(std::make_pair(4000, 1));
 
 }
 bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
@@ -38,7 +38,7 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     item->setParent(this);
 //    std::shared_ptr<QGraphicsItemGroup> group = item->getCollidingGroup();
 
-
+    item->setPositionMap(&positionSet);
     connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
     connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
 //    if(positionSet.empty()){
@@ -52,15 +52,16 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     ++right;
     for(;;){
         if(left == positionSet.cend()) break;
-        if(*right - *left > item->boundingRect().width() + 50){
-            if(*left != 500){
-                item->setPos(QPoint(*left + 50 + item->boundingRect().width(), 2200));
-                positionSet.insert(*left + 50 + item->boundingRect().width());
+        if(right->first - left->first > item->boundingRect().width() + 50){
+            if(left->first != 500){
+                item->setPos(QPoint(left->first + 50 + item->boundingRect().width(), 2200));
+                int xpos = left->first + 50 + item->boundingRect().width();
+                positionSet.insert(std::make_pair(xpos, 1));
             }
             else{
-                qDebug() << "left =" << *left + 10 + item->boundingRect().width() / 2;
-                item->setPos(QPoint(*left + item->boundingRect().width() / 2, 2200));
-                positionSet.insert(*left + item->boundingRect().width() / 2);
+                item->setPos(QPoint(left->first + item->boundingRect().width() / 2, 2200));
+                int xpos = left->first + item->boundingRect().width() / 2;
+                positionSet.insert(std::make_pair(xpos, 1));
             }
             break;
         }

@@ -131,7 +131,11 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
            if(widget->ui->widget_4->layout() != nullptr){
                widget->ui->widget_4->layout()->addWidget(okPushButton);
            }
-           else qDebug() << "meiyou layout";
+           connect(okPushButton, &QPushButton::clicked, this, [=](){
+               emit modifyBodyFrameSignal(widget->getBodyFrameItem());
+               widget->ui->tab_3->close();
+           });
+           widget->ui->tab_3->setWindowFlag(Qt::Dialog);
            widget->ui->tab_3->show();
         });
         menu.exec(QCursor::pos());

@@ -34,6 +34,7 @@ protected:
 signals:
     void exitBodyFrameSignal();
     void innerAddMoudleSignal(QList<Module>);
+    void modifyBodyFrameSignal(const BodyFrame&);
 private:
     QMap<uint, std::shared_ptr<LRMGraphicsItem>> moduleGraphicItems;
     BodyFrame& bodyFrame;

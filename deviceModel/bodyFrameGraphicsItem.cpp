@@ -1,12 +1,13 @@
 ﻿#include "bodyFrameGraphicsItem.h"
 
 #include <QImageReader>
-
+#include <algorithm>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QToolTip>
 #include <QGraphicsScene>
+#include <map>
 
 BodyFrameGraphicsItem::~BodyFrameGraphicsItem()
 {
@@ -26,6 +27,7 @@ BodyFrameGraphicsItem::BodyFrameGraphicsItem(const BusGraphicsItem *Ax, const Bu
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     update();
+    qDebug() << "this->x()" << this->x();
 //    QGraphicsItemGroup* group = new QGraphicsItemGroup();
 //    group->addToGroup(this);
 //    collidingGroup = std::shared_ptr<QGraphicsItemGroup>(group);
@@ -97,9 +99,21 @@ void BodyFrameGraphicsItem::computeLineToBus()
     toBy.update();
 }
 
+void BodyFrameGraphicsItem::setPositionMap(std::map<int, int> *newPositionMap)
+{
+    positionMap = newPositionMap;
+}
+
 
 void BodyFrameGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << "mousePressEvent";
+    qDebug() << "this->x()" << this->x();
+    int xpos = this->x();
+    if(positionMap->find(xpos) != positionMap->end() && positionMap->at(xpos) > 0){
+        positionMap->at(xpos) = positionMap->at(xpos) - 1;
+        if(positionMap->at(xpos) == 0) positionMap->erase(xpos);
+    }
     return QGraphicsItem::mousePressEvent(event);
 }
 
@@ -171,6 +185,10 @@ void BodyFrameGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 //    computeLineToBus();
 //    collidingGroup = nullptr;
 //    hasSet = false;
+    qDebug() << "mouseReleaseEvent";
+    qDebug() << "this->x()" << this->x();
+    int xpos = this->x();
+    (*positionMap)[xpos] = (*positionMap)[xpos] + 1;
     return QGraphicsItem::mouseReleaseEvent(event);
 }
 

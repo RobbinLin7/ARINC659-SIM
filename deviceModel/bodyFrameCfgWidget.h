@@ -39,6 +39,8 @@ public:
     const BodyFrame &getBodyFrameItem() const;
     static void removeTableWidgetItems(QTableWidget* tableWidget);
 
+    void setBodyFrameItem(const BodyFrame &newBodyFrameItem);
+
 private slots:
 
 
