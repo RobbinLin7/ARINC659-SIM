@@ -6,7 +6,7 @@
 #include <QDebug>
 
 
-DataFlow::DataFlow(BodyFrameGraphicsItem* from, BodyFrameGraphicsItem* to, QGraphicsItem *parent)
+DataFlow::DataFlow(LRMGraphicsItem* from, LRMGraphicsItem* to, uint period, QGraphicsItem *parent)
     : QGraphicsItem(parent),
       m_offset(0),
       from(from),
@@ -16,7 +16,7 @@ DataFlow::DataFlow(BodyFrameGraphicsItem* from, BodyFrameGraphicsItem* to, QGrap
     updatePoints();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update1()));
-    timer->start(100);
+    timer->start(period);
 }
 
 void DataFlow::paint(QPainter *painter,

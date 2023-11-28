@@ -9,6 +9,7 @@
 #include "deviceModel/busgraphicsitem.h"
 #include <memory>
 #include "data/module.h"
+#include "deviceModel/dataflow.h"
 
 class InnerBodyFrameScene : public QGraphicsScene
 {
@@ -29,6 +30,8 @@ public:
 
     const BusGraphicsItem* getBy() const;
 
+    void startSimulation();
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:
@@ -43,6 +46,9 @@ private:
     BusGraphicsItem Bx;
     BusGraphicsItem By;
     std::set<int> positionSet; //记录所有机架的水平位置
+    std::map<std::pair<LRMGraphicsItem*, LRMGraphicsItem*>, std::shared_ptr<DataFlow>> dataflows;
+
+    void add_DATA_SEND_window(const FrameWindow&, uint);
 private slots:
     void cfgModuleSlot(uint moduleId);
     void deleteModuleSlot(uint moduleId);

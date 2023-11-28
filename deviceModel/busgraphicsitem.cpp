@@ -35,30 +35,37 @@ void BusGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
     //绘制总线名称
     painter->drawText(-1 * line.dx() / 2, 0, this->name);
+    if(error == false){
+        //内部填充样式模块
+        QRectF testRectf = boundingRect();
+        QRectF boundaryRectf = testRectf.adjusted(17,0,3,0);
+        QPoint startPoint(testRectf.center().x(),testRectf.top());//用来规定渐变样式的生效方向
+        QPoint endPoint(testRectf.center().x(),testRectf.bottom());//用来规定渐变样式的生效方向
+        QLinearGradient innerGradient(startPoint,endPoint);
+        innerGradient.setColorAt(0,QColor("#b35754"));
+        innerGradient.setColorAt(0.4,QColor("#FFFFFF"));
+        innerGradient.setColorAt(0.6,QColor("#FFFFFF"));
+        innerGradient.setColorAt(1,QColor("#b35754"));
+        QBrush innerBrush(innerGradient);
+        QPen brushPen;
+        brushPen.setBrush(innerBrush);
+        brushPen.setWidth(penWidth);
+        painter->setPen(brushPen);
+        painter->drawLine(-1 * line.dx() / 2 + 20, 0, line.dx() / 2, 0);
 
-    //内部填充样式模块
-    QRectF testRectf = boundingRect();
-    QRectF boundaryRectf = testRectf.adjusted(17,0,3,0);
-    QPoint startPoint(testRectf.center().x(),testRectf.top());//用来规定渐变样式的生效方向
-    QPoint endPoint(testRectf.center().x(),testRectf.bottom());//用来规定渐变样式的生效方向
-    QLinearGradient innerGradient(startPoint,endPoint);
-    innerGradient.setColorAt(0,QColor("#b35754"));
-    innerGradient.setColorAt(0.4,QColor("#FFFFFF"));
-    innerGradient.setColorAt(0.6,QColor("#FFFFFF"));
-    innerGradient.setColorAt(1,QColor("#b35754"));
-    QBrush innerBrush(innerGradient);
-    QPen brushPen;
-    brushPen.setBrush(innerBrush);
-    brushPen.setWidth(penWidth);
-    painter->setPen(brushPen);
-    painter->drawLine(-1 * line.dx() / 2 + 20, 0, line.dx() / 2, 0);
-
-    //外部轮廓样式
-    QPen boundaryPen;
-    boundaryPen.setColor(QColor("#427c7e"));
-    painter->setPen(boundaryPen);
-    painter->drawRect(boundaryRectf);
-
+        //外部轮廓样式
+        QPen boundaryPen;
+        boundaryPen.setColor(QColor("#427c7e"));
+        painter->setPen(boundaryPen);
+        painter->drawRect(boundaryRectf);
+    }
+    else{
+        QPen pen;
+        pen.setWidth(penWidth);
+        pen.setColor(Qt::red);
+        painter->setPen(pen);
+        painter->drawLine(-1 * line.dx() / 2 + 20, 0, line.dx() / 2, 0);
+    }
     painter->save();
     painter->restore();
 }
@@ -68,23 +75,25 @@ void BusGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QMenu menu;
     cfgBF = new QAction(QString("配置%1").arg(this->name));
     faultInjectAction = new QAction(QString("故障注入"));
+    QAction* revocateFaultAction = new QAction(QString("故障恢复"));
     menu.addAction(cfgBF);
     menu.addAction(faultInjectAction);
+    menu.addAction(revocateFaultAction);
     connect(faultInjectAction, &QAction::triggered, this, [=](){
-        qDebug() << "hahah";
         FaultInjectDialog *dialog = new FaultInjectDialog();
+        connect(dialog, &FaultInjectDialog::faultInjectSignal, this, [&](FaultInjectDialog::ErrorType errorType){
+            this->errorType = errorType;
+            this->error = true;
+            update();
+        });
         dialog->setWindowTitle(QString("%1故障注入").arg(this->name));
         dialog->setWindowFlag(Qt::Dialog);
         dialog->exec();
     });
+    connect(revocateFaultAction, &QAction::triggered, this, [&](){
+        this->error = false;
+        this->update();
+    });
     QPoint point(event->screenPos().x(), event->screenPos().y());
     menu.exec(point);
-}
-
-void BusGraphicsItem::on_faultInjectAction_triggered()
-{
-    qDebug() << "hahah";
-    FaultInjectDialog *dialog = new FaultInjectDialog();
-    dialog->setWindowFlag(Qt::Dialog);
-    dialog->show();
 }

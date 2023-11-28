@@ -92,12 +92,12 @@ void DeviceModelScene::deleteBodyFrameItem(int x)
 
 void DeviceModelScene::addFrame(std::shared_ptr<BodyFrameGraphicsItem> from, std::shared_ptr<BodyFrameGraphicsItem> to)
 {
-    DataFlow* flow = new DataFlow(from.get(), to.get());
-    dataflows[std::make_pair(from.get(), to.get())] = std::shared_ptr<DataFlow>(flow);
-    //dataflows.insert(std::make_pair(from.get(), to.get()), std::shared_ptr<DataFlow>(flow));
-    flow->setParent(this);
-    this->addItem(flow);
-    flow->update();
+//    DataFlow* flow = new DataFlow(from.get(), to.get());
+//    dataflows[std::make_pair(from.get(), to.get())] = std::shared_ptr<DataFlow>(flow);
+//    //dataflows.insert(std::make_pair(from.get(), to.get()), std::shared_ptr<DataFlow>(flow));
+//    flow->setParent(this);
+//    this->addItem(flow);
+//    flow->update();
 }
 
 const BusGraphicsItem *DeviceModelScene::getAx() const
@@ -118,6 +118,11 @@ const BusGraphicsItem *DeviceModelScene::getBx() const
 const BusGraphicsItem *DeviceModelScene::getBy() const
 {
     return &By;
+}
+
+void DeviceModelScene::simulationStart()
+{
+
 }
 
 

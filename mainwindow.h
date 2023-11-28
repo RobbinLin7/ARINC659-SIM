@@ -123,6 +123,8 @@ private:
 
     std::shared_ptr<Proj659> currentProject = nullptr;
 
+    std::shared_ptr<InnerBodyFrameScene> innerBodyFrameScene = nullptr;
+
     // QWidget interface
 protected:
     //void resizeEvent(QResizeEvent *event);

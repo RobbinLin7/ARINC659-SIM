@@ -5,13 +5,15 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsItem>
 #include "bodyFrameGraphicsItem.h"
+#include "lrmgrphicsitem.h"
 
 class DataFlow:public QObject, public QGraphicsItem
 
 {
     Q_OBJECT
 public:
-    DataFlow(BodyFrameGraphicsItem* from, BodyFrameGraphicsItem* to, QGraphicsItem *parent = nullptr);
+    //DataFlow(BodyFrameGraphicsItem* from, BodyFrameGraphicsItem* to, QGraphicsItem *parent = nullptr);
+    DataFlow(LRMGraphicsItem* from, LRMGraphicsItem* to, uint period, QGraphicsItem* parent = nullptr);
     virtual void paint(QPainter * painter,
                        const QStyleOptionGraphicsItem * option,
                        QWidget * widget = nullptr);
@@ -23,8 +25,8 @@ private slots:
 
 private:
     qreal m_offset;
-    BodyFrameGraphicsItem* from = nullptr;
-    BodyFrameGraphicsItem* to = nullptr;
+    LRMGraphicsItem* from = nullptr;
+    LRMGraphicsItem* to = nullptr;
 //    QPointF points[4] = {
 //        QPointF(100.0, 100.0) + QPointF(200.0, 200.0),
 //        QPointF(100.0, 300.0) + QPointF(200.0, 200.0),

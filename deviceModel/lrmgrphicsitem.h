@@ -24,6 +24,14 @@ public:
     QRectF boundingRect() const override;
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    const BodyFrameToBusLineItem &getToAx() const;
+
+    const BodyFrameToBusLineItem &getToAy() const;
+
+    const BodyFrameToBusLineItem &getToBx() const;
+
+    const BodyFrameToBusLineItem &getToBy() const;
+
 private:
     QRectF rect_cpu;
     QRectF rect_659;

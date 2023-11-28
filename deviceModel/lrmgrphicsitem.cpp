@@ -37,7 +37,7 @@ void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
 
 
-    qDebug()<<"painting";
+    //qDebug()<<"painting";
     //     painter->setBrush(QBrush(Qt::blue));
      QString text_659 = QStringLiteral("ARINC659协议信号处理模块");
      QString text_cpu = QStringLiteral("CPU");
@@ -173,7 +173,27 @@ void LRMGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QGraphicsItem::contextMenuEvent(event);
 
 //     painter->drawPolygon(points1,7);
-//     painter->drawPolygon(points2,7);
+    //     painter->drawPolygon(points2,7);
+}
+
+const BodyFrameToBusLineItem &LRMGraphicsItem::getToAx() const
+{
+    return toAx;
+}
+
+const BodyFrameToBusLineItem &LRMGraphicsItem::getToAy() const
+{
+    return toAy;
+}
+
+const BodyFrameToBusLineItem &LRMGraphicsItem::getToBx() const
+{
+    return toBx;
+}
+
+const BodyFrameToBusLineItem &LRMGraphicsItem::getToBy() const
+{
+    return toBy;
 }
 
 QPainterPath LRMGraphicsItem::createArrow(QPointF startPoint, QPointF endPoint)

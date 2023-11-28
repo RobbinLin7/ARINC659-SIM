@@ -179,25 +179,26 @@ void MainWindow::on_actionCompileCMDTable_triggered()
 void MainWindow::on_actionStartSim_triggered()
 {
     qDebug() << "sim action";
-    BodyFrame item1, item2;
-    item1.setBodyFrameItemID(100);
-    item2.setBodyFrameItemID(101);
-    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem1 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
-                                                                                                                           scene->getAy(),
-                                                                                                                           scene->getBx(),
-                                                                                                                           scene->getBy(),
-                                                                                                                       item1));
-    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem2 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
-                                                                                                                           scene->getAy(),
-                                                                                                                           scene->getBx(),
-                                                                                                                           scene->getBy(),
-                                                                                                                       item2));
+    innerBodyFrameScene->startSimulation();
+//    BodyFrame item1, item2;
+    //item1.setBodyFrameItemID(100);
+    //item2.setBodyFrameItemID(101);
+//    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem1 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
+//                                                                                                                           scene->getAy(),
+//                                                                                                                           scene->getBx(),
+//                                                                                                                           scene->getBy(),
+//                                                                                                                       item1));
+//    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem2 = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
+//                                                                                                                           scene->getAy(),
+//                                                                                                                           scene->getBx(),
+//                                                                                                                           scene->getBy(),
+//                                                                                                                       item2));
 
-    scene->addBodyFrameItem(graphicsItem1);
-    scene->addBodyFrameItem(graphicsItem2);
-    bodyFrameGraphicsItems.insert(item1.getBodyFrameItemID(), graphicsItem1);
-    bodyFrameGraphicsItems.insert(item2.getBodyFrameItemID(), graphicsItem2);
-    scene->addFrame(graphicsItem1, graphicsItem2);
+//    scene->addBodyFrameItem(graphicsItem1);
+//    scene->addBodyFrameItem(graphicsItem2);
+//    bodyFrameGraphicsItems.insert(item1.getBodyFrameItemID(), graphicsItem1);
+//    bodyFrameGraphicsItems.insert(item2.getBodyFrameItemID(), graphicsItem2);
+//    scene->addFrame(graphicsItem1, graphicsItem2);
 }
 
 void MainWindow::on_actionAbortSim_triggered()
@@ -433,7 +434,7 @@ void MainWindow::createNewScene()
 
 void MainWindow::createNewInnerBodyFrameScene(uint bodyFrameId)
 {
-    std::shared_ptr<InnerBodyFrameScene> innerBodyFrameScene(new InnerBodyFrameScene(currentProject->getBodyFrameItem(bodyFrameId)));
+    innerBodyFrameScene = std::shared_ptr<InnerBodyFrameScene>(new InnerBodyFrameScene(currentProject->getBodyFrameItem(bodyFrameId)));
     connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::modifyBodyFrameSignal, this, [this](const BodyFrame& bodyFrame){
         currentProject->addBodyFrameItem(bodyFrame);
     });

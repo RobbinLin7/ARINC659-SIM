@@ -92,7 +92,16 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
     QGraphicsItem *item = itemAt(mousePos, QTransform());
     if(item){
         LRMGraphicsItem* lrmItem = dynamic_cast<LRMGraphicsItem*>(item);
-        lrmItem->contextMenuEvent(event);
+        if(lrmItem != nullptr){
+            lrmItem->contextMenuEvent(event);
+        }
+        else{
+            BusGraphicsItem* busItem = dynamic_cast<BusGraphicsItem*>(item);
+            if(busItem != nullptr){
+                busItem->contextMenuEvent(event);
+            }
+        }
+
     }
     else{
         QMenu menu;
@@ -146,6 +155,57 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
 const BusGraphicsItem* InnerBodyFrameScene::getBy() const
 {
     return &By;
+}
+
+void InnerBodyFrameScene::startSimulation()
+{
+    auto dataFrames = bodyFrame.getDataFrames();
+    for(auto dataFrameName: bodyFrame.getDataFramesOrder()){
+        auto dataFrame = dataFrames[dataFrameName];
+        uint period = dataFrame.getFramePeriod();
+        for(auto window: dataFrame.getFrameWindows()){
+//            enum WindowType
+//            {
+//                //659命令窗口类型
+//                DATA_SEND = 0,  /* 数据传送窗口 */
+//                VERSION_SEND = 1,  /* 版本校验窗口 */
+//                LONG_SYNC = 2,     /* 长同步窗口 */
+//                FRAME_SWITCH = 3, /* 帧切换窗口 */
+//                CALL_SUBFRRAME = 4,  /* 调用子帧窗口 */
+//                INT_SEND = 5,           /*中断发送窗口 */
+//                FRAME_JUMP = 6,   /* 帧跳转窗口*/
+//                FREE = 7,   /* 空闲等待窗口 */
+//                SHORT_SYNC = 8,   /* 短同步窗口 */
+//            };
+            switch(window.getWindowType()){
+            case FrameWindow::DATA_SEND:
+                this->add_DATA_SEND_window(window, period);
+                break;
+            case FrameWindow::VERSION_SEND:
+                break;
+            case FrameWindow::LONG_SYNC:
+                break;
+            case FrameWindow::FRAME_SWITCH:
+                break;
+            case FrameWindow::CALL_SUBFRRAME:
+                break;
+            case FrameWindow::INT_SEND:
+                break;
+            case FrameWindow::FRAME_JUMP:
+                break;
+            case FrameWindow::FREE:
+                break;
+            case FrameWindow::SHORT_SYNC:
+                break;
+            default:
+                break;
+
+            }
+        }
+        break;
+        //先测试，获取一个就结束
+    }
+
 }
 
 const BusGraphicsItem* InnerBodyFrameScene::getBx() const
@@ -205,3 +265,15 @@ std::set<int> InnerBodyFrameScene::getPositionSet() const
 //    myItem->setPos(1000,2300);
 //    this->addItem(myItem);
 //}
+
+
+void InnerBodyFrameScene::add_DATA_SEND_window(const FrameWindow& window, uint period)
+{
+    for(auto to: window.getReceiveLRMList()){
+        DataFlow* flow = new DataFlow(moduleGraphicItems.value(window.getMainLRM()).get(), moduleGraphicItems.value(to).get(), period);
+        dataflows[std::make_pair(moduleGraphicItems.value(window.getMainLRM()).get(), moduleGraphicItems.value(to).get())] = std::shared_ptr<DataFlow>(flow);
+        flow->setParent(this);
+        this->addItem(flow);
+        flow->update();
+    }
+}

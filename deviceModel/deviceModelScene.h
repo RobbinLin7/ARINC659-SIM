@@ -41,6 +41,7 @@ public:
     const BusGraphicsItem* getBx() const;
     const BusGraphicsItem *getBy() const;
 
+    void simulationStart();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;

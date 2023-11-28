@@ -12,3 +12,9 @@ FaultInjectDialog::~FaultInjectDialog()
 {
     delete ui;
 }
+
+void FaultInjectDialog::on_okPushButton_clicked()
+{
+    emit faultInjectSignal(static_cast<ErrorType>(ui->faultType_comboBox->currentIndex()));
+    this->close();
+}
