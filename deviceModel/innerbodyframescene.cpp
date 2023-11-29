@@ -145,6 +145,7 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
                widget->ui->tab_3->close();
            });
            widget->ui->tab_3->setWindowFlag(Qt::Dialog);
+           widget->ui->tab_3->setWindowTitle("配置帧");
            widget->ui->tab_3->show();
         });
         menu.exec(QCursor::pos());
@@ -206,6 +207,11 @@ void InnerBodyFrameScene::startSimulation()
         //先测试，获取一个就结束
     }
 
+}
+
+void InnerBodyFrameScene::abortSimulation()
+{
+    dataflows.clear();
 }
 
 const BusGraphicsItem* InnerBodyFrameScene::getBx() const

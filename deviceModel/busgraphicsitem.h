@@ -26,6 +26,7 @@ public:
 
 public:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    bool getError() const;
 };
 
 #endif // BUSGRAPHICSITEM_H

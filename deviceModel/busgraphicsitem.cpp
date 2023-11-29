@@ -13,7 +13,6 @@ BusGraphicsItem::BusGraphicsItem(const QString& name, const QPoint &from, const 
     line(QLineF(from, to)){
     setZValue(0); //设置z值，z值越高越在上层
     setFlags(ItemIsSelectable | ItemIsMovable);
-
 }
 
 BusGraphicsItem::BusGraphicsItem(const QString& name, const QLineF &line, QGraphicsItem* parent):
@@ -22,6 +21,11 @@ BusGraphicsItem::BusGraphicsItem(const QString& name, const QLineF &line, QGraph
     line(line){
     setZValue(0);
     setFlags(ItemIsSelectable | ItemIsMovable);
+}
+
+bool BusGraphicsItem::getError() const
+{
+    return error;
 }
 
 
@@ -79,6 +83,9 @@ void BusGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     menu.addAction(cfgBF);
     menu.addAction(faultInjectAction);
     menu.addAction(revocateFaultAction);
+    if(error == false){
+        revocateFaultAction->setEnabled(false);
+    }
     connect(faultInjectAction, &QAction::triggered, this, [=](){
         FaultInjectDialog *dialog = new FaultInjectDialog();
         connect(dialog, &FaultInjectDialog::faultInjectSignal, this, [&](FaultInjectDialog::ErrorType errorType){

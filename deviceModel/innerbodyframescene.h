@@ -32,6 +32,8 @@ public:
 
     void startSimulation();
 
+    void abortSimulation();
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:

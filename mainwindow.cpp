@@ -203,7 +203,8 @@ void MainWindow::on_actionStartSim_triggered()
 
 void MainWindow::on_actionAbortSim_triggered()
 {
-
+    qDebug() << "sim abort";
+    innerBodyFrameScene->abortSimulation();
 }
 
 /**

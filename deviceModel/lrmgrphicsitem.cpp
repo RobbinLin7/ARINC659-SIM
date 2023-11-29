@@ -1,4 +1,5 @@
 #include "lrmgrphicsitem.h"
+#include "monitor/monitorWidget.h"
 #include <QPainter>
 #include <QRectF>
 #include <QMenu>
@@ -28,17 +29,10 @@ LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsIte
     QPointF endPoint2(startPoint2.x(),rect_cpu.bottom());
     arrowPath_first = createArrow(startPoint1,endPoint1);
     arrowPath_second = createArrow(startPoint2,endPoint2);
-//    setZValue(3);
-//    this->setVisible(true);
-
 }
 
 void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-
-
-    //qDebug()<<"painting";
-    //     painter->setBrush(QBrush(Qt::blue));
      QString text_659 = QStringLiteral("ARINC659协议信号处理模块");
      QString text_cpu = QStringLiteral("CPU");
 
@@ -161,19 +155,23 @@ void LRMGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QMenu menu;
     QAction *cfgModule = new QAction("配置模块");
     QAction *deleteModule = new QAction("删除模块");
+    QAction *watchWave = new QAction("查看波形");
     connect(cfgModule, &QAction::triggered, this, [=](){
        emit cfgModuleSignal(module.getModuleNumber());
     });
     connect(deleteModule, &QAction::triggered, this, [=](){
        emit deleteModuleSignal(module.getModuleNumber());
     });
+    connect(watchWave, &QAction::triggered, this, [=](){
+        MonitorWidget* monitorWidget = new MonitorWidget();
+        monitorWidget->setWindowFlags(Qt::Dialog);
+        monitorWidget->show();
+    });
     menu.addAction(cfgModule);
     menu.addAction(deleteModule);
+    menu.addAction(watchWave);
     menu.exec(QCursor::pos());
     QGraphicsItem::contextMenuEvent(event);
-
-//     painter->drawPolygon(points1,7);
-    //     painter->drawPolygon(points2,7);
 }
 
 const BodyFrameToBusLineItem &LRMGraphicsItem::getToAx() const

@@ -13,7 +13,7 @@ class DataFlow:public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     //DataFlow(BodyFrameGraphicsItem* from, BodyFrameGraphicsItem* to, QGraphicsItem *parent = nullptr);
-    DataFlow(LRMGraphicsItem* from, LRMGraphicsItem* to, uint period, QGraphicsItem* parent = nullptr);
+    DataFlow(LRMGraphicsItem* to, LRMGraphicsItem* from, uint period, QGraphicsItem* parent = nullptr);
     virtual void paint(QPainter * painter,
                        const QStyleOptionGraphicsItem * option,
                        QWidget * widget = nullptr);

@@ -12,6 +12,7 @@ DataFlow::DataFlow(LRMGraphicsItem* from, LRMGraphicsItem* to, uint period, QGra
       from(from),
       to(to)
 {
+    std::swap(this->from, this->to);
     this->setZValue(1);
     updatePoints();
     QTimer *timer = new QTimer(this);
@@ -24,10 +25,18 @@ void DataFlow::paint(QPainter *painter,
                          QWidget *widget)
 {
     updatePoints();
-    drawDataFlow(painter, AX_dataflow_points, 4);
-    drawDataFlow(painter, AY_dataflow_points, 4);
-    drawDataFlow(painter, BX_dataflow_points, 4);
-    drawDataFlow(painter, BY_dataflow_points, 4);
+    if(from->getToAx().getBus()->getError() == false){
+        drawDataFlow(painter, AX_dataflow_points, 4);
+    }
+    if(from->getToAy().getBus()->getError() == false){
+        drawDataFlow(painter, AY_dataflow_points, 4);
+    }
+    if(from->getToBx().getBus()->getError() == false){
+        drawDataFlow(painter, BX_dataflow_points, 4);
+    }
+    if(from->getToBy().getBus()->getError() == false){
+        drawDataFlow(painter, BY_dataflow_points, 4);
+    }
 //    qreal penWidth = 3;
 //    painter->save();
 //    QPen pen1(Qt::yellow);

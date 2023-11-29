@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1038</width>
-    <height>547</height>
+    <width>1013</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QWidget" name="widget_6" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
        <widget class="QGroupBox" name="groupBox">
         <property name="font">
          <font>
@@ -29,12 +29,45 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QCustomPlot" name="axChart" native="true"/>
+          <widget class="QGroupBox" name="groupBox_5">
+           <property name="title">
+            <string>D0</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ax_d0_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_6">
+           <property name="title">
+            <string>D1</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ax_d1_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_7">
+           <property name="title">
+            <string>CLK</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ax_clk_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1">
        <widget class="QGroupBox" name="groupBox_2">
         <property name="font">
          <font>
@@ -46,12 +79,45 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QCustomPlot" name="ayChart" native="true"/>
+          <widget class="QGroupBox" name="groupBox_8">
+           <property name="title">
+            <string>D0</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ay_d0_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_9">
+           <property name="title">
+            <string>D1</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ay_d1_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_10">
+           <property name="title">
+            <string>CLK</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="ay_clk_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0">
        <widget class="QGroupBox" name="groupBox_4">
         <property name="font">
          <font>
@@ -63,12 +129,45 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QCustomPlot" name="bxChart" native="true"/>
+          <widget class="QGroupBox" name="groupBox_11">
+           <property name="title">
+            <string>D0</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="bx_d0_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_12">
+           <property name="title">
+            <string>D1</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="bx_d1_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_13">
+           <property name="title">
+            <string>CLK</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="bx_clk_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="1" column="1">
        <widget class="QGroupBox" name="groupBox_3">
         <property name="font">
          <font>
@@ -80,59 +179,43 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QCustomPlot" name="byChart" native="true"/>
+          <widget class="QGroupBox" name="groupBox_14">
+           <property name="title">
+            <string>D0</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_11">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="by_d0_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_15">
+           <property name="title">
+            <string>D1</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_12">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="by_d1_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_16">
+           <property name="title">
+            <string>CLK</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_13">
+            <item row="0" column="0">
+             <widget class="QCustomPlot" name="by_clk_chart" native="true"/>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QWidget" name="widget_5" native="true">
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="comboBox"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="startBtn">
-        <property name="text">
-         <string>开始</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="stopBtn">
-        <property name="text">
-         <string>停止</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
