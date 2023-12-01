@@ -27,14 +27,27 @@ void MonitorWidget::realtimeDataSlot()
     if (key-lastPointKey > 0.002) // at most add point every 2 ms
     {
       // add data to lines:
+        int value;
         if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
         {
-            ui->ax_d0_chart->graph(0)->addData(key, 1);
+            value = 1;
         }
         else
         {
-            ui->ax_d0_chart->graph(0)->addData(key, 0);
+            value = 0;
         }
+        ui->ax_d0_chart->graph(0)->addData(key, value);
+        ui->ax_d1_chart->graph(0)->addData(key, value);
+
+        ui->ay_d0_chart->graph(0)->addData(key, value);
+        ui->ay_d1_chart->graph(0)->addData(key, value);
+
+        ui->bx_d0_chart->graph(0)->addData(key, value);
+        ui->bx_d1_chart->graph(0)->addData(key, value);
+
+        ui->by_d0_chart->graph(0)->addData(key, value);
+        ui->by_d1_chart->graph(0)->addData(key, value);
+
       //ui->ax_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
 
       //ui->ax_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
@@ -45,6 +58,27 @@ void MonitorWidget::realtimeDataSlot()
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->ax_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
     ui->ax_d0_chart->replot();
+
+    ui->ax_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ax_d1_chart->replot();
+
+    ui->ay_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ay_d0_chart->replot();
+
+    ui->ay_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ay_d1_chart->replot();
+
+    ui->bx_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->bx_d0_chart->replot();
+
+    ui->bx_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->bx_d1_chart->replot();
+
+    ui->by_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->by_d0_chart->replot();
+
+    ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->by_d1_chart->replot();
 
     // calculate frames per second:
 //    static double lastFpsKey;
@@ -158,17 +192,17 @@ void MonitorWidget::on_actionWatchStart_triggered()
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
     dataTimer.start(0); // Interval 0 means to refresh as fast as possible
 
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer2, SIGNAL(timeout()), this, SLOT(realtimeDataSlot2()));
-    dataTimer2.start(0); // Interval 0 means to refresh as fast as possible
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer2, SIGNAL(timeout()), this, SLOT(realtimeDataSlot2()));
+//    dataTimer2.start(0); // Interval 0 means to refresh as fast as possible
 
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer3, SIGNAL(timeout()), this, SLOT(realtimeDataSlot3()));
-    dataTimer3.start(0); // Interval 0 means to refresh as fast as possible
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer3, SIGNAL(timeout()), this, SLOT(realtimeDataSlot3()));
+//    dataTimer3.start(0); // Interval 0 means to refresh as fast as possible
 
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer4, SIGNAL(timeout()), this, SLOT(realtimeDataSlot4()));
-    dataTimer4.start(0); // Interval 0 means to refresh as fast as possible
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer4, SIGNAL(timeout()), this, SLOT(realtimeDataSlot4()));
+//    dataTimer4.start(0); // Interval 0 means to refresh as fast as possible
 }
 
 void MonitorWidget::on_actionWatchEnd_triggered()
