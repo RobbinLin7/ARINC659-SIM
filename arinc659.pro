@@ -42,6 +42,7 @@ SOURCES += \
     dialog/interruptionwindowcfgdialog.cpp \
     dialog/jumpwindowcfgdialog.cpp \
     dialog/longsyncwindowcfgdialog.cpp \
+    dialog/shortsyncdialog.cpp \
     dialog/stylesheetdialog.cpp \
     dialog/subframecallwindowdialog.cpp \
     dialog/versiondetectionwindowcfgdialog.cpp \
@@ -85,6 +86,7 @@ HEADERS += \
     deviceModel/modulecfgwidget.h \
     dialog/burntofpgadialog.h \
     dialog/faultinjectdialog.h \
+    dialog/shortsyncdialog.h \
     dialog/windowcfgdialog.h \
     dialog/datatransferwindowcfgdialog.h \
     dialog/frameswitchwindowcfgdialog.h \
@@ -129,6 +131,7 @@ FORMS += \
     dialog/interruptionwindowcfgdialog.ui \
     dialog/jumpwindowcfgdialog.ui \
     dialog/longsyncwindowcfgdialog.ui \
+    dialog/shortsyncdialog.ui \
     dialog/stylesheetdialog.ui \
     dialog/subframecallwindowdialog.ui \
     dialog/versiondetectionwindowcfgdialog.ui \

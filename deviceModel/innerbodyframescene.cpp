@@ -2,6 +2,7 @@
 #include "deviceModel/modulecfgwidget.h"
 #include "deviceModel/bodyFrameCfgWidget.h"
 #include "ui_bodyFrameCfgWidget.h"
+#include "monitor/monitorWidget.h"
 #include <QRgb>
 #include <QMenu>
 #include <QDebug>
@@ -278,6 +279,8 @@ void InnerBodyFrameScene::add_DATA_SEND_window(const FrameWindow& window, uint p
     for(auto to: window.getReceiveLRMList()){
         DataFlow* flow = new DataFlow(moduleGraphicItems.value(window.getMainLRM()).get(), moduleGraphicItems.value(to).get(), period);
         dataflows[std::make_pair(moduleGraphicItems.value(window.getMainLRM()).get(), moduleGraphicItems.value(to).get())] = std::shared_ptr<DataFlow>(flow);
+        connect(moduleGraphicItems.value(window.getMainLRM())->getMonitorWidget(), &MonitorWidget::sendData, moduleGraphicItems.value(to).get()->getMonitorWidget(), &MonitorWidget::receiveData);
+        moduleGraphicItems.value(to)->getMonitorWidget()->setType(MonitorWidget::RECEIVE);
         flow->setParent(this);
         this->addItem(flow);
         flow->update();

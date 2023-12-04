@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
+#include "deviceModel/busgraphicsitem.h"
 
 namespace Ui {
 class MonitorWidget;
@@ -13,8 +14,11 @@ class MonitorWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit MonitorWidget(QWidget *parent = nullptr);
+    enum Type{SEND, RECEIVE};
+    explicit MonitorWidget(const BusGraphicsItem* ax, const BusGraphicsItem* ay, const BusGraphicsItem* bx, const BusGraphicsItem* by, QWidget *parent = nullptr);
     ~MonitorWidget();
+
+    void setType(Type newType);
 
 private slots:
   void realtimeDataSlot();
@@ -34,7 +38,12 @@ private:
     QTimer dataTimer3;
     QTimer dataTimer4;
 
-    void initD0_D1(QCustomPlot*);
+    Type type = SEND;
+
+    const BusGraphicsItem* ax = nullptr;
+    const BusGraphicsItem* ay = nullptr;
+    const BusGraphicsItem* bx = nullptr;
+    const BusGraphicsItem* by = nullptr;
 
 private:
     void setAxData();
@@ -44,6 +53,13 @@ private:
     void setBxData();
 
     void setByData();
+
+    void initD0_D1(QCustomPlot*);
+
+signals:
+    void sendData(int val);
+public slots:
+    void receiveData(int val);
 };
 
 #endif // MONITORWIDGET_H

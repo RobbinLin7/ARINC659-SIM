@@ -221,9 +221,9 @@ void MainWindow::initMainWindow()
 
 void MainWindow::on_actionOpenMonitor_triggered()
 {
-    MonitorWidget *monitor = new MonitorWidget();
+    //MonitorWidget *monitor = new MonitorWidget();
 
-    monitor->show();
+    //monitor->show();
 }
 
 void MainWindow::on_actionBurnToFPGA_triggered()

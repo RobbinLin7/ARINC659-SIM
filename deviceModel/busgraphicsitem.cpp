@@ -23,6 +23,11 @@ BusGraphicsItem::BusGraphicsItem(const QString& name, const QLineF &line, QGraph
     setFlags(ItemIsSelectable | ItemIsMovable);
 }
 
+FaultInjectDialog::ErrorType BusGraphicsItem::getErrorType() const
+{
+    return errorType;
+}
+
 bool BusGraphicsItem::getError() const
 {
     return error;

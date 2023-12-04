@@ -6,6 +6,7 @@
 #include <QRectF>
 #include "data/module.h"
 #include "deviceModel/bodyframetobuslineitem.h"
+#include "monitor/monitorWidget.h"
 
 class LRMGraphicsItem : public QObject, public QGraphicsItem
 {
@@ -32,6 +33,8 @@ public:
 
     const BodyFrameToBusLineItem &getToBy() const;
 
+    MonitorWidget *getMonitorWidget() const;
+
 private:
     QRectF rect_cpu;
     QRectF rect_659;
@@ -48,6 +51,8 @@ private:
     BodyFrameToBusLineItem toAy;
     BodyFrameToBusLineItem toBx;
     BodyFrameToBusLineItem toBy;
+
+    MonitorWidget* monitorWidget = nullptr;
 
     // QGraphicsItem interface
 protected:

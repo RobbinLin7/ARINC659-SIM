@@ -29,6 +29,8 @@ LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsIte
     QPointF endPoint2(startPoint2.x(),rect_cpu.bottom());
     arrowPath_first = createArrow(startPoint1,endPoint1);
     arrowPath_second = createArrow(startPoint2,endPoint2);
+
+    monitorWidget = new MonitorWidget(toAx.getBus(), toAy.getBus(), toBx.getBus(), toBy.getBus());
 }
 
 void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -163,7 +165,6 @@ void LRMGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
        emit deleteModuleSignal(module.getModuleNumber());
     });
     connect(watchWave, &QAction::triggered, this, [=](){
-        MonitorWidget* monitorWidget = new MonitorWidget();
         monitorWidget->setWindowFlags(Qt::Dialog);
         monitorWidget->show();
     });
@@ -192,6 +193,11 @@ const BodyFrameToBusLineItem &LRMGraphicsItem::getToBx() const
 const BodyFrameToBusLineItem &LRMGraphicsItem::getToBy() const
 {
     return toBy;
+}
+
+MonitorWidget *LRMGraphicsItem::getMonitorWidget() const
+{
+    return monitorWidget;
 }
 
 QPainterPath LRMGraphicsItem::createArrow(QPointF startPoint, QPointF endPoint)

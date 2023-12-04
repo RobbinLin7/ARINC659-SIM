@@ -1,9 +1,13 @@
 #include "monitorWidget.h"
 #include "ui_monitorWidget.h"
 
-MonitorWidget::MonitorWidget(QWidget *parent) :
+MonitorWidget::MonitorWidget(const BusGraphicsItem* ax, const BusGraphicsItem* ay, const BusGraphicsItem* bx, const BusGraphicsItem* by, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MonitorWidget)
+    ui(new Ui::MonitorWidget),
+    ax(ax),
+    ay(ay),
+    bx(bx),
+    by(by)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("数据监视器"));
@@ -24,36 +28,38 @@ void MonitorWidget::realtimeDataSlot()
     // calculate two new data points:
     double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
+    int value;
     if (key-lastPointKey > 0.002) // at most add point every 2 ms
     {
-      // add data to lines:
-        int value;
-        if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
-        {
-            value = 1;
-        }
-        else
-        {
-            value = 0;
-        }
-        ui->ax_d0_chart->graph(0)->addData(key, value);
-        ui->ax_d1_chart->graph(0)->addData(key, value);
+        // add data to lines:
+          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
+          {
+              value = 1;
+          }
+          else
+          {
+              value = 0;
+          }
+          ui->ax_d0_chart->graph(0)->addData(key, value);
+          ui->ax_d1_chart->graph(0)->addData(key, value);
 
-        ui->ay_d0_chart->graph(0)->addData(key, value);
-        ui->ay_d1_chart->graph(0)->addData(key, value);
+          ui->ay_d0_chart->graph(0)->addData(key, value);
+          ui->ay_d1_chart->graph(0)->addData(key, value);
 
-        ui->bx_d0_chart->graph(0)->addData(key, value);
-        ui->bx_d1_chart->graph(0)->addData(key, value);
+          ui->bx_d0_chart->graph(0)->addData(key, value);
+          ui->bx_d1_chart->graph(0)->addData(key, value);
 
-        ui->by_d0_chart->graph(0)->addData(key, value);
-        ui->by_d1_chart->graph(0)->addData(key, value);
+          ui->by_d0_chart->graph(0)->addData(key, value);
+          ui->by_d1_chart->graph(0)->addData(key, value);
 
-      //ui->ax_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
 
-      //ui->ax_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-      // rescale value (vertical) axis to fit the current data:
+        //ui->ax_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
 
-      lastPointKey = key;
+        //ui->ax_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+        // rescale value (vertical) axis to fit the current data:
+
+        lastPointKey = key;
+        emit sendData(value);
     }
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->ax_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
@@ -79,6 +85,8 @@ void MonitorWidget::realtimeDataSlot()
 
     ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
     ui->by_d1_chart->replot();
+
+
 
     // calculate frames per second:
 //    static double lastFpsKey;
@@ -189,20 +197,15 @@ void MonitorWidget::realtimeDataSlot4()
 void MonitorWidget::on_actionWatchStart_triggered()
 {
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-    dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+    if(type == SEND){
+        //如果是数据发送方，则自己产生数据
+        connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+        dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+    }
+    else if(type == RECEIVE){
+        //如果是接收方，则接受发送方产生的数据
 
-//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer2, SIGNAL(timeout()), this, SLOT(realtimeDataSlot2()));
-//    dataTimer2.start(0); // Interval 0 means to refresh as fast as possible
-
-//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer3, SIGNAL(timeout()), this, SLOT(realtimeDataSlot3()));
-//    dataTimer3.start(0); // Interval 0 means to refresh as fast as possible
-
-//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer4, SIGNAL(timeout()), this, SLOT(realtimeDataSlot4()));
-//    dataTimer4.start(0); // Interval 0 means to refresh as fast as possible
+    }
 }
 
 void MonitorWidget::on_actionWatchEnd_triggered()
@@ -318,6 +321,11 @@ void MonitorWidget::on_stopBtn_clicked()
     dataTimer4.stop();
 }
 
+void MonitorWidget::setType(Type newType)
+{
+    type = newType;
+}
+
 void MonitorWidget::initD0_D1(QCustomPlot *chart)
 {
     chart->addGraph(); // blue line
@@ -337,4 +345,99 @@ void MonitorWidget::initD0_D1(QCustomPlot *chart)
     // make left and bottom axes transfer their ranges to right and top axes:
     connect(chart->xAxis, SIGNAL(rangeChanged(QCPRange)), chart->xAxis2, SLOT(setRange(QCPRange)));
     connect(chart->yAxis, SIGNAL(rangeChanged(QCPRange)), chart->yAxis2, SLOT(setRange(QCPRange)));
+}
+
+void MonitorWidget::receiveData(int value)
+{
+    static QTime timeStart = QTime::currentTime();
+    // calculate two new data points:
+    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
+    if(ax->getError() == false){
+        ui->ax_d0_chart->graph(0)->addData(key, value);
+        ui->ax_d1_chart->graph(0)->addData(key, value);
+    }
+    else{
+        if(ax->getErrorType() == FaultInjectDialog::D0_ERROR){
+            ui->ax_d0_chart->graph(0)->addData(key, 0);
+        }
+        else{
+            ui->ax_d0_chart->graph(0)->addData(key, value);
+        }
+        if(ax->getErrorType() == FaultInjectDialog::D1_ERROR){
+            ui->ax_d1_chart->graph(0)->addData(key, 0);
+        }
+        else{
+            ui->ax_d1_chart->graph(0)->addData(key, value);
+        }
+    }
+
+    if(ay->getError() == false){
+        ui->ay_d0_chart->graph(0)->addData(key, value);
+        ui->ay_d1_chart->graph(0)->addData(key, value);
+    }
+    else{
+        if(ay->getErrorType() == FaultInjectDialog::D0_ERROR){
+            ui->ay_d0_chart->graph(0)->addData(key, 0);
+            ui->ay_d1_chart->graph(0)->addData(key, value);
+        }
+        else{
+            ui->ay_d0_chart->graph(0)->addData(key, value);
+            ui->ay_d1_chart->graph(0)->addData(key, 0);
+        }
+
+    }
+    if(bx->getError() == false){
+        ui->bx_d0_chart->graph(0)->addData(key, value);
+        ui->bx_d1_chart->graph(0)->addData(key, value);
+    }
+    else{
+        if(bx->getErrorType() == FaultInjectDialog::D0_ERROR){
+            ui->bx_d0_chart->graph(0)->addData(key, 0);
+            ui->bx_d1_chart->graph(0)->addData(key, value);
+        }
+        else{
+            ui->bx_d0_chart->graph(0)->addData(key, value);
+            ui->bx_d1_chart->graph(0)->addData(key, 0);
+        }
+    }
+
+    if(by->getError() == false){
+        ui->by_d0_chart->graph(0)->addData(key, value);
+        ui->by_d1_chart->graph(0)->addData(key, value);
+    }
+    else{
+        if(by->getErrorType() == FaultInjectDialog::D0_ERROR){
+            ui->by_d0_chart->graph(0)->addData(key, 0);
+            ui->by_d1_chart->graph(0)->addData(key, value);
+        }
+        else{
+            ui->by_d0_chart->graph(0)->addData(key, value);
+            ui->by_d1_chart->graph(0)->addData(key, 0);
+        }
+    }
+
+    ui->ax_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ax_d0_chart->replot();
+
+    ui->ax_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ax_d1_chart->replot();
+
+    ui->ay_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ay_d0_chart->replot();
+
+    ui->ay_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->ay_d1_chart->replot();
+
+    ui->bx_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->bx_d0_chart->replot();
+
+    ui->bx_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->bx_d1_chart->replot();
+
+    ui->by_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->by_d0_chart->replot();
+
+    ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
+    ui->by_d1_chart->replot();
+
 }

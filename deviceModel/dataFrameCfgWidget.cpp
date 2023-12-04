@@ -1,5 +1,6 @@
 ﻿#include "dataFrameCfgWidget.h"
 #include "ui_dataFrameCfgWidget.h"
+#include "dialog/shortsyncdialog.h"
 #include <QMessageBox>
 
 DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
@@ -302,6 +303,10 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
     }
     case FrameWindow::SHORT_SYNC:{
         windowType = new QTableWidgetItem("短同步窗口");
+        TableItem* windowIdItem = new TableItem{0, windowId};
+        TableItem* windowTypeItem = new TableItem{1, windowType};
+        windowType->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex, windowIdItem, windowTypeItem, nullptr);
         break;
     }
     default:
@@ -528,9 +533,13 @@ void DataFrameCfgWidget::on_frameSwitchPushButton_clicked(bool)
 
 void DataFrameCfgWidget::on_shortSyncPushButton_clicked(bool)
 {
-    FrameWindow window;
-    window.setWindowType(FrameWindow::SHORT_SYNC);
-    addNewWindow(window);
+    ShortSyncDialog* dialog = new ShortSyncDialog(ui->windowTableWidget->rowCount(), this);
+    connect(dialog, &WindowCfgDialog::addNewWindow, this, &DataFrameCfgWidget::addNewWindow);
+    dialog->setWindowFlag(Qt::Dialog);
+    dialog->exec();
+    //FrameWindow window;
+    //window.setWindowType(FrameWindow::SHORT_SYNC);
+    //addNewWindow(window);
 }
 
 void DataFrameCfgWidget::on_editWindowPushButton_clicked(bool)

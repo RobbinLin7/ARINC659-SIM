@@ -27,6 +27,7 @@ public:
 public:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     bool getError() const;
+    FaultInjectDialog::ErrorType getErrorType() const;
 };
 
 #endif // BUSGRAPHICSITEM_H
