@@ -1,20 +1,34 @@
 #include "monitorWidget.h"
 #include "ui_monitorWidget.h"
+#include <fstream>
 
-MonitorWidget::MonitorWidget(const BusGraphicsItem* ax, const BusGraphicsItem* ay, const BusGraphicsItem* bx, const BusGraphicsItem* by, QWidget *parent) :
+MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames, QWidget *parent):
     QWidget(parent),
     ui(new Ui::MonitorWidget),
-    ax(ax),
-    ay(ay),
-    bx(bx),
-    by(by)
+    lrmGraphicsItem(lrmGraphicsItem),
+    ax(lrmGraphicsItem.getToAx().getBus()),
+    ay(lrmGraphicsItem.getToAy().getBus()),
+    bx(lrmGraphicsItem.getToBx().getBus()),
+    by(lrmGraphicsItem.getToBy().getBus()),
+    dataFrames(dataFrames)
+
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("数据监视器"));
+    ui->label->setText(QString("%1").arg(QString::fromStdString(lrmGraphicsItem.getModule().getModuleName())));
     setAxData();
     setAyData();
     setBxData();
     setByData();
+    FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
+    std::ifstream ifs(window.getDataSourceFile());
+    if(ifs){
+        ifs.seekg(0,std::ios::end);
+        fileLen = ifs.tellg();
+        ifs.seekg(0, std::ios::beg);
+        ifs.read(buffer, fileLen);
+        ifs.close();
+    }
 }
 
 MonitorWidget::~MonitorWidget()
@@ -24,22 +38,63 @@ MonitorWidget::~MonitorWidget()
 
 void MonitorWidget::realtimeDataSlot()
 {
+    int value;
+    const DataFrame& dataFrame = *dataFrames.begin();
+    auto period = 120;
+    if(tickCnt % period == 0){
+        //新周期的开始，更新所有的窗口的finished参数
+        std::for_each(dataFrame.getFrameWindows().begin(), dataFrame.getFrameWindows().end(), [&](const FrameWindow& frameWindow){
+            frameWindow.setFinished(false);
+        });
+    }
+    //DataFrame dataFrame;
+    for(auto& window: dataFrame.getFrameWindows()){
+        if(tickCnt % period < 100){
+
+            //1000应该是一个和window有关的参数，这里只是为了调试先写死
+            switch(window.getWindowType()){
+            case FrameWindow::DATA_SEND:
+                if(window.getFinished() == true){
+                    value = 0;
+                }
+                else{
+                    if(((buffer[ptr_byte] >> (7 - ptr_bit)) & 1) > 0){
+                        value = 1;
+                    }
+                    else{
+                        value = 0;
+                    }
+                    ptr_bit = (ptr_bit + 1) % 8;
+                    if(ptr_bit == 0){
+                        ptr_byte = (ptr_byte + 1) % fileLen;
+                    }
+                    if(ptr_byte == 0 && ptr_bit == 0){
+                        window.setFinished(true);
+                    }
+                    break;
+                }
+            default:
+                break;
+            }
+        }
+    }
+    ++tickCnt;
     static QTime timeStart = QTime::currentTime();
     // calculate two new data points:
     double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
-    int value;
+
     if (key-lastPointKey > 0.002) // at most add point every 2 ms
     {
         // add data to lines:
-          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
-          {
-              value = 1;
-          }
-          else
-          {
-              value = 0;
-          }
+//          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
+//          {
+//              value = 1;
+//          }
+//          else
+//          {
+//              value = 0;
+//          }
           ui->ax_d0_chart->graph(0)->addData(key, value);
           ui->ax_d1_chart->graph(0)->addData(key, value);
 
@@ -200,7 +255,7 @@ void MonitorWidget::on_actionWatchStart_triggered()
     if(type == SEND){
         //如果是数据发送方，则自己产生数据
         connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-        dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+        dataTimer.start(500); // Interval 0 means to refresh as fast as possible
     }
     else if(type == RECEIVE){
         //如果是接收方，则接受发送方产生的数据
@@ -336,7 +391,8 @@ void MonitorWidget::initD0_D1(QCustomPlot *chart)
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     QSharedPointer<QCPAxisTickerFixed> ticker(new QCPAxisTickerFixed);
     ticker->setTickStep(1);
-    timeTicker->setTimeFormat("%h:%m:%s");
+    //timeTicker->setTimeFormat()
+    //timeTicker->setTimeFormat("%h:%m:%s");
     chart->xAxis->setTicker(timeTicker);
     //ui->ax_d0_chart->axisRect()->setupFullAxesBox();
     chart->yAxis->setRange(0, 1);

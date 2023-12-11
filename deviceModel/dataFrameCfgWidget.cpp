@@ -3,7 +3,7 @@
 #include "dialog/shortsyncdialog.h"
 #include <QMessageBox>
 
-DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent) :
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const DataFrames& dataframes, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),
@@ -25,7 +25,7 @@ DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const std::ma
 
 }
 
-DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const DataFrame &dataFrame, const std::map<std::string, DataFrame> &dataframes, QWidget *parent):
+DataFrameCfgWidget::DataFrameCfgWidget(const BodyFrame& bodyFrame, const DataFrame &dataFrame, const DataFrames &dataframes, QWidget *parent):
     QWidget(parent),
     ui(new Ui::DataFrameCfgWidget),
     dataframes(dataframes),

@@ -1,6 +1,6 @@
 ﻿#include "stringidvalidator.h"
 #include <iostream>
-StringIdValidator::StringIdValidator(QRegExp exp, const std::map<std::string, DataFrame> &dataFrames, QObject *parent):
+StringIdValidator::StringIdValidator(QRegExp exp, const DataFrames& dataFrames, QObject *parent):
     QRegExpValidator(exp, parent),
     dataFrames(dataFrames)
 {

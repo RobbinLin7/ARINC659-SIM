@@ -13,7 +13,7 @@ public:
     enum DataFrameType{Parent, Child};
 
     DataFrame();
-    DataFrame& operator=(const DataFrame&);
+    //DataFrame& operator=(const DataFrame&);
 
     uint getFramePeriod() const;
     void setFramePeriod(uint newFramePeriod);
@@ -34,6 +34,8 @@ public:
     void setDataFrameType(DataFrameType newDataFrameType);
 
     const std::vector<FrameWindow> &getFrameWindows() const;
+
+    std::vector<FrameWindow> &getFrameWindows();
 
     void insertFrameWindow(const FrameWindow&);
 

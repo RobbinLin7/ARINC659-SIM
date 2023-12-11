@@ -2,6 +2,7 @@
 #include "ui_datatransferwindowcfgdialog.h"
 #include<sstream>
 #include<QMessageBox>
+#include<QFileDialog>
 
 DataTransferWindowCfgDialog::DataTransferWindowCfgDialog(uint id, const std::map<uint, Module>& modules, QWidget *parent) :
     WindowCfgDialog(parent),
@@ -62,6 +63,7 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
     window.setSupportLRM1(ui->backupLRM1_comboBox->currentText().toStdString());
     window.setSupportLRM2(ui->backupLRM2_comboBox->currentText().toStdString());
     window.setSupportLRM3(ui->backupLRM3_comboBox->currentText().toStdString());
+    window.setDataSourceFile(ui->dataSource_lineEdit->text().toStdString());
 
     //存设置好的接受LRM值
     std::istringstream iss(ui->receiveLRM_lineEdit->text().toStdString());
@@ -91,4 +93,15 @@ void DataTransferWindowCfgDialog::on_resetReceiveLRM_pushButton_clicked()
 {
     ui->receiveLRM_lineEdit->clear();
     window.removeAllOfReceiveLRMList();
+}
+
+void DataTransferWindowCfgDialog::on_addFilePushButton_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, QString(tr("打开数据源文件")), QString(), QString("*.src"));
+    if(filePath == ""){
+        QMessageBox::critical(this, QString(tr("错误")), QString(tr("打开项目失败")));
+    }
+    else{
+        ui->dataSource_lineEdit->setText(filePath);
+    }
 }

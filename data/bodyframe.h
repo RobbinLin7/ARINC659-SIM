@@ -2,6 +2,7 @@
 #define BODYFRAMEITEM_H
 #include "data/module.h"
 #include "data/dataframe.h"
+#include "data/dataframes.h"
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -56,11 +57,11 @@ public:
     DataFrame& getDataFrame(std::string);
     uint getMinUnusedModuleId();
 
-    const std::map<std::string, DataFrame> &getDataFrames() const;
-    void setDataFrames(const std::map<std::string, DataFrame> &newDataFrames);
+    const DataFrames &getDataFrames() const;
+    void setDataFrames(const DataFrames &newDataFrames);
 
     void changeDataFramesOrder(int index1, int index2);
-    const std::vector<std::string>& getDataFramesOrder() const;
+    //const std::vector<std::string>& getDataFramesOrder() const;
 
     const std::map<uint, Module> &getModules() const;
     void setModules(const std::map<uint, Module> &newModules);
@@ -73,8 +74,10 @@ private:
      uint majorVersionNumber;                       //主版本号
      uint subVersionNumber;                         //次版本号
      std::map<uint, Module> modules;                //模块数组
-     std::map<std::string, DataFrame> dataFrames;   //帧数组
-     std::vector<std::string> dataFramesOrder;      //帧数组顺序
+//     std::map<std::string, DataFrame> dataFrames;   //帧数组
+//     std::vector<std::string> dataFramesOrder;      //帧数组顺序
+     DataFrames dataFrames;
+
 };
 
 #endif // BODYFRAMEITEM_H

@@ -5,14 +5,17 @@
 #include <QObject>
 #include <QRectF>
 #include "data/module.h"
+#include "data/dataframes.h"
 #include "deviceModel/bodyframetobuslineitem.h"
+class LRMGraphicsItem;
 #include "monitor/monitorWidget.h"
+
 
 class LRMGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By,const Module& module);
+    LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module, const DataFrames& dataFrames);
     QRectF getRect_bound() const;
     void setRect_bound(const QRectF &value);
 
@@ -35,6 +38,8 @@ public:
 
     MonitorWidget *getMonitorWidget() const;
 
+    const Module &getModule() const;
+
 private:
     QRectF rect_cpu;
     QRectF rect_659;
@@ -53,6 +58,7 @@ private:
     BodyFrameToBusLineItem toBy;
 
     MonitorWidget* monitorWidget = nullptr;
+    const DataFrames& dataFrames;
 
     // QGraphicsItem interface
 protected:

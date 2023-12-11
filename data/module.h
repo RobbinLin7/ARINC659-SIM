@@ -7,7 +7,7 @@ class Module
 {
 public:
     Module();
-    Module& operator=(const Module&);
+    //Module& operator=(const Module&);
     enum ModuleType{physicalModule, simulationModule};
     uint getModuleNumber() const;
     void setModuleNumber(uint newModuleNumber);

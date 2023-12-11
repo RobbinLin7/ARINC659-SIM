@@ -26,6 +26,7 @@ protected slots:
     void on_okPushButton_clicked();
     void on_addReceiveLRM_pushButton_clicked();
     void on_resetReceiveLRM_pushButton_clicked();
+    void on_addFilePushButton_clicked();
 };
 
 #endif // DATATRANSFERWINDOWCFGDIALOG_H

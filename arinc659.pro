@@ -19,6 +19,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     data/bodyframe.cpp \
     data/dataframe.cpp \
+    data/dataframes.cpp \
     data/framewindow.cpp \
     data/module.cpp \
     deviceModel/arrow.cpp \
@@ -69,6 +70,7 @@ SOURCES += \
 HEADERS += \
     data/bodyframe.h \
     data/dataframe.h \
+    data/dataframes.h \
     data/framewindow.h \
     data/module.h \
     deviceModel/arrow.h \
