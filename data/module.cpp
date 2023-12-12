@@ -5,14 +5,14 @@ Module::Module()
 
 }
 
-Module &Module::operator=(const Module &module)
-{
-    this->moduleName = module.getModuleName();
-    this->moduleType = module.getModuleType();
-    this->moduleNumber = module.getModuleNumber();
-    this->initialWaitTime = module.getInitialWaitTime();
-    return *this;
-}
+//Module &Module::operator=(const Module &module)
+//{
+//    this->moduleName = module.getModuleName();
+//    this->moduleType = module.getModuleType();
+//    this->moduleNumber = module.getModuleNumber();
+//    this->initialWaitTime = module.getInitialWaitTime();
+//    return *this;
+//}
 
 uint Module::getModuleNumber() const
 {

@@ -30,6 +30,8 @@ public:
 
     const BusGraphicsItem* getBy() const;
 
+    const DataFrames& getDataFrames() const;
+
     void startSimulation();
 
     void abortSimulation();

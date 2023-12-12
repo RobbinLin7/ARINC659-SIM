@@ -163,14 +163,16 @@ Module& BodyFrame::getModule(uint moduleId)
 
 void BodyFrame::addDataFrame(const DataFrame &dataFrame)
 {
-    dataFrames[dataFrame.getFrameIdentification()] = dataFrame;
-    dataFramesOrder.push_back(dataFrame.getFrameIdentification());
+    dataFrames.push(dataFrame);
+    //dataFrames[dataFrame.getFrameIdentification()] = dataFrame;
+    //dataFramesOrder.push_back(dataFrame.getFrameIdentification());
 }
 
 void BodyFrame::modifyDataFrame(const DataFrame& dataFrame)
 {
-    if(dataFrames.find(dataFrame.getFrameIdentification()) != dataFrames.end()){
-        dataFrames.at(dataFrame.getFrameIdentification()) = dataFrame;
+    DataFrames::Iterator itr = dataFrames.find(dataFrame);
+    if(itr != dataFrames.end()){
+        *itr = dataFrame;
     }
 }
 
@@ -196,24 +198,19 @@ uint BodyFrame::getMinUnusedModuleId()
     return i;
 }
 
-const std::map<std::string, DataFrame> &BodyFrame::getDataFrames() const
+const DataFrames& BodyFrame::getDataFrames() const
 {
     return dataFrames;
 }
 
-void BodyFrame::setDataFrames(const std::map<std::string, DataFrame> &newDataFrames)
+void BodyFrame::setDataFrames(const DataFrames& newDataFrames)
 {
     dataFrames = newDataFrames;
 }
 
 void BodyFrame::changeDataFramesOrder(int index1, int index2)
 {
-    std::swap(dataFramesOrder.at(index1), dataFramesOrder.at(index2));
-}
-
-const std::vector<std::string> &BodyFrame::getDataFramesOrder() const
-{
-    return dataFramesOrder;
+    dataFrames.swap(index1, index2);
 }
 
 const std::map<uint, Module> &BodyFrame::getModules() const

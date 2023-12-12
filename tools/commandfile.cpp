@@ -180,12 +180,12 @@ bool CommandFile::createCommand(std::ofstream &os, const BodyFrame& bodyFrame)
     nDelta = bodyFrame.getArbitrationStepDuration();
 
     auto dataFrames = bodyFrame.getDataFrames();
-    auto dataFramesOrder = bodyFrame.getDataFramesOrder();
-    if(dataFramesOrder.size() == 0){
+    //auto dataFramesOrder = bodyFrame.getDataFramesOrder();
+    if(dataFrames.size() == 0){
         return false;
     }
-    for(auto dataFrameId : dataFramesOrder){
-        auto dataFrame = dataFrames[dataFrameId];
+    for(auto dataFrame : dataFrames){
+        //auto dataFrame = dataFrames[dataFrameId];
         nFreeTime = dataFrame.getIdleWaitTime();
         if(dataFrame.getDataFrameType() == DataFrame::Child){
             //子帧
@@ -226,7 +226,7 @@ int CommandFile::getTotalCyl(const BodyFrame &bodyFrame, const DataFrame &dataFr
     int nGap = bodyFrame.getMessageInterval();
     int nDelta = bodyFrame.getArbitrationStepDuration();
     auto frames = bodyFrame.getDataFrames();
-    auto dataFramesOrder = bodyFrame.getDataFramesOrder();
+    //auto dataFramesOrder = bodyFrame.getDataFramesOrder();
     for(auto& window : dataFrame.getFrameWindows()){
         nWindowType = window.getWindowType();
         switch (nWindowType) {
@@ -259,11 +259,16 @@ int CommandFile::getTotalCyl(const BodyFrame &bodyFrame, const DataFrame &dataFr
             if(window.getFlag()){
                 nTotal += 5 + nGap; //发送固有空闲
             }
-            for(int j = 0; j < frames.size(); j++){
-                if(window.getNewFrameID() == frames[dataFramesOrder[j]].getFrameIdentification()){
-                    nTotal += frames[dataFramesOrder[j]].getFramePeriod() * 30000;
+            for(auto frame : frames){
+                if(window.getNewFrameID() == frame.getFrameIdentification()){
+                    nTotal += frame.getFramePeriod() * 30000;
                 }
             }
+//            for(int j = 0; j < frames.size(); j++){
+//                if(window.getNewFrameID() == frames[dataFramesOrder[j]].getFrameIdentification()){
+//                    nTotal += frames[dataFramesOrder[j]].getFramePeriod() * 30000;
+//                }
+//            }
             break;
         case FrameWindow::INT_SEND:
             //发送中断

@@ -63,13 +63,14 @@ bool MyXml::saveProjectToXml(const QString &path, const Proj659& project)
 
                 if(x.getDataFrames().empty() == false){
                     QDomElement dataFrames = doc.createElement("dataFrames");
-                    for(auto dataFrame : x.getDataFrames()){
+                    for(auto it = x.getDataFrames().cbegin(); it != x.getDataFrames().cend(); ++it){
+                        const DataFrame dataFrame = *it;
                         QDomElement dataFrameItem = doc.createElement("dataFrame");
-                        func(&doc, &dataFrameItem, "idleWaitTime", QString::number(dataFrame.second.getIdleWaitTime()));
-                        func(&doc, &dataFrameItem, "framePeriod", QString::number(dataFrame.second.getFramePeriod()));
-                        func(&doc, &dataFrameItem, "totalWindow", QString::number(dataFrame.second.getTotalWindow()));
-                        func(&doc, &dataFrameItem, "frameIdentification", QString::fromStdString(dataFrame.second.getFrameIdentification()));
-                        func(&doc, &dataFrameItem, "timeAllocationType", QString::number(dataFrame.second.getTimeAllocationType()));
+                        func(&doc, &dataFrameItem, "idleWaitTime", QString::number(dataFrame.getIdleWaitTime()));
+                        func(&doc, &dataFrameItem, "framePeriod", QString::number(dataFrame.getFramePeriod()));
+                        func(&doc, &dataFrameItem, "totalWindow", QString::number(dataFrame.getTotalWindow()));
+                        func(&doc, &dataFrameItem, "frameIdentification", QString::fromStdString(dataFrame.getFrameIdentification()));
+                        func(&doc, &dataFrameItem, "timeAllocationType", QString::number(dataFrame.getTimeAllocationType()));
                         dataFrames.appendChild(dataFrameItem);
                     }
                     bodyFrame.appendChild(dataFrames);

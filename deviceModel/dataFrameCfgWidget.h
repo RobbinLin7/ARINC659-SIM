@@ -25,8 +25,8 @@ class DataFrameCfgWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit DataFrameCfgWidget(const BodyFrame&, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
-    explicit DataFrameCfgWidget(const BodyFrame&, const DataFrame& dataFrame, const std::map<std::string, DataFrame>& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const DataFrames& dataframes, QWidget *parent = nullptr);
+    explicit DataFrameCfgWidget(const BodyFrame&, const DataFrame& dataFrame, const DataFrames& dataframes, QWidget *parent = nullptr);
     struct TableItem{
         int index;
         QTableWidgetItem* item;
@@ -38,7 +38,7 @@ private:
     Ui::DataFrameCfgWidget *ui;
     QValidator* framePeriodValidator = nullptr;
     //QValidator* frameIdentificationValidator = nullptr;
-    std::map<std::string, DataFrame> dataframes;
+    const DataFrames& dataframes;
     StringIdValidator frameIdentificationValidator;
     DataFrame dataFrame;
     const BodyFrame bodyFrame;

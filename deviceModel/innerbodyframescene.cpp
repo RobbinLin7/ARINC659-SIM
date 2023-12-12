@@ -32,7 +32,7 @@ InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
     positionSet.insert(500);
     positionSet.insert(4000);
     for(auto module : bodyFrame.getModules()){
-        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(this->getAx(),this->getAy(),this->getBx(),this->getBy(),module.second));
+        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(this->getAx(),this->getAy(),this->getBx(),this->getBy(),module.second, this->getDataFrames()));
         moduleGraphicItems.insert(module.second.getModuleNumber(), myItem);
         myItem->setPos(550,2200);
         myItem->setParent(this);
@@ -122,7 +122,8 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
                                                                                                              this->getAy(),
                                                                                                              this->getBx(),
                                                                                                              this->getBy(),
-                                                                                                             module));
+                                                                                                             module,
+                                                                                                             this->getDataFrames()));
               this->moduleGraphicItems.insert(module.getModuleNumber(),newLrm);
               this->bodyFrame.addModule(module);
               this->addIrmGraphicsItem(newLrm.get());
@@ -159,11 +160,16 @@ const BusGraphicsItem* InnerBodyFrameScene::getBy() const
     return &By;
 }
 
+const DataFrames &InnerBodyFrameScene::getDataFrames() const
+{
+    return bodyFrame.getDataFrames();
+}
+
 void InnerBodyFrameScene::startSimulation()
 {
     auto dataFrames = bodyFrame.getDataFrames();
-    for(auto dataFrameName: bodyFrame.getDataFramesOrder()){
-        auto dataFrame = dataFrames[dataFrameName];
+    for(auto dataFrame: dataFrames){
+        //auto dataFrame = dataFrames[dataFrameName];
         uint period = dataFrame.getFramePeriod();
         for(auto window: dataFrame.getFrameWindows()){
 //            enum WindowType

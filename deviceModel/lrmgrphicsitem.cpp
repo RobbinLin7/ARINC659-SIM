@@ -9,14 +9,16 @@
 #include <QMenu>
 #include <QDebug>
 #include <QGraphicsSceneContextMenuEvent>
+#include "deviceModel/innerbodyframescene.h"
 
 
-LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By,const Module& module):
+LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module, const DataFrames& dataFrames):
     module(module),
     toAx(Ax, this),
     toAy(Ay, this),
     toBx(Bx, this),
-    toBy(By, this)
+    toBy(By, this),
+    dataFrames(dataFrames)
 {
     this->setZValue(1);
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
@@ -29,8 +31,8 @@ LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsIte
     QPointF endPoint2(startPoint2.x(),rect_cpu.bottom());
     arrowPath_first = createArrow(startPoint1,endPoint1);
     arrowPath_second = createArrow(startPoint2,endPoint2);
-
-    monitorWidget = new MonitorWidget(toAx.getBus(), toAy.getBus(), toBx.getBus(), toBy.getBus());
+    //InnerBodyFrameScene* scene = dynamic_cast<InnerBodyFrameScene*>(this->scene());
+    monitorWidget = new MonitorWidget(*this, dataFrames);
 }
 
 void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -198,6 +200,11 @@ const BodyFrameToBusLineItem &LRMGraphicsItem::getToBy() const
 MonitorWidget *LRMGraphicsItem::getMonitorWidget() const
 {
     return monitorWidget;
+}
+
+const Module &LRMGraphicsItem::getModule() const
+{
+    return module;
 }
 
 QPainterPath LRMGraphicsItem::createArrow(QPointF startPoint, QPointF endPoint)

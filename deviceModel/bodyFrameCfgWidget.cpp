@@ -225,7 +225,7 @@ void BodyFrameCfgWidget::on_deleteDataFrameBtn_clicked()
         int row = ui->dataFrameTableWidget->currentRow();
         qDebug() << ui->dataFrameTableWidget->item(row, 0)->text();
         std::string dataFrameIdentification = ui->dataFrameTableWidget->item(row, 0)->text().toStdString();
-        ui->moduleTableWidget->removeRow(row);
+        ui->dataFrameTableWidget->removeRow(row);
         bodyFrameItem.deleteDataFrame(dataFrameIdentification);
     }
     else{
@@ -318,9 +318,12 @@ void BodyFrameCfgWidget::showEvent(QShowEvent *event)
         auto dataFrames = bodyFrameItem.getDataFrames();
         ui->dataFrameTableWidget->clear();
         ui->moduleTableWidget->clear();
-        for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
-            addDataFrameSlot(dataFrames.at(dataFrameId));
+        for(const auto& dataFrame : bodyFrameItem.getDataFrames()){
+            addDataFrameSlot(dataFrame);
         }
+//        for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
+//            addDataFrameSlot(dataFrames.at(dataFrameId));
+//        }
         for(auto& module : bodyFrameItem.getModules()){
             addModuleSlot(module.second);
         }
@@ -407,13 +410,18 @@ void BodyFrameCfgWidget::setForm()
     ui->messageInterval_lineEdit->setText(QString::number(bodyFrameItem.getMessageInterval()));
     ui->majorVersionNumber_lineEdit->setText("0X" + QString::number(bodyFrameItem.getMajorVersionNumber(), 16));
     ui->subVersionNumber_lineEdit->setText("0X" + QString::number(bodyFrameItem.getSubVersionNumber(), 16));
-    auto dataFrames = bodyFrameItem.getDataFrames();
 //    removeTableWidgetItems(ui->dataFrameTableWidget);
 //    removeTableWidgetItems(ui->moduleTableWidget);
 //    ui->moduleTableWidget->clear();
-    for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
-        addDataFrameToTableWidget(dataFrames.at(dataFrameId));
+//    for(const std::string &dataFrameId: bodyFrameItem.getDataFramesOrder()){
+//        addDataFrameToTableWidget(dataFrames.at(dataFrameId));
+//    }
+    for(const auto& dataFrame: bodyFrameItem.getDataFrames()){
+        addDataFrameToTableWidget(dataFrame);
     }
+//    for(auto itr = dataFrames.begin(); itr != dataFrames.end(); ++itr){
+//        addDataFrameToTableWidget(*itr);
+//    }
     for(auto& module : bodyFrameItem.getModules()){
         addModuleToTableWidget(module.second);
     }

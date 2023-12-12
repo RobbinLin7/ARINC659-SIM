@@ -4,6 +4,11 @@
 #include <QWidget>
 #include "qcustomplot.h"
 #include "deviceModel/busgraphicsitem.h"
+class MonitorWidget;
+#include "deviceModel/lrmgrphicsitem.h"
+#include "data/module.h"
+#include "data/dataframe.h"
+#include "data/dataframes.h"
 
 namespace Ui {
 class MonitorWidget;
@@ -15,9 +20,9 @@ class MonitorWidget : public QWidget
 
 public:
     enum Type{SEND, RECEIVE};
-    explicit MonitorWidget(const BusGraphicsItem* ax, const BusGraphicsItem* ay, const BusGraphicsItem* bx, const BusGraphicsItem* by, QWidget *parent = nullptr);
+    explicit MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames, QWidget *parent = nullptr);
     ~MonitorWidget();
-
+    const int maxBufferSize = 512;
     void setType(Type newType);
 
 private slots:
@@ -38,6 +43,8 @@ private:
     QTimer dataTimer3;
     QTimer dataTimer4;
 
+    const LRMGraphicsItem& lrmGraphicsItem;
+
     Type type = SEND;
 
     const BusGraphicsItem* ax = nullptr;
@@ -55,6 +62,18 @@ private:
     void setByData();
 
     void initD0_D1(QCustomPlot*);
+
+    const DataFrames& dataFrames;
+
+    unsigned tickCnt = 0;
+
+    char buffer[512];
+
+    unsigned ptr_byte = 0;
+
+    unsigned ptr_bit = 0;
+
+    unsigned fileLen;
 
 signals:
     void sendData(int val);

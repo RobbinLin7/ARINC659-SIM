@@ -192,3 +192,23 @@ bool FrameWindow::isExistInReceiveLRMList(const int LRM_id)
     else return false;
 
 }
+
+const std::string &FrameWindow::getDataSourceFile() const
+{
+    return dataSourceFile;
+}
+
+void FrameWindow::setDataSourceFile(const std::string &newDataSourceFile)
+{
+    dataSourceFile = newDataSourceFile;
+}
+
+bool FrameWindow::getFinished() const
+{
+    return finished;
+}
+
+void FrameWindow::setFinished(bool newFinished)const
+{
+    finished = newFinished;
+}

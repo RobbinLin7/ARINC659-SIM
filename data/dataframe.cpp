@@ -6,16 +6,16 @@ DataFrame::DataFrame()
     memset(windowIdUsed, 0, sizeof (windowIdUsed));
 }
 
-DataFrame &DataFrame::operator=(const DataFrame &dataFrame)
-{
-    this->framePeriod = dataFrame.framePeriod;
-    this->totalWindow = dataFrame.totalWindow;
-    this->frameIdentification = dataFrame.frameIdentification;
-    this->idleWaitTime = dataFrame.idleWaitTime;
-    this->timeAllocationType = dataFrame.timeAllocationType;
-    this->frameWindows = dataFrame.frameWindows;
-    return *this;
-}
+//DataFrame &DataFrame::operator=(const DataFrame &dataFrame)
+//{
+//    this->framePeriod = dataFrame.framePeriod;
+//    this->totalWindow = dataFrame.totalWindow;
+//    this->frameIdentification = dataFrame.frameIdentification;
+//    this->idleWaitTime = dataFrame.idleWaitTime;
+//    this->timeAllocationType = dataFrame.timeAllocationType;
+//    this->frameWindows = dataFrame.frameWindows;
+//    return *this;
+//}
 
 uint DataFrame::getFramePeriod() const
 {
@@ -78,6 +78,11 @@ void DataFrame::setDataFrameType(DataFrameType newDataFrameType)
 }
 
 const std::vector<FrameWindow> &DataFrame::getFrameWindows() const
+{
+    return frameWindows;
+}
+
+std::vector<FrameWindow> &DataFrame::getFrameWindows()
 {
     return frameWindows;
 }
