@@ -59,6 +59,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
     QPainterPath createArrow(QPointF startPoint, QPointF endPoint);
     void computeLineToBus();
+    QVariant itemChange();
 
 
 signals:
