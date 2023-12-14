@@ -239,7 +239,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         break;
     }
     //finish
-    case FrameWindow::CALL_SUBFRRAME:
+    case FrameWindow::CALL_SUBFRAME:
     {
         QString flag = window.getFlag()==true?"固有空闲":"非固有空闲";
         windowType = new QTableWidgetItem("调用子帧窗口");
@@ -383,7 +383,7 @@ WindowCfgDialog *DataFrameCfgWidget::newWindowCfgDialog()
             dialog->setWindowFlag(Qt::Dialog);
             break;
         }
-        case FrameWindow::CALL_SUBFRRAME:{
+        case FrameWindow::CALL_SUBFRAME:{
             dialog = new SubFrameCallWindowDialog(row,window,this);
             dialog->setWindowFlag(Qt::Dialog);
             break;

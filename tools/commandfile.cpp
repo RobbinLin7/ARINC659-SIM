@@ -254,7 +254,7 @@ int CommandFile::getTotalCyl(const BodyFrame &bodyFrame, const DataFrame &dataFr
             nTmp = 136 + 3 * 10 + 2 * 9;
             nTotal += nTmp;
             break;
-        case FrameWindow::CALL_SUBFRRAME:
+        case FrameWindow::CALL_SUBFRAME:
             //调用子帧
             if(window.getFlag()){
                 nTotal += 5 + nGap; //发送固有空闲
@@ -643,7 +643,7 @@ bool CommandFile::createFrameAverage(std::ostream &os, const DataFrame& dataFram
 
                 break;
 
-            case FrameWindow::CALL_SUBFRRAME://调用子帧
+            case FrameWindow::CALL_SUBFRAME://调用子帧
 
 
                 if (itr->getFlag())
@@ -1027,7 +1027,7 @@ bool CommandFile::createFrameFreeTimeDown(std::ostream &os, const DataFrame &dat
 
                 break;
 
-            case FrameWindow::CALL_SUBFRRAME://调用子帧
+            case FrameWindow::CALL_SUBFRAME://调用子帧
 
                 if (window.getFlag())
                 {//用命令CALLI调用子序列并发送固有空闲

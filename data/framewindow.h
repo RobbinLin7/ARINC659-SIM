@@ -14,7 +14,7 @@ public:
         VERSION_SEND = 1,  /* 版本校验窗口 */
         LONG_SYNC = 2,     /* 长同步窗口 */
         FRAME_SWITCH = 3, /* 帧切换窗口 */
-        CALL_SUBFRRAME = 4,  /* 调用子帧窗口 */
+        CALL_SUBFRAME = 4,  /* 调用子帧窗口 */
         INT_SEND = 5,           /*中断发送窗口 */
         FRAME_JUMP = 6,   /* 帧跳转窗口*/
         FREE = 7,   /* 空闲等待窗口 */
@@ -79,6 +79,8 @@ public:
     bool getFinished() const;
     void setFinished(bool newFinished)const;
 
+    uint32_t getNumOfTimeSlot()const{return 100;};
+
 private:
     bool flag; //版本校验窗口中为版本校验标识,在调用子帧以及JUMP 指令中标识是否发送固有空闲
     WindowType windowType;
@@ -97,9 +99,7 @@ private:
     std::string newFrameID; //新帧标识
     mutable std::list<int> receiveLRMList; //接收模块列表
     std::set<int> receiveLRMSet;
-
     std::string dataSourceFile;           //数据源文件路径
-
     mutable bool finished = false;
 
 };

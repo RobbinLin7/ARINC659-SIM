@@ -6,7 +6,7 @@ SubFrameCallWindowDialog::SubFrameCallWindowDialog(uint id, QWidget *parent) :
     ui(new Ui::SubFrameCallWindowDialog)
 {
     ui->setupUi(this);
-    window.setWindowType(FrameWindow::CALL_SUBFRRAME);
+    window.setWindowType(FrameWindow::CALL_SUBFRAME);
     ui->windowId_lineEdit->setText(QString::number(id));
 }
 

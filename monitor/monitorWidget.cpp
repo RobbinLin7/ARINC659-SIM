@@ -20,17 +20,17 @@ MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataF
     setAyData();
     setBxData();
     setByData();
-    if(dataFrames.size() > 0){
-        FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
-        std::ifstream ifs(window.getDataSourceFile());
-        if(ifs){
-            ifs.seekg(0,std::ios::end);
-            fileLen = ifs.tellg();
-            ifs.seekg(0, std::ios::beg);
-            ifs.read(buffer, fileLen);
-            ifs.close();
-        }
-    }
+//    if(dataFrames.size() > 0){
+//        FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
+//        std::ifstream ifs(window.getDataSourceFile());
+//        if(ifs){
+//            ifs.seekg(0,std::ios::end);
+//            fileLen = ifs.tellg();
+//            ifs.seekg(0, std::ios::beg);
+//            ifs.read(buffer, fileLen);
+//            ifs.close();
+//        }
+//    }
 }
 
 MonitorWidget::~MonitorWidget()
@@ -41,52 +41,115 @@ MonitorWidget::~MonitorWidget()
 void MonitorWidget::realtimeDataSlot()
 {
     int value;
-    const DataFrame& dataFrame = *dataFrames.begin();
-    auto period = 120;
-    if(tickCnt % period == 0){
-        //新周期的开始，更新所有的窗口的finished参数
-        std::for_each(dataFrame.getFrameWindows().begin(), dataFrame.getFrameWindows().end(), [&](const FrameWindow& frameWindow){
-            frameWindow.setFinished(false);
-        });
-    }
-    //DataFrame dataFrame;
-    for(auto& window: dataFrame.getFrameWindows()){
-        if(tickCnt % period < 100){
-
-            //1000应该是一个和window有关的参数，这里只是为了调试先写死
-            switch(window.getWindowType()){
-            case FrameWindow::DATA_SEND:
-                if(window.getFinished() == true){
-                    value = 0;
-                }
-                else{
-                    if(((buffer[ptr_byte] >> (7 - ptr_bit)) & 1) > 0){
-                        value = 1;
-                    }
-                    else{
+    int totalPeriod = 0;
+    std::for_each(dataFrames.begin(), dataFrames.end(), [&](const DataFrame& dataFrame){
+        totalPeriod += dataFrame.getFramePeriod();
+    });
+    totalPeriod = totalPeriod * 10000000 / 333;
+    int sumPeriod = 0;
+    for(auto& dataFrame: dataFrames){
+        auto period = dataFrame.getFramePeriod() * 10000000 / 333;
+        sumPeriod += period;
+        if(tickCnt % totalPeriod == sumPeriod){
+            //新周期的开始，更新所有的窗口的finished参数
+            std::for_each(dataFrame.getFrameWindows().begin(), dataFrame.getFrameWindows().end(), [&](const FrameWindow& frameWindow){
+                frameWindow.setFinished(false);
+            });
+            continue;
+        }
+        //DataFrame dataFrame;
+        uint32_t sum  = 0;
+        for(auto& window: dataFrame.getFrameWindows()){
+            if(window.getMainLRM() != lrmGraphicsItem.getModule().getModuleNumber()){
+                continue; //只有发送lrm才发送，其余接收
+            }
+            if(tickCnt % period < sum + window.getNumOfTimeSlot()){
+                //1000应该是一个和window有关的参数，这里只是为了调试先写死
+                switch(window.getWindowType()){
+                case FrameWindow::DATA_SEND:
+                    ui->label->setText("数据传输窗口");
+                    if(window.getFinished() == true){
                         value = 0;
                     }
-                    ptr_bit = (ptr_bit + 1) % 8;
-                    if(ptr_bit == 0){
-                        ptr_byte = (ptr_byte + 1) % fileLen;
+                    else{
+                        if(ifs.is_open() == false){
+                            ifs.open(window.getDataSourceFile());
+//                            ifs.seekg(0, std::ios::end);
+//                            fileLen = ifs.tellg();
+//                            ifs.seekg(0, std::ios::beg);
+                            ifs.read(buffer, 512);
+                            ptr_byte = 0;
+                            ptr_bit = 0;
+                        }
+                        if(ptr_byte == ifs.gcount()){
+                            ifs.read(buffer, 512);
+                            if(ifs.gcount() == 0 || ifs.eof() == true){
+                                //此时表示文件读完了
+                                window.setFinished(true);
+                                break;
+                            }
+                            ptr_byte = 0;
+                            ptr_bit = 0;
+                        }
+                        if(((buffer[ptr_byte] >> (7 - ptr_bit)) & 1) > 0){
+                            value = 1;
+                        }
+                        else{
+                            value = 0;
+                        }
+                        ptr_bit = (ptr_bit + 1) % 8;
+                        if(ptr_bit == 0){
+                            ptr_byte += 1;
+                        }
+//                        if(ptr_byte == 0 && ptr_bit == 0){
+//                            window.setFinished(true);
+//                        }
+                        break;
                     }
-                    if(ptr_byte == 0 && ptr_bit == 0){
-                        window.setFinished(true);
-                    }
+                case FrameWindow::VERSION_SEND:
+                    ui->label->setText("版本校验窗口");
+                    value = 1;
+                    break;
+                case FrameWindow::LONG_SYNC:
+                    ui->label->setText("长同步窗口");
+                    value = 1;
+                    break;
+                case FrameWindow::FRAME_SWITCH:
+                    ui->label->setText("帧切换窗口");
+                    break;
+                case FrameWindow::CALL_SUBFRAME:
+                    ui->label->setText("子帧调用窗口");
+                    break;
+                case FrameWindow::INT_SEND:
+                    ui->label->setText("中断窗口");
+                    value = 1;
+                    break;
+                case FrameWindow::FRAME_JUMP:
+                    ui->label->setText("帧跳转窗口");
+                    break;
+                case FrameWindow::FREE:
+                    ui->label->setText("FREE窗口");
+                    value = 0;
+                    break;
+                case FrameWindow::SHORT_SYNC:
+                    ui->label->setText("短同步窗口");
+                    break;
+                default:
                     break;
                 }
-            default:
                 break;
             }
+            sum += window.getNumOfTimeSlot();
         }
     }
+
     ++tickCnt;
     static QTime timeStart = QTime::currentTime();
     // calculate two new data points:
-    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
+    double key = timeStart.msecsTo(QTime::currentTime()) / 1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
 
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
+    //if (key-lastPointKey > 0.002) // at most add point every 2 ms
     {
         // add data to lines:
 //          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
@@ -142,14 +205,6 @@ void MonitorWidget::realtimeDataSlot()
 
     ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
     ui->by_d1_chart->replot();
-
-
-
-    // calculate frames per second:
-//    static double lastFpsKey;
-//    static int frameCount;
-//    ++frameCount;
-
 }
 
 void MonitorWidget::realtimeDataSlot2()
@@ -256,8 +311,9 @@ void MonitorWidget::on_actionWatchStart_triggered()
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     if(type == SEND){
         //如果是数据发送方，则自己产生数据
+        dataTimer.setTimerType(Qt::PreciseTimer);
         connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-        dataTimer.start(500); // Interval 0 means to refresh as fast as possible
+        dataTimer.start(33); // Interval 0 means to refresh as fast as possible
     }
     else if(type == RECEIVE){
         //如果是接收方，则接受发送方产生的数据

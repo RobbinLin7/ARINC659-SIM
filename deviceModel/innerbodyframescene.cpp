@@ -195,7 +195,7 @@ void InnerBodyFrameScene::startSimulation()
                 break;
             case FrameWindow::FRAME_SWITCH:
                 break;
-            case FrameWindow::CALL_SUBFRRAME:
+            case FrameWindow::CALL_SUBFRAME:
                 break;
             case FrameWindow::INT_SEND:
                 break;

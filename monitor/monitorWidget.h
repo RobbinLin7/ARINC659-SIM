@@ -9,6 +9,7 @@ class MonitorWidget;
 #include "data/module.h"
 #include "data/dataframe.h"
 #include "data/dataframes.h"
+#include <fstream>
 
 namespace Ui {
 class MonitorWidget;
@@ -43,6 +44,8 @@ private:
     QTimer dataTimer3;
     QTimer dataTimer4;
 
+
+
     const LRMGraphicsItem& lrmGraphicsItem;
 
     Type type = SEND;
@@ -74,6 +77,8 @@ private:
     unsigned ptr_bit = 0;
 
     unsigned fileLen;
+
+    std::ifstream ifs;
 
 signals:
     void sendData(int val);
