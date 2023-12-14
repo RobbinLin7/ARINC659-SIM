@@ -263,19 +263,19 @@ void LRMGraphicsItem::computeLineToBus()
     toBy.update();
 }
 
-QVariant LRMGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
-{
-    if(this->scene() && change == QGraphicsItem::ItemPositionChange){
-        QPointF newPos = value.toPointF();
-        QRectF limitRec(500, 0, 4000 - this->boundingRect().height(), 2470 - this->boundingRect().width());
-        if(limitRec.contains(newPos) == false){
-            newPos.setX()
-        }
-    }
+//QVariant LRMGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+//{
+//    if(this->scene() && change == QGraphicsItem::ItemPositionChange){
+//        QPointF newPos = value.toPointF();
+//        QRectF limitRec(500, 0, 4000 - this->boundingRect().height(), 2470 - this->boundingRect().width());
+//        if(limitRec.contains(newPos) == false){
+//            newPos.setX()
+//        }
+//    }
 
 
-    return  QGraphicsItem::itemChange(change,value);
-}
+//    return  QGraphicsItem::itemChange(change,value);
+//}
 
 
 
