@@ -20,14 +20,16 @@ MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataF
     setAyData();
     setBxData();
     setByData();
-    FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
-    std::ifstream ifs(window.getDataSourceFile());
-    if(ifs){
-        ifs.seekg(0,std::ios::end);
-        fileLen = ifs.tellg();
-        ifs.seekg(0, std::ios::beg);
-        ifs.read(buffer, fileLen);
-        ifs.close();
+    if(dataFrames.size() > 0){
+        FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
+        std::ifstream ifs(window.getDataSourceFile());
+        if(ifs){
+            ifs.seekg(0,std::ios::end);
+            fileLen = ifs.tellg();
+            ifs.seekg(0, std::ios::beg);
+            ifs.read(buffer, fileLen);
+            ifs.close();
+        }
     }
 }
 

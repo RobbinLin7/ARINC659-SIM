@@ -32,6 +32,7 @@ LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsIte
     arrowPath_first = createArrow(startPoint1,endPoint1);
     arrowPath_second = createArrow(startPoint2,endPoint2);
     //InnerBodyFrameScene* scene = dynamic_cast<InnerBodyFrameScene*>(this->scene());
+    //不好的设计，不要在构造函数中将this指针传递出去
     monitorWidget = new MonitorWidget(*this, dataFrames);
 }
 
