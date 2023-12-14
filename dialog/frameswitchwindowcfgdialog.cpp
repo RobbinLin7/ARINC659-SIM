@@ -67,6 +67,7 @@ void FrameSwitchWindowCfgDialog::on_okPushButton_clicked()
     window.setStrSyncCode(ui->syncCode_LineEdit->text().toStdString());
     window.setFlag(ui->checkBox->isChecked());
     window.setStrNewFrameID(QString::number(ui->spinBox_5->value()).toStdString());
+    window.setNumOfTimeSlot(184);
     addNewWindowfunc();
 }
 

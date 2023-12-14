@@ -79,8 +79,12 @@ public:
     bool getFinished() const;
     void setFinished(bool newFinished)const;
 
+    uint32_t getNumOfTimeSlot() const;
+    void setNumOfTimeSlot(const uint32_t &value);
+
 private:
     bool flag; //版本校验窗口中为版本校验标识,在调用子帧以及JUMP 指令中标识是否发送固有空闲
+    uint32_t numOfTimeSlot;
     WindowType windowType;
     int windowId; //窗口序号
     int mainLRM; //主lrm

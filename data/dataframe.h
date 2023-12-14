@@ -47,11 +47,15 @@ public:
 
     bool getRetWithGap() const;
 
+    uint32_t getTotalTimeSlot() const;
+    void setTotalTimeSlot(const uint32_t &value);
+
 private:
     bool windowIdUsed[maxWindowCnt];
     uint idleWaitTime;                      //空闲等待位时
     uint framePeriod;                       //帧周期
     uint totalWindow;                       //窗口总数
+    uint32_t totalTimeSlot = 0;
     std::string frameIdentification;        //帧标识
     TimeAllocationType timeAllocationType;  //时间分配（平均分配，向下集中）
     DataFrameType dataFrameType;            //区分是否为子帧

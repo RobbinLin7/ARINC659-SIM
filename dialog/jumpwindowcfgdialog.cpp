@@ -30,6 +30,7 @@ JumpWindowCfgDialog::~JumpWindowCfgDialog()
 
 void JumpWindowCfgDialog::on_okPushButton_clicked()
 {
+    window.setNumOfTimeSlot(0);
     window.setFlag(ui->checkBox->isChecked());//故有空闲
     window.setStrNewFrameID(ui->lineEdit_2->text().toStdString());//帧标识
     addNewWindowfunc();

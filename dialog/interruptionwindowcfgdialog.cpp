@@ -30,6 +30,7 @@ InterruptionWindowCfgDialog::~InterruptionWindowCfgDialog()
 
 void InterruptionWindowCfgDialog::on_okPushButton_clicked()
 {
+    window.setNumOfTimeSlot(0);
     window.setIntNum1(ui->lineEdit_3->text().toInt());//发送中断号
     window.setIntNum2(ui->lineEdit_2->text().toInt());//接受中断号
     addNewWindowfunc();

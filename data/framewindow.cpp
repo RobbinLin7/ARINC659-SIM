@@ -212,3 +212,13 @@ void FrameWindow::setFinished(bool newFinished)const
 {
     finished = newFinished;
 }
+
+uint32_t FrameWindow::getNumOfTimeSlot() const
+{
+    return numOfTimeSlot;
+}
+
+void FrameWindow::setNumOfTimeSlot(const uint32_t &value)
+{
+    numOfTimeSlot = value;
+}
