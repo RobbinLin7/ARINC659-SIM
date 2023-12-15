@@ -27,6 +27,7 @@ SubFrameCallWindowDialog::~SubFrameCallWindowDialog()
 
 void SubFrameCallWindowDialog::on_okPushButton_clicked()
 {
+    window.setNumOfTimeSlot(900000);
     window.setStrNewFrameID(QString::number(ui->spinBox->value()).toStdString());
     window.setFlag(ui->checkBox->isChecked());
     addNewWindowfunc();

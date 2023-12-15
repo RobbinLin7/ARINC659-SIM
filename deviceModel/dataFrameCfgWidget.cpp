@@ -122,6 +122,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         QTableWidgetItem* receiveAddress = new QTableWidgetItem(QString::fromStdString(window.getReceiveAddr()));
         QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
         QTableWidgetItem* receiveBlock = new QTableWidgetItem(receiveBlockList.join(" "));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
 
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
@@ -129,12 +130,14 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         TableItem* sendAddressItem = new TableItem{4,sendAddress};
         TableItem* receiveBlockItem = new TableItem{5,receiveBlock};
         TableItem* receiveAddressItem = new TableItem{6,receiveAddress};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
         windowType->setTextAlignment(Qt::AlignCenter);
         sendAddress->setTextAlignment(Qt::AlignCenter);
         receiveAddress->setTextAlignment(Qt::AlignCenter);
         sendBlock->setTextAlignment(Qt::AlignCenter);
         receiveBlock->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,sendAddressItem,receiveAddressItem,sendBlockItem,receiveBlockItem,nullptr);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,sendAddressItem,receiveAddressItem,sendBlockItem,receiveBlockItem,numOfTimeSlotItem,nullptr);
 
 
         break;
@@ -158,6 +161,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         QTableWidgetItem* versionReceiveAdress = new QTableWidgetItem(QString::fromStdString(window.getReceiveAddr()));
         QTableWidgetItem* versionSendBlock = new QTableWidgetItem(sendBlockList.join(" "));
         QTableWidgetItem* versionReceiveBlock = new QTableWidgetItem(receiveBlockList.join(" "));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
 
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
@@ -165,12 +169,14 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         TableItem* versionSendBlockItem = new TableItem{3, versionSendBlock};
         TableItem* versionReceiveBlockItem = new TableItem{5, versionReceiveBlock};
         TableItem* versionReceiveAdressItem = new TableItem{6, versionReceiveAdress};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
 
         windowType->setTextAlignment(Qt::AlignCenter);
         versionSendBlock->setTextAlignment(Qt::AlignCenter);
         versionReceiveBlock->setTextAlignment(Qt::AlignCenter);
         versionReceiveAdress->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,versionSendBlockItem,versionReceiveBlockItem,versionReceiveAdressItem,nullptr);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,versionSendBlockItem,versionReceiveBlockItem,versionReceiveAdressItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //finish
@@ -189,6 +195,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
         QTableWidgetItem* syncCode = new QTableWidgetItem(QString::fromStdString(window.getSyncCode()));
         QTableWidgetItem* other = new QTableWidgetItem(flag);
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
 
 
         TableItem* windowIdItem = new TableItem{0, windowId};
@@ -196,13 +203,15 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         TableItem* sendBlockItem = new TableItem{3, sendBlock};
         TableItem* syncCodeItem = new TableItem{7,syncCode};
         TableItem* otherItem = new TableItem{8, other};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
 
         windowType->setTextAlignment(Qt::AlignCenter);
         sendBlock->setTextAlignment(Qt::AlignCenter);
         syncCode->setTextAlignment(Qt::AlignCenter);
         other->setTextAlignment(Qt::AlignCenter);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
 
-        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,otherItem,nullptr);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,otherItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //finish
@@ -221,6 +230,7 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         QTableWidgetItem* sendBlock = new QTableWidgetItem(sendBlockList.join(" "));
         QTableWidgetItem* syncCode = new QTableWidgetItem(QString::fromStdString(window.getSyncCode()));
         QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("新帧标识：" + window.getNewFrameID()));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
 
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
@@ -228,14 +238,16 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         TableItem* newFrameIdItem = new TableItem{5, newFrameId};
         TableItem* syncCodeItem = new TableItem{7,syncCode};
         TableItem* otherItem = new TableItem{8, other};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
 
         syncCode->setTextAlignment(Qt::AlignCenter);
         other->setTextAlignment(Qt::AlignCenter);
         sendBlock->setTextAlignment(Qt::AlignCenter);
         newFrameId->setTextAlignment(Qt::AlignCenter);
         windowType->setTextAlignment(Qt::AlignCenter);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
 
-        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,newFrameIdItem,otherItem,nullptr);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,syncCodeItem,sendBlockItem,newFrameIdItem,otherItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //finish
@@ -245,14 +257,21 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         windowType = new QTableWidgetItem("调用子帧窗口");
         QTableWidgetItem* other = new QTableWidgetItem(flag);
         QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("帧标识：" + window.getNewFrameID()));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
+
+
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
         TableItem* newFrameIdItem = new TableItem{5, newFrameId};
         TableItem* otherItem = new TableItem{8, other};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
+
+
         windowType->setTextAlignment(Qt::AlignCenter);
         newFrameId->setTextAlignment(Qt::AlignCenter);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
         other->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,nullptr);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //中断接受模块需整体更改
@@ -261,14 +280,20 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         windowType = new QTableWidgetItem("中断发送窗口");
         QTableWidgetItem* windowInterruptCode = new QTableWidgetItem(QString::number(window.getIntNum1()));
         QTableWidgetItem* interruptReceiver = new QTableWidgetItem(QString::number(window.getIntNum2()));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
+
+
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
         TableItem* windowInterruptCodeItem = new TableItem{2,windowInterruptCode};
         TableItem* interruptReceiverItem = new TableItem{5,interruptReceiver};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
+
         windowType->setTextAlignment(Qt::AlignCenter);
         windowInterruptCode->setTextAlignment(Qt::AlignCenter);
         interruptReceiver->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,windowInterruptCodeItem,interruptReceiverItem,nullptr);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex,windowIdItem,windowTypeItem,windowInterruptCodeItem,interruptReceiverItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //finish
@@ -278,14 +303,21 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
         windowType = new QTableWidgetItem("帧跳转窗口");
         QTableWidgetItem* other = new QTableWidgetItem(flag);
         QTableWidgetItem* newFrameId = new QTableWidgetItem(QString::fromStdString("新帧标识：" + window.getNewFrameID()));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
+
+
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
         TableItem* newFrameIdItem = new TableItem{5, newFrameId};
         TableItem* otherItem = new TableItem{8, other};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
+
+
         windowType->setTextAlignment(Qt::AlignCenter);
         newFrameId->setTextAlignment(Qt::AlignCenter);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
         other->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,nullptr);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,newFrameIdItem,otherItem,numOfTimeSlotItem,nullptr);
         break;
     }
     //finish
@@ -293,29 +325,44 @@ void DataFrameCfgWidget::addWindow(const FrameWindow &window)
     {
         windowType = new QTableWidgetItem("空闲等待窗口");
         QTableWidgetItem* sendTimeScale = new QTableWidgetItem(QString::number(window.getSendTimeScale()));
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
+
+
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
         TableItem* sendTimeScaleItem = new TableItem{8, sendTimeScale};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
+
+
         windowType->setTextAlignment(Qt::AlignCenter);
         sendTimeScale->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,sendTimeScaleItem,nullptr);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget,rowIndex,windowIdItem,windowTypeItem,sendTimeScaleItem,numOfTimeSlotItem,nullptr);
         break;
     }
     case FrameWindow::SHORT_SYNC:{
         windowType = new QTableWidgetItem("短同步窗口");
+        QTableWidgetItem* numOfTimeSlot = new QTableWidgetItem(QString::number(window.getNumOfTimeSlot()));
+
+
         TableItem* windowIdItem = new TableItem{0, windowId};
         TableItem* windowTypeItem = new TableItem{1, windowType};
+        TableItem* numOfTimeSlotItem = new TableItem{9,numOfTimeSlot};
+
         windowType->setTextAlignment(Qt::AlignCenter);
-        addTableItems(ui->windowTableWidget, rowIndex, windowIdItem, windowTypeItem, nullptr);
+        numOfTimeSlot->setTextAlignment(Qt::AlignCenter);
+        addTableItems(ui->windowTableWidget, rowIndex, windowIdItem, windowTypeItem,numOfTimeSlotItem ,nullptr);
         break;
     }
     default:
         break;
     }
-    //TableItem* windowIdItemWithIndex = new TableItem{0, windowIdItem};
-    //TableItem* windowTypeItemWithIndex = new TableItem{1, windowTypeItem};
-    //windowTypeItem->setTextAlignment(Qt::AlignCenter);
-    //addTableItems(ui->windowTableWidget, rowIndex, windowIdItemWithIndex, windowTypeItemWithIndex, nullptr);
+
+//    uint32_t totalTimeUpdate;
+//    totalTimeUpdate = this->dataFrame.getTotalTimeSlot()+ window.getNumOfTimeSlot();
+//    this->dataFrame.setTotalTimeSlot(totalTimeUpdate);
+//    ui->totalWindow_lineEdit->setText(QString::number(totalTimeUpdate));
+
 }
 
 bool DataFrameCfgWidget::addTableItems(QTableWidget *tableWidget, int rowIndex, TableItem *firstItem, ...)
@@ -552,14 +599,22 @@ void DataFrameCfgWidget::on_deleteWindowPushButton_clicked(bool)
 {
     if(ui->windowTableWidget->currentRow() >= 0){
         int row = ui->windowTableWidget->currentRow();
+        uint32_t totalTimeUpdate;
+        totalTimeUpdate = this->dataFrame.getTotalTimeSlot() - ui->windowTableWidget->item(row, 9)->text().toUInt();
+        this->dataFrame.setTotalTimeSlot(totalTimeUpdate);
+        ui->totalTimeSlot_LineEdit->setText(QString::number(totalTimeUpdate));
         ui->windowTableWidget->removeRow(row);
         dataFrame.deleteFrameWindowAtIndex(row);
+        ui->totalWindow_lineEdit->setText(QString::number(ui->totalWindow_lineEdit->text().toUInt() - 1));
+//        uint32_t totalTimeUpdate;
+//        totalTimeUpdate = this->dataFrame.getTotalTimeSlot() - ui->windowTableWidget->item(row, 9)->text().toUInt();
+//        this->dataFrame.setTotalTimeSlot(totalTimeUpdate);
+//        ui->totalTimeSlot_LineEdit->setText(QString::number(totalTimeUpdate));
         while(row < ui->windowTableWidget->rowCount()){
             uint id = ui->windowTableWidget->item(row, 0)->text().toUInt() - 1;
             ui->windowTableWidget->item(row, 0)->setText(QString::number(id));
             ++row;
         }
-        ui->totalWindow_lineEdit->setText(QString::number(ui->totalWindow_lineEdit->text().toUInt() - 1));
     }
     else{
         qDebug() << "选中项目为空";
@@ -585,6 +640,10 @@ void DataFrameCfgWidget::addNewWindow(const FrameWindow &frameWindow)
     dataFrame.insertFrameWindow(frameWindow);
     addWindow(frameWindow);
     ui->totalWindow_lineEdit->setText(QString::number(ui->totalWindow_lineEdit->text().toUInt() + 1));
+    uint32_t totalTimeUpdate;
+    totalTimeUpdate = this->dataFrame.getTotalTimeSlot()+ frameWindow.getNumOfTimeSlot();
+    this->dataFrame.setTotalTimeSlot(totalTimeUpdate);
+    ui->totalTimeSlot_LineEdit->setText(QString::number(totalTimeUpdate));
 }
 
 bool DataFrameCfgWidget::eventFilter(QObject *watched, QEvent *event)

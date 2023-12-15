@@ -97,6 +97,7 @@ void LongSyncWindowCfgDialog::on_okPushButton_clicked()
         QMessageBox::warning(this, "错误", "同步码参数超出范围");
         return;
     }
+    window.setNumOfTimeSlot(184);
     window.setMainLRM(ui->mainLRM_comboBox->currentText().toInt());
     window.setStrSyncCode(ui->syncCode_lineEdit->text().toStdString());
     window.setSupportLRM1(ui->backupLRM1_comboBox->currentText().toStdString());

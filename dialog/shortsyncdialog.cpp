@@ -18,5 +18,6 @@ ShortSyncDialog::~ShortSyncDialog()
 
 void ShortSyncDialog::on_okPushButton_clicked()
 {
+    window.setNumOfTimeSlot(10);
     addNewWindowfunc();
 }

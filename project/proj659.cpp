@@ -10,7 +10,7 @@ Proj659::~Proj659()
     if(save == true){
         //如果需要保存
     }
-    delete projectTree;
+    //delete projectTree;
 }
 
 Proj659::Proj659(QString name, QString description, QTreeWidgetItem* projectTree)

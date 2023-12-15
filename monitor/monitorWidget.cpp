@@ -48,7 +48,7 @@ void MonitorWidget::realtimeDataSlot()
     totalPeriod = totalPeriod * 10000000 / 333;
     int sumPeriod = 0;
     for(auto& dataFrame: dataFrames){
-        auto period = dataFrame.getFramePeriod() * 10000000 / 333;
+        auto period = dataFrame.getFramePeriod() * 10000000 / 333 / 2;
         sumPeriod += period;
         if(tickCnt % totalPeriod == sumPeriod){
             //新周期的开始，更新所有的窗口的finished参数
@@ -59,14 +59,17 @@ void MonitorWidget::realtimeDataSlot()
         }
         //DataFrame dataFrame;
         uint32_t sum  = 0;
+        bool flag = false;
         for(auto& window: dataFrame.getFrameWindows()){
-            if(window.getMainLRM() != lrmGraphicsItem.getModule().getModuleNumber()){
-                continue; //只有发送lrm才发送，其余接收
-            }
+
             if(tickCnt % period < sum + window.getNumOfTimeSlot()){
                 //1000应该是一个和window有关的参数，这里只是为了调试先写死
+                flag = true;
                 switch(window.getWindowType()){
                 case FrameWindow::DATA_SEND:
+                    if(window.getMainLRM() != lrmGraphicsItem.getModule().getModuleNumber()){
+                        continue; //只有发送lrm才发送，其余接收
+                    }
                     ui->label->setText("数据传输窗口");
                     if(window.getFinished() == true){
                         value = 0;
@@ -86,6 +89,7 @@ void MonitorWidget::realtimeDataSlot()
                             if(ifs.gcount() == 0 || ifs.eof() == true){
                                 //此时表示文件读完了
                                 window.setFinished(true);
+                                ifs.close();
                                 break;
                             }
                             ptr_byte = 0;
@@ -141,6 +145,9 @@ void MonitorWidget::realtimeDataSlot()
             }
             sum += window.getNumOfTimeSlot();
         }
+        if(flag == false){
+            ui->label->setText("空闲");
+        }
     }
 
     ++tickCnt;
@@ -149,7 +156,7 @@ void MonitorWidget::realtimeDataSlot()
     double key = timeStart.msecsTo(QTime::currentTime()) / 1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
 
-    //if (key-lastPointKey > 0.002) // at most add point every 2 ms
+    if (key-lastPointKey > 0.002) // at most add point every 2 ms
     {
         // add data to lines:
 //          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
@@ -313,11 +320,10 @@ void MonitorWidget::on_actionWatchStart_triggered()
         //如果是数据发送方，则自己产生数据
         dataTimer.setTimerType(Qt::PreciseTimer);
         connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-        dataTimer.start(33); // Interval 0 means to refresh as fast as possible
+        dataTimer.start(1); // Interval 0 means to refresh as fast as possible
     }
     else if(type == RECEIVE){
         //如果是接收方，则接受发送方产生的数据
-
     }
 }
 

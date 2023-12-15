@@ -316,7 +316,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_5">
+       <widget class="QLineEdit" name="totalTimeSlot_LineEdit">
         <property name="enabled">
          <bool>false</bool>
         </property>

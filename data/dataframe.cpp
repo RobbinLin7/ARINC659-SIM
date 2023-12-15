@@ -111,3 +111,13 @@ bool DataFrame::getRetWithGap() const
 {
     return retWithGap;
 }
+
+uint32_t DataFrame::getTotalTimeSlot() const
+{
+    return totalTimeSlot;
+}
+
+void DataFrame::setTotalTimeSlot(const uint32_t &value)
+{
+    totalTimeSlot = value;
+}

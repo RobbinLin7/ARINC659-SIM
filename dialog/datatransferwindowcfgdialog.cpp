@@ -64,6 +64,7 @@ void DataTransferWindowCfgDialog::on_okPushButton_clicked()
     window.setSupportLRM2(ui->backupLRM2_comboBox->currentText().toStdString());
     window.setSupportLRM3(ui->backupLRM3_comboBox->currentText().toStdString());
     window.setDataSourceFile(ui->dataSource_lineEdit->text().toStdString());
+    window.setNumOfTimeSlot(4085);//设置窗口对应的位时
 
     //存设置好的接受LRM值
     std::istringstream iss(ui->receiveLRM_lineEdit->text().toStdString());

@@ -57,6 +57,7 @@ VersionDetectionWindowCfgDialog::~VersionDetectionWindowCfgDialog()
 
 void VersionDetectionWindowCfgDialog::on_okPushButton_clicked()
 {
+    window.setNumOfTimeSlot(37);
     window.setMainLRM(nameToId[ui->mainLRM_comboBox->currentText().toStdString()]);
     window.setSupportLRM1(ui->backupLRM1_comboBox->currentText().toStdString());
     window.setSupportLRM2(ui->backupLRM2_comboBox->currentText().toStdString());

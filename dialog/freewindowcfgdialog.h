@@ -17,8 +17,11 @@ public:
 
 private:
     Ui::FreeWindowCfgDialog *ui;
+    void installValidator();
+    bool check(QWidget* qWidget);
 protected slots:
     void on_okPushButton_clicked();
+    void dynamicSetLineEdit();
 };
 
 #endif // FREEWINDOWCFGDIALOG_H
