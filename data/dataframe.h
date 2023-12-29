@@ -60,7 +60,9 @@ private:
     TimeAllocationType timeAllocationType;  //时间分配（平均分配，向下集中）
     DataFrameType dataFrameType;            //区分是否为子帧
     std::vector<FrameWindow> frameWindows;    //窗口列表
-    bool retWithGap;                        //子序列返回时是否发送固有空闲，即利用RET，还是RETI返回
+    bool retWithGap = false;                  //子序列返回时是否发送固有空闲，即利用RET，还是RETI返回
 };
+
+bool operator==(const DataFrame& dataFrame1, const DataFrame& dataFrame2);
 
 #endif // DATAFRAME_H

@@ -11,10 +11,31 @@
 #include <QProcess>
 #include <fstream>
 
+#include "spdlog/spdlog.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    spdlog::info("Welcome to spdlog!");
+    spdlog::error("Some error message with arg: {}", 1);
+
+    spdlog::warn("Easy padding in numbers like {:08d}", 12);
+    spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+    spdlog::info("Support for floats {:03.2f}", 1.23456);
+    spdlog::info("Positional args are {1} {0}..", "too", "supported");
+    spdlog::info("{:<30}", "left aligned");
+
+    spdlog::set_level(spdlog::level::debug); // Set global log level to debug
+    spdlog::debug("This message should be displayed..");
+
+    // change log pattern
+    spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+
+    // Compile time log levels
+    // define SPDLOG_ACTIVE_LEVEL to desired level
+    SPDLOG_TRACE("Some trace message with param {}", 42);
+    SPDLOG_DEBUG("Some debug message");
     ui->setupUi(this);
     ui->paraConfigWidget->hide();
     ui->projectTreeWidget->clear();
@@ -56,17 +77,16 @@ void MainWindow::on_actionNewBodyFrameItem_triggered()
  */
 void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
     currentProject->addBodyFrameItem(bodyFrameItem);
-    std::shared_ptr<BodyFrameGraphicsItem> graphicsItem = std::shared_ptr<BodyFrameGraphicsItem>(new BodyFrameGraphicsItem(scene->getAx(),
-                                                                                                                           scene->getAy(),
-                                                                                                                           scene->getBx(),
-                                                                                                                           scene->getBy(),
-                                                                                                        bodyFrameItem));
-
+    BodyFrameGraphicsItem* graphicsItem = new BodyFrameGraphicsItem(scene->getAx(),
+                                                                    scene->getAy(),
+                                                                    scene->getBx(),
+                                                                    scene->getBy(),
+                                                                    bodyFrameItem);
 //    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, [=](uint id){
 //       ui->graphicsView->setScene(new InnerBodyFrameScene(bodyFrameItem,this));
 //    });
 
-    bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
+    //bodyFrameGraphicsItems.insert(bodyFrameItem.getBodyFrameItemID(), graphicsItem);
     if(scene->addBodyFrameItem(graphicsItem) == false){
         qDebug() << "scene addbodyframeitem failed";
         return;
@@ -74,11 +94,9 @@ void MainWindow::saveBodyFrameItemSlot(const BodyFrame& bodyFrameItem){
     currentBodyFrameList.insert(bodyFrameItem.getBodyFrameItemID(), bodyFrameCfgWidget);
 
     //对应删除机架、配置机架和进入机架
-    connect(graphicsItem.get(), &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
-    connect(graphicsItem.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
-    connect(graphicsItem.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
-
-
+    connect(graphicsItem, &BodyFrameGraphicsItem::enterInBodyFrame, this, &MainWindow::createNewInnerBodyFrameScene);
+    connect(graphicsItem, &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &MainWindow::cfgBodyFrameItemSlot);
+    connect(graphicsItem, &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &MainWindow::deleteBodyFrameItemSlot);
     auto p = ui->projectTreeWidget->findItems("机架配置", Qt::MatchContains | Qt::MatchRecursive);
     for(auto &x : p){
         QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
@@ -133,8 +151,8 @@ void MainWindow::cfgBodyFrameItemSlot(uint frameId)
 void MainWindow::deleteBodyFrameItemSlot(uint id)
 {
     currentProject->deleteBodyFrameItem(id);
-    scene->deleteBodyFrameItem(bodyFrameGraphicsItems.value(id)->pos().x());
-    bodyFrameGraphicsItems.remove(id);
+    //scene->deleteBodyFrameItem(bodyFrameGraphicsItems.value(id)->pos().x());
+    //bodyFrameGraphicsItems.remove(id);
     scene->update();
 }
 
@@ -149,17 +167,10 @@ void MainWindow::on_actionChangeStyleSheet_triggered()
 
 void MainWindow::on_actionCreateCMDTable_triggered()
 {
+    on_actionSaveProject_triggered();
     if(CommandFile::createCommandFile(*currentProject) == true){
         addLogToDockWidget(QString("命令表生成成功"));
-        if(currentProject->getCommandFilePath() == ""){
-            currentProject->setCommandFilePath(currentProject->getName() + ".txt");
-            auto p = ui->projectTreeWidget->findItems("命令表文件", Qt::MatchContains | Qt::MatchRecursive);
-            for(auto &x : p){
-                QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
-                treeWidgetItem->setText(0, currentProject->getName() + ".txt");
-                x->setExpanded(true);
-            }
-        }
+        addCommandFileToFileTree();
     }
     else{
         addLogToDockWidget(QString("命令表生成失败"));
@@ -321,14 +332,35 @@ void MainWindow::on_actionOpenProject_triggered()
         QMessageBox::critical(this, QString(tr("错误")), QString(tr("打开项目失败")));
     }
     else{
-        Proj659 project = MyXml::loadProjectFromXml(filePath);
-        currentProject = std::make_shared<Proj659>(project);
+        currentProject = std::make_shared<Proj659>(MyXml::loadProjectFromXml(filePath));
+        currentProject->setPath(filePath.left(filePath.lastIndexOf('/')));
+        createNewScene();
+        for(auto& bodyFrame: currentProject->getBodyFrameItems()){
+            saveBodyFrameItemSlot(bodyFrame);
+        }
+        currentProject->setProjectTree(createProjectTree(currentProject->getName()));
+        enableAllActionNeedAProject();
+        ui->projectTreeWidget->setColumnCount(1);
+        if(QFile::exists(currentProject->getPath() + "/" + QString("%1.txt").arg(currentProject->getName()))){
+            addCommandFileToFileTree();
+        }
+        addLogToDockWidget(QString(tr("项目打开成功")));
     }
 }
 
 void MainWindow::on_actionSaveProject_triggered()
 {
-    MyXml::saveProjectToXml(QString("%1.proj659").arg(currentProject->getName()), *currentProject);
+//    QDir dir(currentProject->getName());
+//    if(dir.exists() == false){
+//        if(dir.mkdir(currentProject->getName()) == false){
+//            addLogToDockWidget("项目保存失败");
+//        }
+//    }
+//    if(dir.exists()){
+//        MyXml::saveProjectToXml(QString("%1/%1.proj659").arg(currentProject->getName()), *currentProject);
+//    }
+    MyXml::saveProjectToXml(*currentProject);
+//    MyXml::saveProjectToXml(QString("%1.proj659").arg(currentProject->getName()), *currentProject);
     currentProject->setStatus(Proj659::saved);
 }
 /**
@@ -342,6 +374,7 @@ void MainWindow::addNewProjectSlot(QString name, QString info)
 
     if((currentProject = std::shared_ptr<Proj659>(new Proj659(name, info, topItem))) != nullptr){
         enableAllActionNeedAProject();
+        currentProject->setPath(QString("%1/%2").arg(QDir::currentPath()).arg(name));
     }
     else{
         delete topItem;
@@ -371,6 +404,17 @@ void MainWindow::enableAllActionNeedAProject()
     this->ui->menuCMDTableManagement->setEnabled(true);
     this->ui->menuMonitor->setEnabled(true);
     this->ui->menuSimulink->setEnabled(true);
+}
+
+void MainWindow::addCommandFileToFileTree()
+{
+    currentProject->setCommandFilePath(currentProject->getName() + ".txt");
+    auto p = ui->projectTreeWidget->findItems("命令表文件", Qt::MatchContains | Qt::MatchRecursive);
+    for(auto &x : p){
+        QTreeWidgetItem *treeWidgetItem = new QTreeWidgetItem(x);
+        treeWidgetItem->setText(0, currentProject->getName() + ".txt");
+        x->setExpanded(true);
+    }
 }
 
 QTreeWidgetItem* MainWindow::createProjectTree(QString name)
@@ -439,7 +483,7 @@ void MainWindow::createNewInnerBodyFrameScene(uint bodyFrameId)
     connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::modifyBodyFrameSignal, this, [this](const BodyFrame& bodyFrame){
         currentProject->addBodyFrameItem(bodyFrame);
     });
-    bodyFrameScenes[bodyFrameId] = innerBodyFrameScene;
+    //bodyFrameScenes[bodyFrameId] = innerBodyFrameScene;
     connect(innerBodyFrameScene.get(), &InnerBodyFrameScene::exitBodyFrameSignal, this, [=](){
         ui->graphicsView->setScene(scene.get());
         ui->graphicsView->centerOn(1000, 2350);
@@ -473,23 +517,39 @@ QString MainWindow::createBatchFile()
 
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+bool MainWindow::checkWhetherNeedToShowSaveWarningDialog()
 {
     if(currentProject == nullptr || currentProject->getStatus() == Proj659::saved){
+        return false;
+    }
+    else if(*currentProject == MyXml::loadProjectFromXml(currentProject->getPath() + "/" + currentProject->getName() + ".proj659")){
+        return false;
+    }
+    return true;
+}
+
+int MainWindow::showSaveWarningDialog()
+{
+    QString message = "项目尚未保存，确认要退出吗？";
+    //QMessageBox::question(this, "退出", message, QPushButton("保存并退出"), QPushButton("取消"));
+    QMessageBox box(QMessageBox::Warning, "退出", message);
+    box.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Cancel);
+    box.setButtonText(QMessageBox::Save, QString("保存并退出"));
+    box.setButtonText(QMessageBox::Discard, QString("放弃修改"));
+    box.setButtonText(QMessageBox::Cancel, QString("取消"));
+    return box.exec();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(checkWhetherNeedToShowSaveWarningDialog() == false){
         event->accept();
     }
     else{
-        QString message = "项目尚未保存，确认要退出吗？";
-        //QMessageBox::question(this, "退出", message, QPushButton("保存并退出"), QPushButton("取消"));
-        QMessageBox box(QMessageBox::Warning, "退出", message);
-        box.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        box.setDefaultButton(QMessageBox::Cancel);
-        box.setButtonText(QMessageBox::Save, QString("保存并退出"));
-        box.setButtonText(QMessageBox::Discard, QString("放弃修改"));
-        box.setButtonText(QMessageBox::Cancel, QString("取消"));
-        int choosedBtn = box.exec();
+        auto choosedBtn = showSaveWarningDialog();
         if(choosedBtn == QMessageBox::Save){
-            MyXml::saveProjectToXml(QString("%1.proj659").arg(currentProject->getName()), *currentProject);
+            on_actionSaveProject_triggered();
             event->accept();
         }
         else if(choosedBtn == QMessageBox::Discard){
@@ -521,12 +581,39 @@ void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
             QAction* closeAction = new QAction(QString("关闭%1").arg(item->text(column)), ui->projectTreeWidget);
             QAction* deleteAction = new QAction(QString("删除%1").arg(item->text(column)), ui->projectTreeWidget);
             QMenu *menu = new QMenu(ui->projectTreeWidget);
-            connect(closeAction, &QAction::triggered, this, [=](){
+            connect(closeAction, &QAction::triggered, this, [&](){
                 //ui->projectTreeWidget->removeItemWidget(item, column);
                 //delete item;
-                currentProject = nullptr;
-                scene = nullptr;
-                disableAllActionNeedAProject();
+
+                if(checkWhetherNeedToShowSaveWarningDialog() == true){
+                    auto choosedBtn = showSaveWarningDialog();
+                    if(choosedBtn == QMessageBox::Save){
+                        on_actionSaveProject_triggered();
+                        currentProject = nullptr;
+                        innerBodyFrameScene = nullptr;
+                        scene = nullptr;
+                        disableAllActionNeedAProject();
+                        addLogToDockWidget("保存项目成功");
+                        addLogToDockWidget("关闭项目成功");
+                    }
+                    else if(choosedBtn == QMessageBox::Discard){
+                        currentProject = nullptr;
+                        innerBodyFrameScene = nullptr;
+                        scene = nullptr;
+                        disableAllActionNeedAProject();
+                        addLogToDockWidget("关闭项目成功");
+                    }
+                }
+                else{
+                    currentProject = nullptr;
+                    innerBodyFrameScene = nullptr;
+                    scene = nullptr;
+                    disableAllActionNeedAProject();
+                    addLogToDockWidget("关闭项目成功");
+                }
+
+                //qDebug() << "bodyFrameGraphicsItem size" << bodyFrameGraphicsItems.size();
+                //bodyFrameGraphicsItems.clear();
                 //currentBodyFrameList.clear();
             });
             connect(deleteAction, &QAction::triggered, this, [=](){

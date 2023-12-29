@@ -21,16 +21,14 @@ class MonitorWidget : public QWidget
 
 public:
     enum Type{SEND, RECEIVE};
-    explicit MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames, QWidget *parent = nullptr);
+    explicit MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames,
+                           const QMap<uint, std::shared_ptr<LRMGraphicsItem>>* moduleGraphicItems, QWidget *parent = nullptr);
     ~MonitorWidget();
     const int maxBufferSize = 512;
     void setType(Type newType);
 
 private slots:
   void realtimeDataSlot();
-  void realtimeDataSlot2();
-  void realtimeDataSlot3();
-  void realtimeDataSlot4();
   void on_actionWatchStart_triggered();
   void on_actionWatchEnd_triggered();
   void on_startBtn_clicked();
@@ -44,7 +42,7 @@ private:
     QTimer dataTimer3;
     QTimer dataTimer4;
 
-
+    const QMap<uint, std::shared_ptr<LRMGraphicsItem>>* moduleGraphicItems;
 
     const LRMGraphicsItem& lrmGraphicsItem;
 

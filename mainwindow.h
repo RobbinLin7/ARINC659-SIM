@@ -89,9 +89,9 @@ private:
 
     QMap<uint, std::shared_ptr<BodyFrameCfgWidget>> currentBodyFrameList;
 
-    QMap<uint, std::shared_ptr<BodyFrameGraphicsItem>> bodyFrameGraphicsItems;
+    //QMap<uint, std::shared_ptr<BodyFrameGraphicsItem>> bodyFrameGraphicsItems;
 
-    QMap<uint, std::shared_ptr<InnerBodyFrameScene>> bodyFrameScenes;
+    //QMap<uint, std::shared_ptr<InnerBodyFrameScene>> bodyFrameScenes;
 
     QVBoxLayout *layout;
 
@@ -109,6 +109,8 @@ private:
 
     void enableAllActionNeedAProject();
 
+    void addCommandFileToFileTree();
+
     QTreeWidgetItem* createProjectTree(QString);
 
     void createNewScene();
@@ -124,6 +126,10 @@ private:
     std::shared_ptr<Proj659> currentProject = nullptr;
 
     std::shared_ptr<InnerBodyFrameScene> innerBodyFrameScene = nullptr;
+
+    bool checkWhetherNeedToShowSaveWarningDialog();
+
+    int showSaveWarningDialog();
 
     // QWidget interface
 protected:

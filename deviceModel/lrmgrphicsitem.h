@@ -15,7 +15,8 @@ class LRMGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module, const DataFrames& dataFrames);
+    LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module);
+    ~LRMGraphicsItem();
     QRectF getRect_bound() const;
     void setRect_bound(const QRectF &value);
 
@@ -40,6 +41,8 @@ public:
 
     const Module &getModule() const;
 
+    void initMonitorWidget();
+
 private:
     QRectF rect_cpu;
     QRectF rect_659;
@@ -58,7 +61,6 @@ private:
     BodyFrameToBusLineItem toBy;
 
     MonitorWidget* monitorWidget = nullptr;
-    const DataFrames& dataFrames;
 
     // QGraphicsItem interface
 protected:

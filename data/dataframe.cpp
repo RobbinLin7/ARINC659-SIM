@@ -121,3 +121,24 @@ void DataFrame::setTotalTimeSlot(const uint32_t &value)
 {
     totalTimeSlot = value;
 }
+
+bool operator==(const DataFrame& dataFrame1, const DataFrame& dataFrame2){
+    bool flag = (dataFrame1.getFrameWindows() == dataFrame2.getFrameWindows());
+    flag = flag && (dataFrame1.getFrameIdentification() == dataFrame2.getFrameIdentification());
+    flag = flag && (dataFrame1.getFramePeriod() == dataFrame2.getFramePeriod());
+    flag = flag && (dataFrame1.getIdleWaitTime() == dataFrame2.getIdleWaitTime());
+    flag = flag && ((bool)dataFrame1.getRetWithGap() == (bool)dataFrame2.getRetWithGap());
+    flag = flag && (dataFrame1.getTimeAllocationType() == dataFrame2.getTimeAllocationType());
+    flag = flag && (dataFrame1.getTotalTimeSlot() == dataFrame2.getTotalTimeSlot());
+    flag = flag && (dataFrame1.getTotalWindow() == dataFrame2.getTotalWindow());
+    flag = flag && (dataFrame1.getDataFrameType() == dataFrame2.getDataFrameType());
+    return (flag = (dataFrame1.getDataFrameType() == dataFrame2.getDataFrameType()) &&
+           (dataFrame1.getFrameIdentification() == dataFrame2.getFrameIdentification()) &&
+           (dataFrame1.getFramePeriod() == dataFrame2.getFramePeriod()) &&
+           (dataFrame1.getIdleWaitTime() == dataFrame2.getIdleWaitTime()) &&
+           (dataFrame1.getRetWithGap() == dataFrame2.getRetWithGap()) &&
+           (dataFrame1.getTimeAllocationType() == dataFrame2.getTimeAllocationType()) &&
+           (dataFrame1.getTotalTimeSlot() == dataFrame2.getTotalTimeSlot()) &&
+           (dataFrame1.getTotalWindow() == dataFrame2.getTotalWindow()) &&
+           (dataFrame1.getFrameWindows() == dataFrame2.getFrameWindows()));
+}

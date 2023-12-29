@@ -222,3 +222,25 @@ void FrameWindow::setNumOfTimeSlot(const uint32_t &value)
 {
     numOfTimeSlot = value;
 }
+
+bool operator==(const FrameWindow& frameWindow1, const FrameWindow& frameWindow2){
+    return (frameWindow1.getWindowId() == frameWindow2.getWindowId()) &&
+           (frameWindow1.getWindowType() == frameWindow2.getWindowType()) &&
+           (frameWindow1.getDataCount() == frameWindow2.getDataCount()) &&
+           (frameWindow1.getDataSourceFile() == frameWindow2.getDataSourceFile()) &&
+           (frameWindow1.getFinished() == frameWindow2.getFinished()) &&
+           (frameWindow1.getFlag() == frameWindow2.getFlag()) &&
+           (frameWindow1.getIntNum1() == frameWindow2.getIntNum1()) &&
+           (frameWindow1.getIntNum2() == frameWindow2.getIntNum2()) &&
+           (frameWindow1.getMainLRM() == frameWindow2.getMainLRM()) &&
+           (frameWindow1.getNewFrameID() == frameWindow2.getNewFrameID()) &&
+           (frameWindow1.getNumOfTimeSlot() == frameWindow2.getNumOfTimeSlot()) &&
+           (frameWindow1.getReceiveAddr() == frameWindow2.getReceiveAddr()) &&
+           (frameWindow1.getReceiveLRMList() == frameWindow2.getReceiveLRMList()) &&
+           (frameWindow1.getSendAddr() == frameWindow2.getSendAddr()) &&
+           (frameWindow1.getSendTimeScale() == frameWindow2.getSendTimeScale()) &&
+           (frameWindow1.getSupportLRM1() == frameWindow2.getSupportLRM1()) &&
+           (frameWindow1.getSupportLRM2() == frameWindow2.getSupportLRM2()) &&
+           (frameWindow1.getSupportLRM3() == frameWindow2.getSupportLRM3()) &&
+           (frameWindow1.getSyncCode() == frameWindow2.getSyncCode());
+}

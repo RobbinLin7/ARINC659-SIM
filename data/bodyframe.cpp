@@ -163,17 +163,20 @@ Module& BodyFrame::getModule(uint moduleId)
 
 void BodyFrame::addDataFrame(const DataFrame &dataFrame)
 {
-    dataFrames.push(dataFrame);
+    dataFrames.push(dataFrame.getFrameIdentification(), dataFrame);
     //dataFrames[dataFrame.getFrameIdentification()] = dataFrame;
     //dataFramesOrder.push_back(dataFrame.getFrameIdentification());
 }
 
 void BodyFrame::modifyDataFrame(const DataFrame& dataFrame)
 {
-    DataFrames::Iterator itr = dataFrames.find(dataFrame);
-    if(itr != dataFrames.end()){
-        *itr = dataFrame;
+    if(dataFrames.exist(dataFrame.getFrameIdentification())){
+        dataFrames.at(dataFrame.getFrameIdentification()) = dataFrame;
     }
+//    DataFrames::Iterator itr = dataFrames.find(dataFrame);
+//    if(itr != dataFrames.end()){
+//        *itr = dataFrame;
+//    }
 }
 
 void BodyFrame::deleteDataFrame(std::string dataFrameIdentification)
@@ -221,4 +224,16 @@ const std::map<uint, Module> &BodyFrame::getModules() const
 void BodyFrame::setModules(const std::map<uint, Module> &newModules)
 {
     modules = newModules;
+}
+
+bool operator==(const BodyFrame& bodyFrame1, const BodyFrame& bodyFrame2){
+    bool flag = (bodyFrame1.getDataFrames() == bodyFrame2.getDataFrames());
+    return (bodyFrame1.getBodyFrameItemID() == bodyFrame2.getBodyFrameItemID()) &&
+           (bodyFrame1.getArbitrationStepDuration() == bodyFrame2.getArbitrationStepDuration()) &&
+           (bodyFrame1.getDataFrames() == bodyFrame2.getDataFrames()) &&
+           (bodyFrame1.getMajorVersionNumber() == bodyFrame2.getMajorVersionNumber()) &&
+           (bodyFrame1.getMessageInterval() == bodyFrame2.getMessageInterval()) &&
+           (bodyFrame1.getModules() == bodyFrame2.getModules()) &&
+           (bodyFrame1.getSubVersionNumber() == bodyFrame2.getSubVersionNumber()) &&
+           (bodyFrame1.getTimeCalibrationFactor() == bodyFrame2.getTimeCalibrationFactor());
 }

@@ -69,7 +69,8 @@ void BodyFrameGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *eve
        emit(cfgBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID()));
     });
     connect(deleteBF, &QAction::triggered, this, [=](){
-       emit(deleteBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID()));
+       emit(deleteBodyFrameItemSignal(this->bodyFrameItem.getBodyFrameItemID(), this->x()));
+       this->~BodyFrameGraphicsItem();
     });
     menu.exec(point);
 }

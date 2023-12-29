@@ -103,7 +103,8 @@ private:
     std::set<int> receiveLRMSet;
     std::string dataSourceFile;           //数据源文件路径
     mutable bool finished = false;
-
 };
+
+bool operator==(const FrameWindow& frameWindow1, const FrameWindow& frameWindow2);
 
 #endif // FRAMEWINDOW_H

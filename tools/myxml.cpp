@@ -1,8 +1,24 @@
 ﻿#include "myxml.h"
-
-bool MyXml::saveProjectToXml(const QString &path, const Proj659& project)
+std::string MyXml::windowTypeIdToString[] = {"DATA_SEND", "VERSION_SEND", "LONG_SYNC", "FRAME_SWITCH", "CALL_SUBFRAME", "INT_SEND", "FRAME_JUMP", "FREE", "SHORT_SYNC"};
+std::map<std::string, uint> MyXml::windowTypeStringToId = {
+    std::make_pair("DATA_SEND", 0),
+    std::make_pair("VERSION_SEND", 1),
+    std::make_pair("LONG_SYNC", 2),
+    std::make_pair("FRAME_SWITCH", 3),
+    std::make_pair("CALL_SUBFRAME", 4),
+    std::make_pair("INT_SEND", 5),
+    std::make_pair("FRAME_JUMP", 6),
+    std::make_pair("FREE", 7),
+    std::make_pair("SHORT_SYNC", 8)
+};
+#include<QDir>
+bool MyXml::saveProjectToXml(const Proj659& project)
 {
-    QFile file(path);
+    QDir dir;
+    if(dir.exists(project.getPath()) == false){
+        dir.mkdir(project.getPath());
+    }
+    QFile file(project.getPath() + "/" + project.getName() + ".proj659");
     if(file.open(QIODevice::ReadWrite)){
         QDomDocument doc;
 
@@ -44,6 +60,7 @@ bool MyXml::saveProjectToXml(const QString &path, const Proj659& project)
                 func(&doc, &bodyFrame, "timeCalibrationFactor", QString::number(x.getTimeCalibrationFactor()));
                 func(&doc, &bodyFrame, "majorVersionNumber", QString::number(x.getMajorVersionNumber()));
                 func(&doc, &bodyFrame, "subVersionNumber", QString::number(x.getSubVersionNumber()));
+                func(&doc, &bodyFrame, "messageInterval", QString::number(x.getMessageInterval()));
 
 
                 if(x.getModules().empty() == false){
@@ -71,6 +88,19 @@ bool MyXml::saveProjectToXml(const QString &path, const Proj659& project)
                         func(&doc, &dataFrameItem, "totalWindow", QString::number(dataFrame.getTotalWindow()));
                         func(&doc, &dataFrameItem, "frameIdentification", QString::fromStdString(dataFrame.getFrameIdentification()));
                         func(&doc, &dataFrameItem, "timeAllocationType", QString::number(dataFrame.getTimeAllocationType()));
+                        //func(&doc, &dataFrameItem, "windows");
+                        QDomElement windows = doc.createElement("windows");
+                        for(auto &window: it->getFrameWindows()){
+                            QDomElement windowItem = doc.createElement("window");
+                            switch (window.getWindowType()) {
+
+                            }
+                            func(&doc, &windowItem, "windowId", QString::number(window.getWindowId()));
+                            func(&doc, &windowItem, "windowType", QString::fromStdString(windowTypeIdToString[window.getWindowType()]));
+                            func(&doc, &windowItem, "mainLRM", QString::number(window.getMainLRM()));
+                            windows.appendChild(windowItem);
+                        }
+                        dataFrameItem.appendChild(windows);
                         dataFrames.appendChild(dataFrameItem);
                     }
                     bodyFrame.appendChild(dataFrames);
@@ -132,6 +162,11 @@ void MyXml::func(QDomDocument* doc, QDomElement *parent, const QString &name, co
     parent->appendChild(child);
 }
 
+void MyXml::func(QDomDocument *doc, QDomElement *parent, const QString &name)
+{
+    parent->appendChild(QDomElement(doc->createElement(name)));
+}
+
 void MyXml::readBodyFrames(QXmlStreamReader* xmlReader, Proj659& project)
 {
     xmlReader->readNext();
@@ -163,6 +198,9 @@ void MyXml::readBodyFrame(QXmlStreamReader *xmlReader, Proj659& project)
             }
             else if(xmlReader->name() == "subVersionNumber"){
                 bodyFrame.setSubVersionNumber(xmlReader->readElementText().toUInt());
+            }
+            else if(xmlReader->name() == "messageInterval"){
+                bodyFrame.setMessageInterval(xmlReader->readElementText().toUInt());
             }
             else if(xmlReader->name() == "modules"){
                 readModules(xmlReader, bodyFrame);
@@ -251,8 +289,38 @@ void MyXml::readDataFrame(QXmlStreamReader *xmlReader, BodyFrame &bodyFrame)
                                 DataFrame::downConcentrationAlloc :
                                 DataFrame::equalAlloc);
             }
+            else if(xmlReader->name() == "windows"){
+                readWindows(xmlReader, dataFrame);
+            }
         }
         xmlReader->readNext();
     }
     bodyFrame.addDataFrame(dataFrame);
+}
+
+void MyXml::readWindows(QXmlStreamReader *xmlReader, DataFrame &dataFrame)
+{
+    xmlReader->readNext();
+    while(xmlReader->name() != "windows"){
+        if(xmlReader->name() == "window"){
+            readWindow(xmlReader, dataFrame);
+        }
+        xmlReader->readNext();
+    }
+}
+
+void MyXml::readWindow(QXmlStreamReader *xmlReader, DataFrame &dataFrame)
+{
+    xmlReader->readNext();
+    FrameWindow window;
+    while(xmlReader->name() != "window"){
+        if(xmlReader->name() == "windowId"){
+            window.setWindowId(xmlReader->readElementText().toUInt());
+        }
+        else if(xmlReader->name() == "windowType"){
+            window.setWindowType((FrameWindow::WindowType)windowTypeStringToId[xmlReader->readElementText().toStdString()]);
+        }
+        xmlReader->readNext();
+    }
+    dataFrame.insertFrameWindow(window);
 }

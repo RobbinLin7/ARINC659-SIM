@@ -11,7 +11,7 @@ QValidator::State StringIdValidator::validate(QString &string, int &pos) const{
     QValidator::State state;
     if((state = QRegExpValidator::validate(string, pos)) == QValidator::Acceptable){
         QString str = string.mid(pos);
-        if(dataFrames.find(str.toStdString()) == dataFrames.end()){
+        if(dataFrames.exist(str.toStdString()) == false){
             return QValidator::Acceptable;
         }
         return QValidator::Invalid;

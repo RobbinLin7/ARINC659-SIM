@@ -12,13 +12,12 @@
 #include "deviceModel/innerbodyframescene.h"
 
 
-LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module, const DataFrames& dataFrames):
+LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsItem *Ay, const BusGraphicsItem *Bx, const BusGraphicsItem *By, const Module& module):
     module(module),
     toAx(Ax, this),
     toAy(Ay, this),
     toBx(Bx, this),
-    toBy(By, this),
-    dataFrames(dataFrames)
+    toBy(By, this)
 {
     this->setZValue(1);
     setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
@@ -33,7 +32,12 @@ LRMGraphicsItem::LRMGraphicsItem(const BusGraphicsItem *Ax, const BusGraphicsIte
     arrowPath_second = createArrow(startPoint2,endPoint2);
     //InnerBodyFrameScene* scene = dynamic_cast<InnerBodyFrameScene*>(this->scene());
     //不好的设计，不要在构造函数中将this指针传递出去
-    monitorWidget = new MonitorWidget(*this, dataFrames);
+    //monitorWidget = new MonitorWidget(*this, dataFrames, );
+}
+
+LRMGraphicsItem::~LRMGraphicsItem()
+{
+    delete monitorWidget;
 }
 
 void LRMGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -206,6 +210,12 @@ MonitorWidget *LRMGraphicsItem::getMonitorWidget() const
 const Module &LRMGraphicsItem::getModule() const
 {
     return module;
+}
+
+void LRMGraphicsItem::initMonitorWidget()
+{
+    InnerBodyFrameScene* scene = dynamic_cast<InnerBodyFrameScene*>(this->scene());
+    monitorWidget = new MonitorWidget(*this, scene->getDataFrames(), scene->getModuleGraphicItems());
 }
 
 QPainterPath LRMGraphicsItem::createArrow(QPointF startPoint, QPointF endPoint)

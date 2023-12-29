@@ -13,7 +13,7 @@ using std::string;
 
 bool CommandFile::createCommandFile(const Proj659 &proj)
 {
-    std::ofstream commandFile(proj.getName().toStdString() + ".txt");
+    std::ofstream commandFile(proj.getPath().toStdString() + "/" + proj.getName().toStdString() + ".txt");
     for(auto bodyFrame : proj.getBodyFrameItems()){
         createBodyFrameInfo(commandFile, bodyFrame);
         createCommand(commandFile, bodyFrame);
@@ -33,13 +33,14 @@ bool CommandFile::compileCommandFile(const Proj659 &proj)
     /* 变量初始化 */
     VarInit(com_status);
     /* 源文件预处理 */
-    PreProcess preProcess(".", proj.getName().toStdString());
+    PreProcess preProcess(proj.getPath().toStdString(), proj.getName().toStdString());
     preProcess.setLstSourceCommand(m_lstSourceCommand);
     if (preProcess.ProcessCommand(com_status) != 0)
     {
         return 1;
     }
-    std::string m_strDir = ".", m_strFlieName = proj.getName().toStdString();
+    //std::string m_strDir = ".", m_strFlieName = proj.getName().toStdString();
+    std::string m_strDir = proj.getPath().toStdString(), m_strFlieName = proj.getName().toStdString();
     /* 标号扫描 */
     LabelScan labelScan(m_strDir,m_strFlieName);
     label_list = labelScan.ScanLabel(com_status);
@@ -1202,7 +1203,7 @@ std::string CommandFile::convertModuleNumToName(const BodyFrame &bodyFrame, cons
 
 void CommandFile::SaveCompileResult(COMPILE_STATUS status, const Proj659& proj)
 {
-    string path =  string("  ") + "/" + proj.getName().toStdString() + ".lst";
+    string path =  proj.getPath().toStdString() + "/" + proj.getName().toStdString() + ".lst";
     string str_tmp;
     try
     {
@@ -1238,7 +1239,7 @@ void CommandFile::ReloadCommand(std::vector<std::string> &m_commandLst, const Pr
 
 
     //Project project = FormMain.m_lstProject[m_nProjectIndex];
-    str_tmp = std::string(".") + "/" + proj.getName().toStdString() + ".txt";
+    str_tmp = proj.getPath().toStdString() + "/" + proj.getName().toStdString() + ".txt";
 
     std::ifstream is(str_tmp);
     if(is.good() == false){

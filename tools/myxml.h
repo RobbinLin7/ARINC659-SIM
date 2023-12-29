@@ -11,7 +11,7 @@ class MyXml
 {
 public:
     MyXml()=delete;
-    static bool saveProjectToXml(const QString& path, const Proj659& project);
+    static bool saveProjectToXml(const Proj659& project);
     static Proj659 loadProjectFromXml(const QString& path);
 //    MyXml(QString path);
 //    MyXml();
@@ -31,13 +31,17 @@ public:
 //    Proj659 project659; //保存从文件里面读取到的项目信息
 private:
     static void func(QDomDocument*, QDomElement*, const QString&, const QString&);
+    static void func(QDomDocument*, QDomElement*, const QString&);
     static void readBodyFrames(QXmlStreamReader*, Proj659&);
     static void readBodyFrame(QXmlStreamReader*, Proj659&);
     static void readModules(QXmlStreamReader*, BodyFrame&);
     static void readModule(QXmlStreamReader*, BodyFrame&);
     static void readDataFrames(QXmlStreamReader*, BodyFrame&);
     static void readDataFrame(QXmlStreamReader*, BodyFrame&);
-
+    static void readWindows(QXmlStreamReader*, DataFrame&);
+    static void readWindow(QXmlStreamReader*, DataFrame&);
+    static std::string windowTypeIdToString[9];
+    static std::map<std::string, uint> windowTypeStringToId;
 };
 
 #endif // MYXML_H

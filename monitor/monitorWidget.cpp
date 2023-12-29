@@ -2,9 +2,11 @@
 #include "ui_monitorWidget.h"
 #include <fstream>
 
-MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames, QWidget *parent):
+MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataFrames& dataFrames,
+                             const QMap<uint, std::shared_ptr<LRMGraphicsItem>>* moduleGraphicItems, QWidget *parent):
     QWidget(parent),
     ui(new Ui::MonitorWidget),
+    moduleGraphicItems(moduleGraphicItems),
     lrmGraphicsItem(lrmGraphicsItem),
     ax(lrmGraphicsItem.getToAx().getBus()),
     ay(lrmGraphicsItem.getToAy().getBus()),
@@ -20,17 +22,6 @@ MonitorWidget::MonitorWidget(const LRMGraphicsItem& lrmGraphicsItem, const DataF
     setAyData();
     setBxData();
     setByData();
-//    if(dataFrames.size() > 0){
-//        FrameWindow window = *dataFrames.begin()->getFrameWindows().begin();
-//        std::ifstream ifs(window.getDataSourceFile());
-//        if(ifs){
-//            ifs.seekg(0,std::ios::end);
-//            fileLen = ifs.tellg();
-//            ifs.seekg(0, std::ios::beg);
-//            ifs.read(buffer, fileLen);
-//            ifs.close();
-//        }
-//    }
 }
 
 MonitorWidget::~MonitorWidget()
@@ -69,7 +60,7 @@ void MonitorWidget::realtimeDataSlot()
                 case FrameWindow::DATA_SEND:
                     if(window.getMainLRM() != lrmGraphicsItem.getModule().getModuleNumber()){
                         continue; //只有发送lrm才发送，其余接收
-                    }
+                    }               
                     ui->label->setText("数据传输窗口");
                     if(window.getFinished() == true){
                         value = 0;
@@ -156,161 +147,66 @@ void MonitorWidget::realtimeDataSlot()
     double key = timeStart.msecsTo(QTime::currentTime()) / 1000.0; // time elapsed since start of demo, in seconds
     static double lastPointKey = 0;
 
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
+    if (key - lastPointKey > 0.002) // at most add point every 2 ms
     {
-        // add data to lines:
-//          if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843) > 0)
-//          {
-//              value = 1;
-//          }
-//          else
-//          {
-//              value = 0;
-//          }
-          ui->ax_d0_chart->graph(0)->addData(key, value);
-          ui->ax_d1_chart->graph(0)->addData(key, value);
+        ui->ax_d0_chart->graph(0)->addData(tickCnt, value);
+        ui->ax_d1_chart->graph(0)->addData(tickCnt, value);
+        ui->ax_clk_chart->graph(0)->addData(tickCnt, 1);
 
-          ui->ay_d0_chart->graph(0)->addData(key, value);
-          ui->ay_d1_chart->graph(0)->addData(key, value);
+        ui->ay_d0_chart->graph(0)->addData(tickCnt, value);
+        ui->ay_d1_chart->graph(0)->addData(tickCnt, value);
+        ui->ay_clk_chart->graph(0)->addData(tickCnt, 1);
 
-          ui->bx_d0_chart->graph(0)->addData(key, value);
-          ui->bx_d1_chart->graph(0)->addData(key, value);
+        ui->bx_d0_chart->graph(0)->addData(tickCnt, value);
+        ui->bx_d1_chart->graph(0)->addData(tickCnt, value);
+        ui->bx_clk_chart->graph(0)->addData(tickCnt, 1);
 
-          ui->by_d0_chart->graph(0)->addData(key, value);
-          ui->by_d1_chart->graph(0)->addData(key, value);
+        ui->by_d0_chart->graph(0)->addData(tickCnt, value);
+        ui->by_d1_chart->graph(0)->addData(tickCnt, value);
+        ui->by_clk_chart->graph(0)->addData(tickCnt, 1);
 
+        size_t size = 800;
+        ui->ax_d0_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ax_d0_chart->replot();
 
-        //ui->ax_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
+        ui->ax_d1_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ax_d1_chart->replot();
 
-        //ui->ax_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-        // rescale value (vertical) axis to fit the current data:
+        ui->ax_clk_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ax_clk_chart->replot();
+
+        ui->ay_d0_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ay_d0_chart->replot();
+
+        ui->ay_d1_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ay_d1_chart->replot();
+
+        ui->ay_clk_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->ay_clk_chart->replot();
+
+        ui->bx_d0_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->bx_d0_chart->replot();
+
+        ui->bx_d1_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->bx_d1_chart->replot();
+
+        ui->bx_clk_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->bx_clk_chart->replot();
+
+        ui->by_d0_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->by_d0_chart->replot();
+
+        ui->by_d1_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->by_d1_chart->replot();
+
+        ui->by_clk_chart->xAxis->setRange(tickCnt, size, Qt::AlignRight);
+        ui->by_clk_chart->replot();
 
         lastPointKey = key;
         emit sendData(value);
     }
     // make key axis range scroll with the data (at a constant range size of 8):
-    ui->ax_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ax_d0_chart->replot();
 
-    ui->ax_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ax_d1_chart->replot();
-
-    ui->ay_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ay_d0_chart->replot();
-
-    ui->ay_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ay_d1_chart->replot();
-
-    ui->bx_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->bx_d0_chart->replot();
-
-    ui->bx_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->bx_d1_chart->replot();
-
-    ui->by_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->by_d0_chart->replot();
-
-    ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->by_d1_chart->replot();
-}
-
-void MonitorWidget::realtimeDataSlot2()
-{
-    static QTime timeStart = QTime::currentTime();
-    // calculate two new data points:
-    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
-    static double lastPointKey = 0;
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
-    {
-      // add data to lines:
-      //ui->ay_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.3843));
-        if(qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.6364) > 0)
-        {
-            ui->ay_d0_chart->graph(1)->addData(key, -1);
-        }
-        else
-        {
-            ui->ay_d0_chart->graph(1)->addData(key, 1);
-        }
-      //ui->ay_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.6364));
-      // rescale value (vertical) axis to fit the current data:
-
-      lastPointKey = key;
-    }
-    // make key axis range scroll with the data (at a constant range size of 8):
-    ui->ay_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ay_d0_chart->replot();
-
-    // calculate frames per second:
-//    static double lastFpsKey;
-//    static int frameCount;
-//    ++frameCount;
-}
-
-void MonitorWidget::realtimeDataSlot3()
-{
-    static QTime timeStart = QTime::currentTime();
-    // calculate two new data points:
-    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
-    static double lastPointKey = 0;
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
-    {
-      // add data to lines:
-        if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.2843) > 0)
-        {
-            ui->bx_d0_chart->graph(0)->addData(key, 0);
-        }
-        else
-        {
-            ui->bx_d0_chart->graph(0)->addData(key, 1);
-        }
-      //ui->bx_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.2843));
-      //ui->bx_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.5364));
-      // rescale value (vertical) axis to fit the current data:
-
-      lastPointKey = key;
-    }
-    // make key axis range scroll with the data (at a constant range size of 8):
-    ui->bx_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->bx_d0_chart->replot();
-
-    // calculate frames per second:
-//    static double lastFpsKey;
-//    static int frameCount;
-//    ++frameCount;
-}
-
-void MonitorWidget::realtimeDataSlot4()
-{
-    static QTime timeStart = QTime::currentTime();
-    // calculate two new data points:
-    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
-    static double lastPointKey = 0;
-    if (key-lastPointKey > 0.002) // at most add point every 2 ms
-    {
-      // add data to lines:
-        if(qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.4843) > 0)
-        {
-            ui->by_d0_chart->graph(0)->addData(key, 1);
-        }
-        else
-        {
-            ui->by_d0_chart->graph(0)->addData(key, 0);
-        }
-      //ui->by_d0_chart->graph(0)->addData(key, qSin(key)+std::rand()/(double)RAND_MAX*1*qSin(key/0.4843));
-      //ui->by_d0_chart->graph(1)->addData(key, qCos(key)+std::rand()/(double)RAND_MAX*0.5*qSin(key/0.3364));
-      // rescale value (vertical) axis to fit the current data:
-
-      lastPointKey = key;
-    }
-    // make key axis range scroll with the data (at a constant range size of 8):
-    ui->by_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->by_d0_chart->replot();
-
-    // calculate frames per second:
-//    static double lastFpsKey;
-//    static int frameCount;
-    //    ++frameCount;
 }
 
 void MonitorWidget::on_actionWatchStart_triggered()
@@ -452,15 +348,20 @@ void MonitorWidget::initD0_D1(QCustomPlot *chart)
     chart->addGraph(); // red line
     chart->graph(1)->setPen(QPen(QColor(255, 110, 40)));
 
-    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    QSharedPointer<QCPAxisTickerFixed> ticker(new QCPAxisTickerFixed);
-    ticker->setTickStep(1);
+    QSharedPointer<QCPAxisTickerFixed> xTicker(new QCPAxisTickerFixed);
+    QSharedPointer<QCPAxisTickerFixed> yTicker(new QCPAxisTickerFixed);
+    yTicker->setTickStep(1);
     //timeTicker->setTimeFormat()
     //timeTicker->setTimeFormat("%h:%m:%s");
-    chart->xAxis->setTicker(timeTicker);
+    //timeTicker->setTimeFormat("%s");
+    chart->xAxis->setTicker(xTicker);
+    xTicker->setTickStep(100);
+    chart->xAxis->setLabel("x:单位(位时)");
+    chart->yAxis->setLabel("y:单位(电平)");
+    chart->xAxis->setObjectName("位置时间");
     //ui->ax_d0_chart->axisRect()->setupFullAxesBox();
     chart->yAxis->setRange(0, 1);
-    chart->yAxis->setTicker(ticker);
+    chart->yAxis->setTicker(yTicker);
 
     // make left and bottom axes transfer their ranges to right and top axes:
     connect(chart->xAxis, SIGNAL(rangeChanged(QCPRange)), chart->xAxis2, SLOT(setRange(QCPRange)));
@@ -469,95 +370,49 @@ void MonitorWidget::initD0_D1(QCustomPlot *chart)
 
 void MonitorWidget::receiveData(int value)
 {
-    static QTime timeStart = QTime::currentTime();
+    //static QTime timeStart = QTime::currentTime();
     // calculate two new data points:
-    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
-    if(ax->getError() == false){
-        ui->ax_d0_chart->graph(0)->addData(key, value);
-        ui->ax_d1_chart->graph(0)->addData(key, value);
-    }
-    else{
-        if(ax->getErrorType() == FaultInjectDialog::D0_ERROR){
-            ui->ax_d0_chart->graph(0)->addData(key, 0);
+    static int key = 0;
+    //double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
+    auto func = [=](decltype (ax) bus, decltype (ui->ax_clk_chart) clk, decltype (ui->ax_d0_chart) d0, decltype (ui->ax_d1_chart) d1){
+        if(bus->getError() == false){
+            d0->graph(0)->addData(key, value);
+            d1->graph(0)->addData(key, value);
+            clk->graph(0)->addData(key, 1);
         }
         else{
-            ui->ax_d0_chart->graph(0)->addData(key, value);
+            if(bus->getErrorType() == FaultInjectDialog::CLK_ERROR){
+                d0->graph(0)->addData(key, 0);
+                d1->graph(0)->addData(key, 0);
+                clk->graph(0)->addData(key, 0);
+            }
+            else{
+                clk->graph(0)->addData(key, 1);
+                if(bus->getErrorType() == FaultInjectDialog::D0_ERROR){
+                    d0->graph(0)->addData(key, 0);
+                }
+                else{
+                    d0->graph(0)->addData(key, value);
+                }
+                if(ax->getErrorType() == FaultInjectDialog::D1_ERROR){
+                    d1->graph(0)->addData(key, 0);
+                }
+                else{
+                    d1->graph(0)->addData(key, value);
+                }
+            }
         }
-        if(ax->getErrorType() == FaultInjectDialog::D1_ERROR){
-            ui->ax_d1_chart->graph(0)->addData(key, 0);
-        }
-        else{
-            ui->ax_d1_chart->graph(0)->addData(key, value);
-        }
-    }
-
-    if(ay->getError() == false){
-        ui->ay_d0_chart->graph(0)->addData(key, value);
-        ui->ay_d1_chart->graph(0)->addData(key, value);
-    }
-    else{
-        if(ay->getErrorType() == FaultInjectDialog::D0_ERROR){
-            ui->ay_d0_chart->graph(0)->addData(key, 0);
-            ui->ay_d1_chart->graph(0)->addData(key, value);
-        }
-        else{
-            ui->ay_d0_chart->graph(0)->addData(key, value);
-            ui->ay_d1_chart->graph(0)->addData(key, 0);
-        }
-
-    }
-    if(bx->getError() == false){
-        ui->bx_d0_chart->graph(0)->addData(key, value);
-        ui->bx_d1_chart->graph(0)->addData(key, value);
-    }
-    else{
-        if(bx->getErrorType() == FaultInjectDialog::D0_ERROR){
-            ui->bx_d0_chart->graph(0)->addData(key, 0);
-            ui->bx_d1_chart->graph(0)->addData(key, value);
-        }
-        else{
-            ui->bx_d0_chart->graph(0)->addData(key, value);
-            ui->bx_d1_chart->graph(0)->addData(key, 0);
-        }
-    }
-
-    if(by->getError() == false){
-        ui->by_d0_chart->graph(0)->addData(key, value);
-        ui->by_d1_chart->graph(0)->addData(key, value);
-    }
-    else{
-        if(by->getErrorType() == FaultInjectDialog::D0_ERROR){
-            ui->by_d0_chart->graph(0)->addData(key, 0);
-            ui->by_d1_chart->graph(0)->addData(key, value);
-        }
-        else{
-            ui->by_d0_chart->graph(0)->addData(key, value);
-            ui->by_d1_chart->graph(0)->addData(key, 0);
-        }
-    }
-
-    ui->ax_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ax_d0_chart->replot();
-
-    ui->ax_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ax_d1_chart->replot();
-
-    ui->ay_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ay_d0_chart->replot();
-
-    ui->ay_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->ay_d1_chart->replot();
-
-    ui->bx_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->bx_d0_chart->replot();
-
-    ui->bx_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->bx_d1_chart->replot();
-
-    ui->by_d0_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->by_d0_chart->replot();
-
-    ui->by_d1_chart->xAxis->setRange(key, 8, Qt::AlignRight);
-    ui->by_d1_chart->replot();
+        clk->xAxis->setRange(key, 800, Qt::AlignRight);
+        clk->replot();
+        d0->xAxis->setRange(key, 800, Qt::AlignRight);
+        d0->replot();
+        d1->xAxis->setRange(key, 800, Qt::AlignRight);
+        d1->replot();
+    };
+    func(ax, ui->ax_clk_chart, ui->ax_d0_chart, ui->ax_d1_chart);
+    func(ay, ui->ay_clk_chart, ui->ay_d0_chart, ui->ay_d1_chart);
+    func(bx, ui->bx_clk_chart, ui->bx_d0_chart, ui->bx_d1_chart);
+    func(by, ui->by_clk_chart, ui->by_d0_chart, ui->by_d1_chart);
+    ++key;
 
 }

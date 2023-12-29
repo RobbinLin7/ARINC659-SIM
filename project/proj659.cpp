@@ -10,7 +10,7 @@ Proj659::~Proj659()
     if(save == true){
         //如果需要保存
     }
-    //delete projectTree;
+    delete projectTree;
 }
 
 Proj659::Proj659(QString name, QString description, QTreeWidgetItem* projectTree)
@@ -128,4 +128,25 @@ void Proj659::setCommandFilePath(const QString &newCommandFilePath)
 QTreeWidgetItem *Proj659::getProjectTree() const
 {
     return projectTree;
+}
+
+void Proj659::setProjectTree(QTreeWidgetItem *newProjectTree)
+{
+    projectTree = newProjectTree;
+}
+
+const QString &Proj659::getPath() const
+{
+    return path;
+}
+
+void Proj659::setPath(const QString &newPath)
+{
+    path = newPath;
+}
+
+bool operator==(const Proj659& proj1, const Proj659& proj2){
+    return  (proj1.getName() == proj2.getName()) &&
+            (proj1.getDescription() == proj2.getDescription()) &&
+            (proj1.getBodyFrameItems() == proj2.getBodyFrameItems());
 }

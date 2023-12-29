@@ -32,7 +32,8 @@ InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
     positionSet.insert(500);
     positionSet.insert(4000);
     for(auto module : bodyFrame.getModules()){
-        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(this->getAx(),this->getAy(),this->getBx(),this->getBy(),module.second, this->getDataFrames()));
+        std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem(this->getAx(),this->getAy(),this->getBx(),this->getBy(),module.second));
+        //myItem.init
         moduleGraphicItems.insert(module.second.getModuleNumber(), myItem);
         myItem->setPos(550,2200);
         myItem->setParent(this);
@@ -40,10 +41,21 @@ InnerBodyFrameScene::InnerBodyFrameScene(BodyFrame& bodyFrame, QObject *parent)
         connect(myItem.get(), &LRMGraphicsItem::cfgModuleSignal, this, &InnerBodyFrameScene::cfgModuleSlot);
         connect(myItem.get(), &LRMGraphicsItem::deleteModuleSignal, this, &InnerBodyFrameScene::deleteModuleSlot);
     }
-    //for(int i = 0; i < bodyFrame.getModules(); i++)
-    //std::shared_ptr<LRMGraphicsItem> myItem(new LRMGraphicsItem());
-    //modules.insert()
-    //LRMGraphicsItem* myItem = new LRMGraphicsItem();
+    for(auto& moduleGraphicItem : moduleGraphicItems){
+        moduleGraphicItem->initMonitorWidget();
+    }
+    for(auto &dataFrame: bodyFrame.getDataFrames()){
+        for(auto& window: dataFrame.getFrameWindows()){
+            if(window.getWindowType() == FrameWindow::DATA_SEND){
+                for(auto moduleGraphicItemId : window.getReceiveLRMList()){
+                    connect(moduleGraphicItems.value(window.getMainLRM())->getMonitorWidget(),
+                            &MonitorWidget::sendData,
+                            moduleGraphicItems.value(moduleGraphicItemId).get()->getMonitorWidget(),
+                            &MonitorWidget::receiveData);
+                }
+            }
+        }
+    }
 }
 
 
@@ -82,6 +94,7 @@ bool InnerBodyFrameScene::addIrmGraphicsItem(LRMGraphicsItem* item)
 //    this->addLine(250 + width * 4 / 5,item->y() + height, 250 + width * 4 / 5, 775);
 //    this->addLine(item->x() + item->boundingRect().width() / 5, item->y() + item->boundingRect().height(), item->x() + item->boundingRect().width() / 5, 2470);
     this->addItem(item);
+//    item->initMonitorWidget();
 //    item->setPos(QPointF(1000,2200));
     return true;
 }
@@ -122,11 +135,12 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
                                                                                                              this->getAy(),
                                                                                                              this->getBx(),
                                                                                                              this->getBy(),
-                                                                                                             module,
-                                                                                                             this->getDataFrames()));
+                                                                                                             module));
+
               this->moduleGraphicItems.insert(module.getModuleNumber(),newLrm);
               this->bodyFrame.addModule(module);
               this->addIrmGraphicsItem(newLrm.get());
+              newLrm->initMonitorWidget();
               this->update();
 
           });
@@ -144,6 +158,19 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
            }
            connect(okPushButton, &QPushButton::clicked, this, [=](){
                emit modifyBodyFrameSignal(widget->getBodyFrameItem());
+               for(auto &dataFrame: bodyFrame.getDataFrames()){
+                   for(auto& window: dataFrame.getFrameWindows()){
+                       if(window.getWindowType() == FrameWindow::DATA_SEND){
+                           for(auto moduleGraphicItemId : window.getReceiveLRMList()){
+                               disconnect(moduleGraphicItems.value(moduleGraphicItemId).get()->getMonitorWidget());
+                               connect(moduleGraphicItems.value(window.getMainLRM())->getMonitorWidget(),
+                                       &MonitorWidget::sendData,
+                                       moduleGraphicItems.value(moduleGraphicItemId).get()->getMonitorWidget(),
+                                       &MonitorWidget::receiveData);
+                           }
+                       }
+                   }
+               }
                widget->ui->tab_3->close();
            });
            widget->ui->tab_3->setWindowFlag(Qt::Dialog);
@@ -153,6 +180,11 @@ void InnerBodyFrameScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
         menu.exec(QCursor::pos());
         return QGraphicsScene::contextMenuEvent(event);
     }
+}
+
+const QMap<uint, std::shared_ptr<LRMGraphicsItem>>* InnerBodyFrameScene::getModuleGraphicItems() const
+{
+    return &moduleGraphicItems;
 }
 
 const BusGraphicsItem* InnerBodyFrameScene::getBy() const
@@ -167,58 +199,12 @@ const DataFrames &InnerBodyFrameScene::getDataFrames() const
 
 void InnerBodyFrameScene::startSimulation()
 {
-    auto dataFrames = bodyFrame.getDataFrames();
-    for(auto dataFrame: dataFrames){
-        //auto dataFrame = dataFrames[dataFrameName];
-        uint period = dataFrame.getFramePeriod();
-        for(auto window: dataFrame.getFrameWindows()){
-//            enum WindowType
-//            {
-//                //659命令窗口类型
-//                DATA_SEND = 0,  /* 数据传送窗口 */
-//                VERSION_SEND = 1,  /* 版本校验窗口 */
-//                LONG_SYNC = 2,     /* 长同步窗口 */
-//                FRAME_SWITCH = 3, /* 帧切换窗口 */
-//                CALL_SUBFRRAME = 4,  /* 调用子帧窗口 */
-//                INT_SEND = 5,           /*中断发送窗口 */
-//                FRAME_JUMP = 6,   /* 帧跳转窗口*/
-//                FREE = 7,   /* 空闲等待窗口 */
-//                SHORT_SYNC = 8,   /* 短同步窗口 */
-//            };
-            switch(window.getWindowType()){
-            case FrameWindow::DATA_SEND:
-                this->add_DATA_SEND_window(window, period);
-                break;
-            case FrameWindow::VERSION_SEND:
-                break;
-            case FrameWindow::LONG_SYNC:
-                break;
-            case FrameWindow::FRAME_SWITCH:
-                break;
-            case FrameWindow::CALL_SUBFRAME:
-                break;
-            case FrameWindow::INT_SEND:
-                break;
-            case FrameWindow::FRAME_JUMP:
-                break;
-            case FrameWindow::FREE:
-                break;
-            case FrameWindow::SHORT_SYNC:
-                break;
-            default:
-                break;
-
-            }
-        }
-        break;
-        //先测试，获取一个就结束
-    }
 
 }
 
 void InnerBodyFrameScene::abortSimulation()
 {
-    dataflows.clear();
+
 }
 
 const BusGraphicsItem* InnerBodyFrameScene::getBx() const

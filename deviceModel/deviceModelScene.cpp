@@ -32,21 +32,15 @@ DeviceModelScene::DeviceModelScene():
     positionSet.insert(std::make_pair(4000, 1));
 
 }
-bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> item)
+bool DeviceModelScene::addBodyFrameItem(BodyFrameGraphicsItem* item)
 {
     if(item == nullptr) return false;
     item->setParent(this);
 //    std::shared_ptr<QGraphicsItemGroup> group = item->getCollidingGroup();
 
     item->setPositionMap(&positionSet);
-    connect(item.get(), &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
-    connect(item.get(), &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
-//    if(positionSet.empty()){
-//        item->setPos(QPoint(550, 2000));
-//    }
-//    else{
-
-//    }
+    connect(item, &BodyFrameGraphicsItem::cfgBodyFrameItemSignal, this, &DeviceModelScene::cfgBodyFrameItemSlot);
+    connect(item, &BodyFrameGraphicsItem::deleteBodyFrameItemSignal, this, &DeviceModelScene::deleteBodyFrameItemSlot);
     auto left = positionSet.cbegin();
     auto right = positionSet.cbegin();
     ++right;
@@ -78,7 +72,7 @@ bool DeviceModelScene::addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem> i
     //this->addLine(item->x() + item->boundingRect().width() / 5, item->y() + item->boundingRect().height(), item->x() + item->boundingRect().width() / 5, 2470);
 //    this->addItem(item.get());
 //    if(item->getHasSet()==false)
-       this->addItem(item.get());
+       this->addItem(item);
 //    else
 //       this->addItem(group.get());
 
@@ -189,10 +183,11 @@ void DeviceModelScene::cfgBodyFrameItemSlot(uint bodyFrameId)
     emit(cfgBodyFrameItemSignal(bodyFrameId));
 }
 
-void DeviceModelScene::deleteBodyFrameItemSlot(uint bodyFrameId)
+void DeviceModelScene::deleteBodyFrameItemSlot(uint, qreal x)
 {
 //    this->bodyFrameItemMap.remove(bodyFrameId);
 //    flag[bodyFrameId] = false;
 //    bodyFrameItemMap.value(bodyFrameId)->deleteLater();
     //    emit(deleteBodyFrameSignal(bodyFrameId));
+    if(positionSet[x] > 0) --positionSet[x];
 }

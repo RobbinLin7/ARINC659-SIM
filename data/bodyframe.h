@@ -77,7 +77,8 @@ private:
 //     std::map<std::string, DataFrame> dataFrames;   //帧数组
 //     std::vector<std::string> dataFramesOrder;      //帧数组顺序
      DataFrames dataFrames;
-
 };
+
+bool operator==(const BodyFrame& bodyFrame1, const BodyFrame& bodyFrame2);
 
 #endif // BODYFRAMEITEM_H

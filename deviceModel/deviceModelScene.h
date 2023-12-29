@@ -29,7 +29,7 @@ class DeviceModelScene : public QGraphicsScene
 public:
     enum DeviceModel{BodyFrame};
     DeviceModelScene();
-    bool addBodyFrameItem(std::shared_ptr<BodyFrameGraphicsItem>);
+    bool addBodyFrameItem(BodyFrameGraphicsItem*);
     void deleteBodyFrameItem(int x);
     void addFrame(std::shared_ptr<BodyFrameGraphicsItem> from, std::shared_ptr<BodyFrameGraphicsItem> to);
     void setAx(int, int, int, int);
@@ -53,7 +53,7 @@ protected:
 private slots:
 
     void cfgBodyFrameItemSlot(uint);
-    void deleteBodyFrameItemSlot(uint);
+    void deleteBodyFrameItemSlot(uint, qreal);
 
 
 private:

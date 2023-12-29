@@ -68,6 +68,7 @@ SOURCES += \
     validator/stringidvalidator.cpp
 
 HEADERS += \
+    data/OrderedMap.h \
     data/bodyframe.h \
     data/dataframe.h \
     data/dataframes.h \
@@ -150,3 +151,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 QMAKE_CXXFLAGS += --std=c++11 -fno-elide-constructors
 RESOURCES += \
     resources.qrc
+INCLUDEPATH += ./spdlog

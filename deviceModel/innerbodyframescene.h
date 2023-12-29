@@ -36,6 +36,8 @@ public:
 
     void abortSimulation();
 
+    const QMap<uint, std::shared_ptr<LRMGraphicsItem>>* getModuleGraphicItems() const;
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 signals:

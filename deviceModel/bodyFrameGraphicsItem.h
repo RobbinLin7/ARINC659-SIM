@@ -78,7 +78,7 @@ signals:
 
     void cfgBodyFrameItemSignal(uint frameId);
 
-    void deleteBodyFrameItemSignal(uint frameId);
+    void deleteBodyFrameItemSignal(uint frameId, qreal x);
 
     void enterInBodyFrame(uint frameId);
 

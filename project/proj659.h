@@ -35,17 +35,24 @@ public:
 
     QTreeWidgetItem *getProjectTree() const;
 
+    void setProjectTree(QTreeWidgetItem *newProjectTree);
+
+    const QString &getPath() const;
+    void setPath(const QString &newPath);
+
 private:
+    QString path;
     QString name;
     QString description;
     QString commandFilePath;
-    QTreeWidgetItem* projectTree;
+    QTreeWidgetItem* projectTree = nullptr;
     bool save = true;
     QMap<uint, BodyFrame> bodyFrameItems;
     bool used[maxFrameId] = {false};
     Status status = unsaved;
 };
 
+bool operator==(const Proj659& proj1, const Proj659& proj2);
 
 
 #endif // PROJ659_H

@@ -29,4 +29,6 @@ private:
     ModuleType moduleType;  //模块属性
 };
 
+bool operator==(const Module& module1, const Module& module2);
+
 #endif // MODULE_H
