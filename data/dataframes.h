@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 //typedef OrderedMap<std::string, DataFrame> DataFrames;
-using DataFrame = OrderedMap<std::string, DataFrame>;
+using DataFrames = OrderedMap<std::string, DataFrame>;
 //class DataFrames
 //{
 //public:

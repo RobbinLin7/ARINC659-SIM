@@ -333,6 +333,7 @@ void MainWindow::on_actionOpenProject_triggered()
     }
     else{
         currentProject = std::make_shared<Proj659>(MyXml::loadProjectFromXml(filePath));
+        //xxxx = currentProject;
         currentProject->setPath(filePath.left(filePath.lastIndexOf('/')));
         createNewScene();
         for(auto& bodyFrame: currentProject->getBodyFrameItems()){
@@ -658,7 +659,8 @@ void MainWindow::onProjectItemPressed(QTreeWidgetItem *item, int column)
 //        ui->paraConfigWidget->show();
 //        bodyFrameCfgWidget->show();
         bodyFrameCfgWidget = nullptr;
-        commandFileWidget = std::shared_ptr<CommandFileWidget>(new CommandFileWidget(currentProject->getCommandFilePath()));
+        qDebug() << currentProject->getPath() + "/" + currentProject->getCommandFilePath();
+        commandFileWidget = std::shared_ptr<CommandFileWidget>(new CommandFileWidget(currentProject->getPath() + "/" + currentProject->getCommandFilePath()));
         commandFileWidget->setParent(ui->paraConfigWidget);
         ui->paraConfigLayout->addWidget(commandFileWidget.get());
         ui->paraConfigWidget->show();
